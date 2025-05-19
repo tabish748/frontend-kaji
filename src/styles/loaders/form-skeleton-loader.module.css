@@ -1,0 +1,59 @@
+@-webkit-keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonFormWrapper {
+  padding: 20px;
+}
+
+.skeletonRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-bottom: 50px;
+}
+
+.skeletonRow .skeletonField {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  height: 500px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(25%, rgba(0, 0, 0, 0.06)), color-stop(50%, rgba(0, 0, 0, 0.12)), color-stop(75%, rgba(0, 0, 0, 0.06)));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.06) 75%);
+  background-size: 200% 100%;
+  -webkit-animation: shimmer 1.5s infinite;
+          animation: shimmer 1.5s infinite;
+  margin-right: 10px;
+}
+
+.skeletonRow .skeletonField:last-child {
+  margin-right: 0;
+}
+
+.skeletonButton {
+  width: 100%;
+  height: 40px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(25%, rgba(0, 0, 0, 0.06)), color-stop(50%, rgba(0, 0, 0, 0.12)), color-stop(75%, rgba(0, 0, 0, 0.06)));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.06) 75%);
+  background-size: 200% 100%;
+  -webkit-animation: shimmer 1.5s infinite;
+          animation: shimmer 1.5s infinite;
+}
+/*# sourceMappingURL=form-skeleton-loader.module.css.map */

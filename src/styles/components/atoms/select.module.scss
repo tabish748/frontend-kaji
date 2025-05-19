@@ -1,0 +1,93 @@
+@import "../../base/_colors.scss";
+
+.selectWrapper {
+  position: relative;
+  margin-bottom: 10px;
+
+  label {
+    display: inline-block;
+    font-weight: normal;
+    font-size: 12px;
+  }
+
+  select {
+  // width: 100%;
+  // padding: 12px 16px;
+  // margin: 5px 0;
+  // box-sizing: border-box;
+  // background-color: $white !important;
+  // border: 1px solid #dedede;
+  // border-radius: 4px;
+  // font-size: 12px;
+  // appearance: none; // This is to remove default browser styling
+  // background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+  // background-position: right 10px top 50% !important;
+  // background-size: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 0 11px;
+    color: #455560;
+    border: 1px solid $gray-light;
+    font-size: 12px;
+    // line-height: 1.5714285714285714;
+    list-style: none;
+    appearance: none; // This is to remove default browser styling
+    background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+    background-position: right 10px top 50% !important;
+    font-family: 'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    display: flex;
+    border-radius: 10px;
+    height: 40px;
+    option {
+      font-size: 12px;
+    }
+  &:hover {
+    background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+    background-position: right 10px top 50% !important;
+    border-color: $blue-lighter !important;
+    
+  }
+
+  &:focus, &:active {
+    // border-color: $primary !important;
+    // outline: none;
+    // background-color: #FCFADE !important;
+    border: 1px solid $blue-light !important;
+  }
+
+  &:disabled {
+    background-color: #f6f7fb!important;
+    cursor: not-allowed;
+
+    &:hover, &:focus {
+      border: 1px solid $gray-light !important;
+    }
+  }
+
+  &.error {
+    border-color: $danger;
+  }
+}
+
+
+  .errorText {
+    color: $danger; 
+    font-size: 12px;
+  }
+}
+
+.tag {
+  margin-right: 8px;
+  background-color: $danger;
+  padding: 4px 6px;
+  border-radius: 2px;
+  font-size: 0.6em!important;
+  text-transform: capitalize;
+  margin-left: 10px;
+  color: $white; 
+}
+.selectedOption {
+  background-color: $primary;
+  color: $white;
+}

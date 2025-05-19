@@ -1,0 +1,22 @@
+@import '../../base/colors.scss';
+
+.customerOrderFormRow1 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0 1rem;
+}
+.commentField {
+    grid-column: span 4;
+}
+.customerOrderSaveBtn {
+    height: 40px;
+    // margin-top: .3rem;
+}
+.dropdownSelect {
+    padding-top: 8px;
+}
+
+.propertyDropdownSelect {
+    margin-top: 10px;
+}

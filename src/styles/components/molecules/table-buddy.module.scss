@@ -1,0 +1,374 @@
+@import '../../base/colors.scss';
+@import "../../base/_mixins.scss";
+
+.columnCell{
+ 
+}
+.tableContainer {
+  // width: 100%;
+  // overflow-x: auto;
+  // position: relative;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: $mud-gray;
+    font-size: 12px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: 'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    border-bottom: none;
+    overflow-x: auto;
+
+    &.headerFixed .stickyTableHeader {
+       
+        position: fixed;
+        width: fit-content;
+        top: 79px; // Adjust based on your needs
+        z-index: 100000; // Ensure the header is above other elements
+        background-color: white; // Ensure the header has a background
+        // width: calc(100% - 20px); // Adjust width based on padding or margin
+       
+     
+    }
+  
+    &.headerFixed .headerPlaceholder {
+      display: table-row;
+      // height: 50px; // Adjust to match the height of your header
+    }
+  
+
+    &.fixedColumns {
+      .table {
+        overflow-x: auto;
+        th, td {
+          &:nth-child(1), &:nth-child(2) { // Targeting first two columns
+            position: sticky;
+            left: 0;
+            background: white; 
+            z-index: 1;
+           &::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            // box-shadow: 12px 3px 107px -32px rgba(0,0,0,0.43);
+            // -webkit-box-shadow: 12px 3px 107px -32px rgba(0,0,0,0.43);
+            // -moz-box-shadow: 12px 3px 107px -32px rgba(0,0,0,0.43);
+           }
+          }
+  
+          &:nth-child(2) {
+            left: 100px;
+          }
+        }
+      }
+    }
+}
+
+
+.table {
+  // width: 100%;
+  // border-collapse: collapse;
+  // white-space: nowrap;
+    width: 100%;
+    // min-height: 350px;
+    text-align: start;
+    border-radius: 12px 12px 0 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    // overflow-x: auto;
+  tbody {
+    border-left: thin solid #f0f0f0;
+    border-right: thin solid #f0f0f0;
+  }
+  thead {
+    // border: 1px solid #dedede;
+    // height: 54px;
+    // position: relative;
+    color: $mud-gray;
+    font-weight: 600;
+    text-align: start;
+    background: #fbfcfc;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  th,
+  td {
+    // padding: 10px 10px;
+    // text-align: left;
+    // font-size: 12px;
+    position: relative;
+    padding: 12px 8px;
+    min-width: 95px;
+    overflow-wrap: break-word;
+    border-bottom: 1px solid #f0f0f0;
+    span {
+      display: -webkit-box;
+      -webkit-line-clamp: 6; /* Limit to 6 lines */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  /* Apply padding only to the first th and td elements */
+  th:first-child,
+  td:first-child {
+    padding-left: 16px; /* Left padding for the first th and td */
+  }
+
+  /* Apply padding only to the rest of the th and td elements */
+  th:not(:first-child),
+  td:not(:first-child) {
+    padding-left: 0px; /* No left padding for the rest of the th and td */
+  }
+tr{
+  border-bottom: thin solid #f0f0f0;
+}
+  th {
+    // background-color: $white;
+    // color: $primary;
+    // font-weight: normal;
+    // border-bottom: 3px solid #dedede;
+    position: relative;
+    color: $mud-gray;
+    font-weight: 600;
+    text-align: start;
+    background: #fbfcfc!important;
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:hover {
+      // background-color: #E7F3FF;
+      background-color: #f4f5f5;
+    }
+  }
+  
+tr:hover {
+  // background-color: #FCFADE;
+  background-color: #04d182!important;
+}
+  tr:nth-child(even) {
+    background-color: #fbfcfc;
+    &:hover {
+      // background-color: #FCFADE;
+      background-color: #04d182!important;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+
+    th,
+    td {
+      // Reduce padding on small screens
+      padding: 8px;
+      min-width: 50px; // Or any other size that works for you
+    }
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7); // Semi-transparent white background
+  z-index: 10; // Ensure it appears on top of the table
+  display: flex;
+  justify-content: center; // Horizontally center loader
+  align-items: center; // Vertically center loader
+}
+
+.loader {
+  display: inline-block;
+  border: 8px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 8px solid $primary;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.recordNotFound {
+  font-size: 1.4rem;
+  margin-top: 1rem;
+
+}
+
+.direction {
+  color: #fff;
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.arrowWrapper {
+  margin-left: 1rem;
+  img {
+    width: 8px;
+  }
+}
+.arrow {
+  // display: inline-block;
+  // vertical-align: middle;
+  display: block;
+  width: 7px;
+  height: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+    /* Non-active arrows will be more transparent */
+  line-height: 12px;
+}
+
+
+
+.arrowUp {
+  /* Adjust this as needed */
+}
+
+.arrowDown {
+  transform: rotate(180deg);
+}
+.formSubmitButtonContainer {
+  width: 100%;
+  .submitBtn {
+    min-width: 150px;
+    display: block;
+    margin: 1rem auto;
+  }
+}
+
+.dangerHighlightedRow {
+  background-color: $danger!important;
+  color: $white;
+  td {
+    span{
+      color: $white;
+      font-weight: bold;
+    }
+    
+  }
+  &:hover {
+    background-color:  $danger!important;
+    td {
+      span{
+        color: $white;
+        font-weight: bold;
+      }
+    }
+  }
+}
+.warnHighlightedRow {
+  background-color: $warning!important;
+  td {
+    span{
+      color: $white!important;
+      font-weight: bold;
+    }
+  }
+  &:hover {
+    background-color:  $warning!important;
+    td {
+      span{
+        color: $white!important;
+        font-weight: bold;
+      }
+    }
+  }
+}
+// .stickyTableHeader {
+//   position: sticky;
+//   top: 0;
+//   background: white; // Adjust the background color according to your design
+//   z-index: 10; // Ensure it's above other content
+// }
+.arrowSvg {
+  width: 7px;
+    height: 7px;
+    line-height: 11px;
+    fill: #DBDDDF;
+}
+.arrowActive {
+  opacity: 1;
+  .arrowSvg {
+    fill: $primary!important;
+  }
+}
+.greyCell {
+  background: #dadada  url("http://sozu.japanstation.com.pk/vs_web/views/img/bg-stripe.png");
+  border-bottom: 1px solid #dedede !important;
+  // border-top: 1px solid #dedede !important;
+  padding-left: 8px!important;
+  font-weight: bold;
+  text-align: center;
+
+  span {
+    color: $mud-gray !important;
+  }
+}
+
+.redCell {
+  background-color: $danger;
+  font-weight: bold;
+  text-align: center;
+}
+
+.yellowCell {
+  background-color: $warning;
+  font-weight: bold;
+  text-align: center;
+}
+
+.normalCell {
+  // background-color: $white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.simpleCell {
+  text-align: center !important;
+}
+.remarksCell {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+// .headerFixed {
+//   position: fixed;
+//   top: 100px;
+// }
+
+.stickyTableHeader {
+  background-color: #fff;
+  // Other styles...
+}
+
+.headerPlaceholder {
+  display: none; // Initially hidden
+  height: 0; // Initially no height
+}
+
+.columnCell {
+    // display: -webkit-box;
+    // -webkit-line-clamp: 6; /* Limit to 6 lines */
+    // -webkit-box-orient: vertical;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+}
+
+.tableCell {
+  div {
+    text-align: left;
+    align-items: flex-start;
+  }
+}

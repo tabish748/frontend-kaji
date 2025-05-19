@@ -1,0 +1,13 @@
+@import '../../base/colors.scss';
+
+.customDateFieldWrapper {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1fr;
+    gap: 4px;
+}
+
+.label {
+    display: inline-block;
+    font-weight: normal;
+    font-size: 12px;
+}

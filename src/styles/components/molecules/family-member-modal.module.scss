@@ -1,0 +1,33 @@
+
+    .nameFieldsWrapper {
+        width: 100%;
+        max-width: 60%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 1rem;
+    }
+    .phoneFieldsRow {
+        width: 100%;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr 1fr 2fr 1fr;
+        gap: 0 1rem;
+    }
+
+    .emailRow {
+        width: 100%;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 1rem;
+    }
+    .postCodeRow {
+        width: 100%;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 5fr;
+        gap: 0 1rem;
+    }
+    .relationShipWrapper {
+        max-width: 250px;
+    }

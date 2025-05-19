@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAEA,UAAU,CAAV,IAAU;EACN,EAAE;IACE,IAAI,EAAE,KAAK;;EAEf,IAAI;IACA,IAAI,EAAE,IAAI;;;;AAIlB,AAAA,OAAO,CAAC;EACJ,QAAQ,EAAE,KAAK;EACf,GAAG,EAAE,CAAC;EACN,IAAI,EAAE,CAAC;EACP,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,GAAG;EACX,UAAU,EAAE,uBAAuB;EACnC,SAAS,EAAE,gBAAgB;EAC3B,OAAO,EAAE,IAAI;CAChB",
+    "sources": [
+        "global-loader.module.scss"
+    ],
+    "names": [],
+    "file": "global-loader.module.css"
+}

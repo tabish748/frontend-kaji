@@ -1,0 +1,57 @@
+/* colors.scss */
+
+// Primary colors
+// $primary: #017FFA;
+$primary: #3e79f7;
+$blue-light: #4096ff;
+$blue-lighter: #699dff;
+$primary-light: lighten($primary, 50%);
+$primary-dark: darken($primary, 10%);
+
+$tertiary: #091a52;
+$tertiary-light: lighten($tertiary, 50%);
+$tertiary-dark: darken($tertiary, 10%);
+
+// Secondary colors
+$secondary: #c2d1d9;
+$secondary-light: lighten($secondary, 10%);
+$secondary-dark: darken($secondary, 10%);
+
+// Tertiary colors
+
+
+// Grayscale
+$whiteSmoke:#f2f5f7;
+$white: #ffffff;
+$gray-light: #e6ebf1;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #333333;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black: #000000;
+
+$mud-gray: #455560;
+$lighter-gray: #EAEAEA;
+$light-text: #c2d1d9;
+$active: #E3F3FF;
+
+// Additional colors (if needed)
+$success: #04d182;
+// $success: #28a745;
+$success-dark: darken($success, 10%);
+$info: #17a2b8;
+$warning: #ffc542;
+// $danger: #CF3A58;
+$danger: #ff6b72;
+$danger-dark: darken($danger, 10%);
+$danger-light: #FCDDDD;
+$disabled: #DFDFDF;
+// Background colors
+$background: $white;
+$background-light: $whiteSmoke;
+$background-dark: $gray-900;

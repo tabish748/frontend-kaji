@@ -1,0 +1,47 @@
+@import "../../base/_mixins.scss";
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    @include respond-to('small') {
+      display: block;
+    }
+  }
+  
+  .label {
+    margin-right: 1em;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .optionWrapper {
+    display: flex;
+    flex-direction: row;
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 1rem;
+    @include respond-to('small') {
+      margin-top: 1rem;
+    }
+   
+
+  }
+  
+  
+  .unselected {
+    padding: 10px;
+    border-radius: 20px;
+    background: transparent;
+    color: black;
+    cursor: pointer;
+  }
+  
+  .selected {
+    padding: 10px;
+    border-radius: 20px;
+    background: #c2d1d9;
+    color: white;
+    cursor: pointer;
+  }
+  

@@ -1,0 +1,38 @@
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeletonFormWrapper {
+    padding: 20px;
+}
+
+.skeletonRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+
+    .skeletonField {
+        flex: 1;
+        height: 500px;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.06) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        margin-right: 10px;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.skeletonButton {
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.06) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}

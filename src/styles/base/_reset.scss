@@ -1,0 +1,110 @@
+/* reset.scss */
+@use 'colors' as c;
+/* Remove default margin and padding */
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+abbr,
+address,
+button,
+input,
+label,
+select,
+optgroup,
+option,
+table,
+caption,
+tfoot,
+thead,
+tbody,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove table cell border and spacing */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove default button and input styles */
+button,
+select {
+  background: none;
+  border: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Set default font properties */
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 20px;
+  line-height: 1.5;
+  // color: #333;
+  color: c.$mud-gray;
+  background-color: c.$white;
+}
+
+/* Remove default link styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Remove default image border */
+img {
+  border: none;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+/* Remove default quote styling */
+blockquote,
+q {
+  quotes: none;
+}
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+  content: '';
+  content: none;
+}
+
+/* Set default box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

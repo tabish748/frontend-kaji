@@ -1,0 +1,36 @@
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  border-bottom: 2px solid transparent;
+  -webkit-transition: border-bottom-color 0.3s, color 0.3s;
+  transition: border-bottom-color 0.3s, color 0.3s;
+}
+
+.tab:hover {
+  border-bottom-color: #999;
+  color: #999;
+}
+
+.tab.active {
+  border-bottom-color: #0070f3;
+  color: #0070f3;
+}
+
+.tabContents > div {
+  display: none;
+}
+
+.tabContents > div.active {
+  display: block;
+}
+
+.tabBtn {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 11px 30px !important;
+}
+/*# sourceMappingURL=tabs.module.css.map */

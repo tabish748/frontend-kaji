@@ -1,0 +1,42 @@
+// Variables
+$breakpoints: (
+  'xs': 0,
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px
+);
+
+// Utilities
+.container {
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+[class*='col-'] {
+  padding-right: 15px;
+  padding-left: 15px;
+  flex-grow: 1;
+  flex-basis: 0;
+  max-width: 100%;
+}
+
+// Responsiveness
+@each $breakpoint, $min-width in $breakpoints {
+  @media (min-width: $min-width) {
+    @for $i from 1 through 12 {
+      .col-#{$breakpoint}-#{$i} {
+        flex: 0 0 calc(100% * (#{$i} / 12));
+        max-width: calc(100% * (#{$i} / 12));
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@import '../../base/colors.scss';
+@import "../../base/_mixins.scss";
+
+.breadcrumbContainer {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    // margin-top: 5px;
+    // margin-bottom: 5px;
+}
+
+.headingBuddy {
+    margin: 0;
+    @include responsive-font(14px, 16px);
+    font-weight: bold;
+}
+
+.primaryCircle {
+    width: 21px;
+    height: 22px;
+    background-color: $primary;
+    border-radius: 50%;
+    margin-right: .7rem;
+}
+.breadCrumbTxt {
+    font-size: 16px;
+}

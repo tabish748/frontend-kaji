@@ -1,0 +1,64 @@
+/* colors.scss */
+.toggleWrapper {
+  padding-top: 10px;
+}
+
+.wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.label {
+  margin-right: 20px;
+  font-size: 12px;
+  color: #455560;
+}
+
+.toggleButton {
+  width: 50px;
+  height: 25px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: thin solid #dedede;
+  position: relative;
+  cursor: pointer;
+  padding-bottom: 5px;
+}
+
+.toggleButton:active {
+  background-color: #fff;
+}
+
+.slider {
+  position: absolute;
+  top: 3px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #fff;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.on {
+  left: 28px;
+  top: 2px;
+  background-color: #3e79f7;
+}
+
+.off {
+  left: 2px;
+  top: 2px;
+  background-color: #ced4da;
+}
+
+.toggleButton.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+/*# sourceMappingURL=toggle-button.module.css.map */

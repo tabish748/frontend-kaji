@@ -1,0 +1,125 @@
+/* mixins.scss */
+// @import './variables';
+@use 'variables' as v;
+
+// Media query mixin
+@debug v.$breakpoint-small;
+
+@mixin respond-to($breakpoint) {
+    @if $breakpoint == 'small' {
+      @media (max-width: v.$breakpoint-small) { @content; }
+    } @else if $breakpoint == 'medium' {
+      @media (max-width: v.$breakpoint-medium) { @content; }
+    } @else if $breakpoint == 'large' {
+      @media (max-width: v.$breakpoint-large) { @content; }
+    } @else if $breakpoint == 'xlarge' {
+      @media (max-width: v.$breakpoint-xlarge) { @content; }
+    }
+  }
+  
+  // Clearfix mixin
+  @mixin clearfix {
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+  
+  // Flexbox center mixin
+  @mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  @mixin text-one-line {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  @mixin vertical-margin-1 {
+      margin: 1rem 0;
+  }
+  @mixin vertical-margin-2 {
+    margin: 2rem 0;
+}
+  
+  // Border-radius mixin
+  @mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+       -moz-border-radius: $radius;
+        -ms-border-radius: $radius;
+            border-radius: $radius;
+  }
+  
+  // Box-shadow mixin
+  @mixin box-shadow($x: 0, $y: 1px, $blur: 4px, $spread: 0, $color: rgba(0, 0, 0, 0.1)) {
+    -webkit-box-shadow: $x $y $blur $spread $color;
+       -moz-box-shadow: $x $y $blur $spread $color;
+        -ms-box-shadow: $x $y $blur $spread $color;
+            box-shadow: $x $y $blur $spread $color;
+  }
+  
+  // Text ellipsis mixin
+  @mixin text-ellipsis($lines: 1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  
+    @if $lines > 1 {
+      display: -webkit-box;
+      -webkit-line-clamp: $lines;
+      -webkit-box-orient: vertical;
+    }
+  }
+  
+  // CSS triangle mixin
+  @mixin css-triangle($direction, $size, $color) {
+    content: '';
+    width: 0;
+    height: 0;
+  
+    @if $direction == 'up' {
+      border-left: $size solid transparent;
+      border-right: $size solid transparent;
+      border-bottom: $size * 1.5 solid $color;
+    } @else if $direction == 'down' {
+      border-left: $size solid transparent;
+      border-right: $size solid transparent;
+      border-top: $size * 1.5 solid $color;
+    } @else if $direction == 'left' {
+      border-top: $size solid transparent;
+      border-bottom: $size solid transparent;
+      border-right: $size * 1.5 solid $color;
+    } @else if $direction == 'right' {
+      border-top: $size solid transparent;
+      border-bottom: $size solid transparent;
+      border-left: $size * 1.5 solid $color;
+    }
+  }
+
+  @mixin responsive-font($min-font-size, $max-font-size) {
+    font-size: $min-font-size;
+    @media (min-width: #{v.$breakpoint-small}) and (max-width: #{v.$breakpoint-large}) {
+      font-size: calc(#{$min-font-size} + (#{$max-font-size} - #{$min-font-size}) * ((100vw - #{v.$breakpoint-small}) / (#{v.$breakpoint-large} - #{v.$breakpoint-small})));
+    }
+    @media (min-width: #{v.$breakpoint-large}) {
+      font-size: $max-font-size;
+    }
+  }
+
+
+  // @include respond-to('medium') {
+  //   .row {
+  //       flex-direction:column;
+  //   }
+  // }
+
+  // Example usage of mixins
+  .example {
+    @include border-radius(4px);
+    @include box-shadow();
+    @include flex-center();
+  }
+  
+  

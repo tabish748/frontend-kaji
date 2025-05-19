@@ -1,0 +1,128 @@
+@import "../../base/_colors.scss"; // Adjust this path based on where your _colors.scss file is located
+
+.button {
+  // padding: 10px 20px;
+  // border-radius: 4px;
+  // border: none;
+  // cursor: pointer;
+  // text-align: center;
+  // display: flex;
+  // justify-content: space-evenly;
+  outline: none;
+  position: relative;
+  display: inline-block;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: center;
+  background-image: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  user-select: none;
+  touch-action: manipulation;
+  line-height: 1.5714285714285714;
+  color: #455560;
+  font-size: 12px;
+  height: 40px;
+  padding: 8px 15px;
+  border-radius: 10px;
+
+  &:disabled {
+    background-color: #f6f7fb !important;
+    color: #444 !important;
+  }
+
+  &.primary {
+    background-color: $primary;
+    color: $white;
+
+    &:hover {
+      color: #fff;
+      background-color: $blue-lighter;
+    }
+  }
+
+  &.secondary {
+    // background-color: $white;
+    // color: $primary;
+    // border: thin solid $primary;
+    background-color: #ffffff;
+    border: 2px solid $gray-light;
+    box-shadow: 0 2px 0 rgba(69, 85, 96, 0.02);
+
+    &:disabled {
+      cursor: not-allowed;
+      color: rgba(69, 85, 96, 0.25) !important;
+    }
+
+    &:not(:disabled):hover {
+      color: $blue-lighter;
+      border-color: $blue-lighter;
+    }
+  }
+
+  &.danger {
+    background-color: $danger;
+    color: $white;
+
+    &:hover {
+      background-color: #ff9496;
+      color: #ffffff;
+    }
+  }
+
+
+  &.tertiary {
+    background-color: $tertiary;
+    color: #fff;
+  }
+
+
+  &.small {
+    font-size: 12px;
+    padding: 9px 10px;
+  }
+
+  &.medium {
+    font-size: 16px;
+    padding: 11px 15px;
+  }
+
+  &.large {
+    font-size: 20px;
+    padding: 15px 30px;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block; 
+  width: 16px; 
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3); 
+  border-radius: 50%; 
+  border-top-color: #fff; 
+  border-left-color: #fff; 
+  animation: spinner 3s linear infinite; 
+  vertical-align: middle; 
+}
+
+

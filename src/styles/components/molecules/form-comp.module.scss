@@ -1,0 +1,23 @@
+.formContainer {
+    // display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .SubmitBtn {
+    min-width: 200px;
+  }
+  
+  .delBtn {
+    display: block;
+    width:fit-content;
+  }
+  
+  .centerSubmitBtn {
+    margin-bottom: 17px;
+  }
+  
+.confirmationBox {
+  min-width: 475px;
+}
+  

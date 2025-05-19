@@ -1,0 +1,112 @@
+@import "../../base/_colors.scss";
+
+
+.inputWrapper {
+  position: relative;
+  margin-bottom: 10px;
+
+  label {
+    display: inline-block;
+    font-weight: normal;
+    font-size: 12px;
+  }
+
+  input {
+    // width: 100%;
+    // padding: 12px 16px;
+    // margin: 5px 0;
+    // box-sizing: border-box;
+    // border: 1px solid #dedede;
+    // border-radius: 4px;
+    // font-size: 13px;
+    // height: 41px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 9.3px 12px;
+    color: #455560;
+    font-size: 12px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: 'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    min-width: 0;
+    background-color: #ffffff;
+    border-width: 1px;
+    border-style: solid;
+    border-color: $gray-light;
+    border-radius: 10px;
+    transition: all 0.2s;
+    height: 40px;
+    &:focus {
+      // border-color: #699dff; 
+      // background-color: #FCFADE;
+      // outline: none;
+      // box-shadow: 0 0 5px rgba(153, 145, 40, 0.5) !important;
+      border-color: $blue-lighter;
+      outline: none;
+    }
+
+    // &::placeholder {
+    //   color: $gray-light;
+    // }
+
+    &:hover {
+      // border-color: 1px solid #dedede;
+      border-color: $blue-lighter;
+      border-inline-end-width: 1px;
+    }
+
+    &:disabled {
+      background-color: #f6f7fb !important;
+      cursor: not-allowed;
+    }
+
+    &.error {
+      border-color: $danger;
+    }
+  }
+  textarea {
+    &.error {
+      border-color: $danger!important;
+    }
+  }
+  input[readonly] {
+    background-color: #f6f7fb; 
+    cursor: default; 
+    &:focus , &:hover {
+      border: 0.5px solid $gray-light !important;
+      box-shadow: none !important;
+    }
+  }
+  .errorText {
+    color: $danger;
+    font-size: 12px;
+  }
+}
+
+.tag {
+  padding: 4px 6px;
+  border-radius: 2px;
+  font-size: 0.6em;
+  text-transform: capitalize;
+  margin-left: 8px;
+  color: $white; 
+}
+
+.tagFirstTime {
+  background-color: $warning!important; // Assuming you have a $yellow variable defined
+}
+
+.tagInherit {
+  background-color: $white!important;
+  color: $black; // Change text color for contrast
+}
+
+.tagRequired {
+  background-color: $danger!important; // Use the existing $danger variable for red
+}
+.tagDefault {
+  background-color: $danger!important;
+}

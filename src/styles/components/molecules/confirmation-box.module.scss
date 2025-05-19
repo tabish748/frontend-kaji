@@ -1,0 +1,130 @@
+@import '../../base/colors.scss';
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    animation: fadeIn 0.3s forwards;
+
+}
+
+.box {
+    // width: 30%;
+    // background-color: #fff;
+    // padding: 30px 20px;
+    // border-radius: 10px;
+    // box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    // transition: transform 0.2s;
+    // animation: slideDown 0.3s forwards;
+    position: relative;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    pointer-events: auto;
+    padding: 20px 24px;
+    transition: transform 0.2s;
+    animation: confirmation-box_slideDown__r0RR_ 0.3s forwards;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+}
+
+.title {
+    // font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 16px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 20px;
+    max-width: fit-content;
+    margin: 0 auto;
+
+    button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        // font-size: 1rem;
+        transition: background-color 0.2s, transform 0.2s;
+        font-size: 16px;
+        &:hover {
+            cursor: pointer;
+            transform: translateY(-2px);
+        }
+
+        &:active {
+            transform: translateY(1px);
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    .confirmBtn {
+        background-color: $primary;
+        color: $white;
+        border: thin solid $primary;
+        font-weight: bold;
+
+        &:hover {
+            background-color: $blue-light;
+            color: $white;
+            border: thin solid $blue-light;
+        }
+    }
+    .confirmBtn:focus {
+        outline: none;
+        border: 2px solid #0056b3;
+      }
+    .cancelBtn {
+        // background-color: $whiteSmoke;
+        // color: $black;
+        // border: 2.5px solid #dedede;
+        // font-weight: bold;
+        background-color: #ffffff;
+        border: thin solid #d9d9d9;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+
+        &:hover {
+            background-color: $white;
+            color: $blue-light;
+            border: thin solid $blue-light ;
+        }
+    }
+}

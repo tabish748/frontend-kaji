@@ -1,0 +1,46 @@
+@import '../../base/colors.scss';
+
+.toast {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    border-radius: 8px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    z-index: 10000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    // display: flex;
+    // justify-content: space-between;
+    // flex-direction: row-reverse;
+
+    &.success {
+        background-color: #EAF5F2 !important;
+        border: thin solid $success !important;
+    }
+
+    &.fail {
+        background-color: #FBECEF !important;
+        border: thin solid $danger !important;
+    }
+
+    .alertIconMargin {
+        margin: 0 15px 8px 0;
+    }
+
+    .dangerIconMargin {
+        margin: 2.2px 20px 8px 0;
+    }
+}
+.closeButton {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    font-size: 1.5rem;
+}
+

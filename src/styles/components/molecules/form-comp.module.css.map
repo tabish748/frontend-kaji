@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,UAAU,CAAC;EAEP,MAAM,EAAE,qBAAqB;EAC7B,SAAS,EAAE,KAAK;CACnB",
+    "sources": [
+        "form-comp.module.scss"
+    ],
+    "names": [],
+    "file": "form-comp.module.css"
+}

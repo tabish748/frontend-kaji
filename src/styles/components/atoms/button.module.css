@@ -1,0 +1,130 @@
+/* colors.scss */
+.button {
+  outline: none;
+  position: relative;
+  display: inline-block;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: center;
+  background-image: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  -webkit-transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  line-height: 1.5714285714285714;
+  color: #455560;
+  font-size: 12px;
+  height: 40px;
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
+.button:disabled {
+  background-color: #f6f7fb !important;
+  color: #444 !important;
+}
+
+.button.primary {
+  background-color: #3e79f7;
+  color: #ffffff;
+}
+
+.button.primary:hover {
+  color: #fff;
+  background-color: #699dff;
+}
+
+.button.secondary {
+  background-color: #ffffff;
+  border: 2px solid #e6ebf1;
+  -webkit-box-shadow: 0 2px 0 rgba(69, 85, 96, 0.02);
+          box-shadow: 0 2px 0 rgba(69, 85, 96, 0.02);
+}
+
+.button.secondary:disabled {
+  cursor: not-allowed;
+  color: rgba(69, 85, 96, 0.25) !important;
+}
+
+.button.secondary:not(:disabled):hover {
+  color: #699dff;
+  border-color: #699dff;
+}
+
+.button.danger {
+  background-color: #ff6b72;
+  color: #ffffff;
+}
+
+.button.danger:hover {
+  background-color: #ff9496;
+  color: #ffffff;
+}
+
+.button.tertiary {
+  background-color: #091a52;
+  color: #fff;
+}
+
+.button.small {
+  font-size: 12px;
+  padding: 9px 10px;
+}
+
+.button.medium {
+  font-size: 16px;
+  padding: 11px 15px;
+}
+
+.button.large {
+  font-size: 20px;
+  padding: 15px 30px;
+}
+
+.button .icon {
+  margin-right: 8px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #fff;
+  width: 18px;
+  height: 18px;
+  -webkit-animation: spinner 2s linear infinite;
+          animation: spinner 2s linear infinite;
+}
+/*# sourceMappingURL=button.module.css.map */

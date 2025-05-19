@@ -1,0 +1,79 @@
+/* colors.scss */
+.selectWrapper {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.selectWrapper label {
+  display: inline-block;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.selectWrapper select {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  cursor: pointer;
+  padding: 0 11px;
+  color: #455560;
+  border: 1px solid #e6ebf1;
+  font-size: 12px;
+  list-style: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+  background-position: right 10px top 50% !important;
+  font-family: 'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-radius: 10px;
+  height: 40px;
+}
+
+.selectWrapper select:hover {
+  background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+  background-position: right 10px top 50% !important;
+  border-color: #699dff !important;
+}
+
+.selectWrapper select:focus, .selectWrapper select:active {
+  border: 1px solid #4096ff !important;
+}
+
+.selectWrapper select:disabled {
+  background-color: #f6f7fb !important;
+  cursor: not-allowed;
+}
+
+.selectWrapper select:disabled:hover, .selectWrapper select:disabled:focus {
+  border: 1px solid #e6ebf1 !important;
+}
+
+.selectWrapper select.error {
+  border-color: #ff6b72;
+}
+
+.selectWrapper .errorText {
+  color: #ff6b72;
+  font-size: 12px;
+}
+
+.tag {
+  margin-right: 8px;
+  background-color: #ff6b72;
+  padding: 4px 6px;
+  border-radius: 2px;
+  font-size: 0.6em;
+  text-transform: capitalize;
+  margin-left: 10px;
+  color: #ffffff;
+}
+
+.selectedOption {
+  background-color: #3e79f7;
+  color: #ffffff;
+}
+/*# sourceMappingURL=select.module.css.map */

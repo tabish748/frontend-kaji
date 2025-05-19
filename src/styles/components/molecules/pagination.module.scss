@@ -1,0 +1,58 @@
+@import '../../base/colors.scss';
+.paginationWrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 0 0 0;
+    margin-bottom: 0.1rem;
+
+    button { 
+        display: inline-block;
+        min-width: 25px;
+        height: 25px;
+        margin-inline-end: 6px;
+        font-family: 'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+        line-height: 24px;
+        text-align: center;
+        vertical-align: middle;
+        list-style: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 50%;
+        outline: 0;
+        cursor: pointer;
+        user-select: none;
+        font-size: 12px;
+        &:hover {
+            transition: all 0.2s;
+            background-color: rgba(69, 85, 96, 0.06);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            // background-color: rgba(69, 85, 96, 0.06);
+            color: $mud-gray;
+
+            &:hover {
+                background-color: transparent !important;
+            }
+        }
+    }
+
+    .activePage {
+        background-color: $primary;
+        color: white;
+
+        &:hover {
+            background-color: $primary !important;
+        }
+    }
+}
+
+.pageInfoDetail {
+    font-size: 12px;
+    color: $gray-700;
+}
+.recordLimitDropdown {
+    min-width: 120px;
+}
