@@ -1,0 +1,31 @@
+@import "../../base/_colors.scss";
+.imageLabelButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 6px 0;
+  font-size: 1rem;
+  color: $lable-color;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #b3c2d1;
+  }
+
+  .imageLabelIcon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .imageLabelText {
+    margin-left: 4px;
+    font-weight: 500;
+    color: $lable-color;
+  }
+}

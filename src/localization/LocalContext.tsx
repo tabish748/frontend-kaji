@@ -5,6 +5,7 @@ import { generateDateTranslations } from "@/libs/utils";
 type LanguageContextType = {
   t: (key: string) => string;
   setLanguage: (lang: string) => void;
+  currentLanguage: string;
 };
 
 type LanguageProviderProps = {
@@ -23,7 +24,7 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const router = useRouter();
-  const [language, setLanguage] = useState<string>("jp"); // Set to 'jp' by default
+  const [language, setLanguage] = useState<string>("en"); // Set to 'jp' by default
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
@@ -58,10 +59,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   }, [language]);
 
   const t = (key: string) => translations[key] || key;
-
   const contextValue = {
     t,
     setLanguage,
+    currentLanguage: language,
   };
   if (loading) {
     return <div className="loading-screen"></div>; // Render a loading screen or spinner

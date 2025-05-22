@@ -1,7 +1,7 @@
 /* variables.scss */
 
 // Typography
-$font-family-base: 'Roboto', sans-serif;
+$font-family-base: 'Ubuntu', sans-serif;
 $font-size-base: 16px;
 $line-height-base: 1.5;
 $font-weight-normal: 400;
@@ -24,3 +24,6 @@ $border-radius-large: 16px;
 // Box shadow
 $box-shadow-default:  0px 0px 4px 0px rgba(0,0,0,0.16);
 $box-shadow-strong: 0px 4px 25px 0px rgba(0,0,0,0.12);
+
+// radius   
+$border-radius: 7px;

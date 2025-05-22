@@ -8,6 +8,8 @@ import { store } from '../app/store';
 import DashboardLayout from '@/components/dashboard-layout/dashboard-layout';
 import { useRouter } from 'next/router';
 import GlobalLoader from '@/components/global-loader/global-loader';
+import LayoutSelector from '@/components/dashboard-layout/dashboard-selector';
+
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -43,9 +45,9 @@ export default function App({ Component, pageProps }: AppProps) {
         {(router.pathname === '/login' || router.pathname === '/sign-up') ? (
           <Component {...pageProps} />
         ) : (
-          <DashboardLayout>
+          <LayoutSelector>
             <Component {...pageProps} />
-          </DashboardLayout>
+          </LayoutSelector>
         )}
       </LanguageProvider>
     </Provider>

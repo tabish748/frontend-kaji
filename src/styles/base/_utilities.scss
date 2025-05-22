@@ -8,7 +8,7 @@ html {
 }
 
 body {
-  font-family: 'Roboto', sans-serif !important;
+  font-family: 'Ubuntu', sans-serif !important;
 }
 
 // Spacing
@@ -74,7 +74,7 @@ input[type="month"] {
   background-position: right 1em center;
   background-repeat: no-repeat;
   background-size: 20px;
-  font-family: 'Helvetica', 'Arial', sans-serif !important;
+  font-family: 'Ubuntu', 'Arial', sans-serif !important;
   height: 40px;
 
   &:disabled {
@@ -743,7 +743,7 @@ textarea {
   border: 1px solid #e6ebf1 !important;
   border-radius: 10px;
   font-size: 13px !important;
-  font-family: 'Helvetica', 'Arial', sans-serif !important;
+  font-family: 'Ubuntu', 'Arial', sans-serif !important;
   color: $mud-gray;
 
   &:hover,
