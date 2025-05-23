@@ -1,0 +1,91 @@
+.accordionWrapper {
+  width: 100%;
+  background: #fafbfc;
+}
+
+.accordionItem {
+  border-bottom: 1px solid #e6ebf1;
+}
+
+.accordionLabel {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333;
+}
+
+.accordionIcon {
+  font-size: 20px;
+  margin-left: 8px;
+}
+
+.accordionPanel {
+  overflow: hidden;
+  transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.4s ease-in-out;
+  opacity: 0;
+  transform: translateY(-16px);
+  max-height: 0;
+  pointer-events: none;
+  padding: 16px;
+}
+
+.panelOpen {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 1000px;
+  pointer-events: auto;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panelClosed {
+  opacity: 0;
+  transform: translateY(-16px);
+  max-height: 0;
+  padding: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 24px 0 0 0;
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 16px;
+  button,
+  span {
+    border: none;
+    background: none;
+    font-size: 16px;
+    color: #6c7a89;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: none;
+  }
+  .activePage {
+    background: #2ad2c9;
+    color: #fff;
+    font-weight: 600;
+    pointer-events: none;
+  }
+}

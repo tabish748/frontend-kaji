@@ -4,7 +4,7 @@
 
 .clientLayout {
   min-height: 100vh;
-  background: #f8fafc;
+  background: #F8FAFA;
   position: relative;
 }
 
@@ -18,11 +18,10 @@
   align-items: center;
   justify-content: space-between;
   background: #fff;
-  padding: 1rem;
+  padding: 5px 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   position: sticky;
   top: 0;
-  padding: 0 50px;
   z-index: 100;
 
   .headerControls {
@@ -74,24 +73,27 @@
 }
 
 .clientHamburger {
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  margin-left: -0.5rem;
-  display: flex;
+
   align-items: center;
-  position: fixed;
-  top: 0.75rem;
-  left: 1rem;
+
   z-index: 1100;
 
   &:focus {
     outline: none;
   }
+
+  @include respond-to("large") {
+    display: block;
+  }
 }
 
 .clientSidebar {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -139,6 +141,10 @@
         color: $primary;
       }
     }
+  }
+
+  @include respond-to("large") {
+    display: block;
   }
 }
 
@@ -330,28 +336,24 @@
     }
   }
 
-  @media (max-width: 1024px) {
+  @include respond-to("large") {
     display: none;
   }
-
-  // @include respond-to("md") {
-  //   display: none;
-  // }
 }
 
 .clientFooter {
-  width: 100%;
-  background: $white;
-  border-top: 1px solid #e6ebf1;
+  margin: 0 30px;
   margin-top: 40px;
   position: relative;
   z-index: 2;
 }
 
 .contactSection {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 40px 30px;
+  background-color: $white;
+  border:1px solid $border;
+  border-radius: $border-radius;
 
   h2 {
     color: $primary;
@@ -362,14 +364,13 @@
 
   h3 {
     font-size: 14px;
-    color: #666;
+    color: $mud-gray;
     margin-bottom: 24px;
   }
 }
 
 .contactGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
   gap: 32px;
 }
 
@@ -378,9 +379,41 @@
   gap: 16px;
   align-items: flex-start;
 
-  img {
-    margin-top: 4px;
+  .contactIcon.link {
+    padding: 4px;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
     filter: opacity(0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fdd9d9;
+    color: #fe0000;
+  }
+  .contactIcon.address {
+    background-color: #dcf3fc;
+    padding: 4px;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    filter: opacity(0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00b7ff;
+  }
+  .contactIcon.contact {
+    background-color: #d7f4f0;
+    padding: 4px;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    filter: opacity(0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ffdd;
   }
 
   div {
@@ -395,7 +428,6 @@
       }
 
       a {
-        color: $primary;
         text-decoration: none;
 
         &:hover {
@@ -407,9 +439,11 @@
 }
 
 .footerCopyright {
+  background-color: #F3F6F8;
   text-align: center;
   padding: 16px 0;
-  color: #888;
+  color: $mud-gray;
   font-size: 14px;
-  border-top: 1px solid #e6ebf1;
+  margin-top: 30px;
 }
+

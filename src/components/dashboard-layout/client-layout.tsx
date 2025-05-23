@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useLanguage } from "@/localization/LocalContext";
 import ImageLabel from "../image-lable/image-lable";
 import { useRouter } from "next/router";
+import { IoMdPhonePortrait } from "react-icons/io";
+import { BiCurrentLocation } from "react-icons/bi";
+import { IoLinkSharp } from "react-icons/io5";
+import ClientSection from "../client-section/client-section";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -101,20 +105,6 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
   return (
     <div className={styles.clientLayout}>
-      {/* Hamburger for mobile */}
-      <button
-        ref={hamburgerButtonRef}
-        className={styles.clientHamburger}
-        onClick={() => setSidebarOpen((open) => !open)}
-        aria-label={t("mainMenu")}
-      >
-        <Image
-          src="/assets/svg/hamburger1.svg"
-          alt={t("mainMenu")}
-          width={30}
-          height={30}
-        />
-      </button>
       {/* Sidebar for mobile only */}
       <nav
         ref={sidebarRef}
@@ -149,7 +139,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
         aria-hidden="true"
       />
       <header className={styles.clientHeader}>
-        <div>
+        <div className="d-flex">
           <Image
             className={styles.logo}
             src="/assets/images/client-dashboard-logo.svg"
@@ -157,6 +147,20 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
             height={40}
             alt="Logo"
           />
+          {/* Hamburger for mobile */}
+          <button
+            ref={hamburgerButtonRef}
+            className={styles.clientHamburger}
+            onClick={() => setSidebarOpen((open) => !open)}
+            aria-label={t("mainMenu")}
+          >
+            <Image
+              src="/assets/svg/hamburger1.svg"
+              alt={t("mainMenu")}
+              width={30}
+              height={30}
+            />
+          </button>
         </div>
 
         <div className={styles.headerControls}>
@@ -255,7 +259,9 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                 <li key={link.path}>
                   <Link
                     href={link.path}
-                    className={router.pathname === link.path ? styles.active : ""}
+                    className={
+                      router.pathname === link.path ? styles.active : ""
+                    }
                   >
                     {link.name}
                   </Link>
@@ -267,59 +273,52 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
       </div>
       <main className={styles.clientContent}>{children}</main>
       <footer className={styles.clientFooter}>
-        <div className={styles.contactSection}>
-          <h2>CONTACT</h2>
-          <h3>Contact with us</h3>
-          <div className={styles.contactGrid}>
-            <div className={styles.contactItem}>
-              <Image
-                src="/assets/svg/footer-phone.svg"
-                width={20}
-                height={20}
-                alt="Phone"
-              />
-              <div>
-                <p>Contact</p>
-                <p>0120-699-100</p>
-                <p>info@chezvous.co.jp</p>
+        <ClientSection heading="Contact">
+          <div className={styles.contactSection}>
+            <h3>Contact with us</h3>
+            <div className={styles.contactGrid}>
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIcon} ${styles.contact}`}>
+                  <IoMdPhonePortrait size={16} />
+                </div>
+                <div>
+                  <p>Contact</p>
+                  <p>0120-699-100</p>
+                  <p>info@chezvous.co.jp</p>
+                </div>
               </div>
-            </div>
-            <div className={styles.contactItem}>
-              <Image
-                src="/assets/svg/footer-address.svg"
-                width={20}
-                height={20}
-                alt="Address"
-              />
-              <div>
-                <p>Address</p>
-                <p>〒160-0008</p>
-                <p>1st & 3rd Floor, 1-13 Saneicho, Yotsuya,</p>
-                <p>Shinjuku-ku, Tokyo, Japan</p>
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIcon} ${styles.address}`}>
+                  <BiCurrentLocation size={16} />
+                </div>
+                <div>
+                  <p>Address</p>
+                  <p>〒160-0008</p>
+                  <p>1st & 3rd Floor, 1-13 Saneicho, Yotsuya,</p>
+                  <p>Shinjuku-ku, Tokyo, Japan</p>
+                </div>
               </div>
-            </div>
-            <div className={styles.contactItem}>
-              <Image
-                src="/assets/svg/footer-link.svg"
-                width={20}
-                height={20}
-                alt="Website"
-              />
-              <div>
-                <p>Website</p>
-                <p>
-                  <a
-                    href="https://www.chezvous.co.jp/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    https://www.chezvous.co.jp/
-                  </a>
-                </p>
+              <div className={styles.contactItem}>
+                <div className={`${styles.contactIcon} ${styles.link}`}>
+                  <IoLinkSharp size={16} />
+                </div>
+                <div>
+                  <p>Website</p>
+                  <p>
+                    <a
+                      href="https://www.chezvous.co.jp/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      https://www.chezvous.co.jp/
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ClientSection>
+
         <div className={styles.footerCopyright}>
           Copyright © {new Date().getFullYear()} Chez Vous All Rights Reserved
         </div>

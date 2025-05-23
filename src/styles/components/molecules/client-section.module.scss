@@ -1,0 +1,25 @@
+@import "../../base/_colors.scss";
+@import "../../base/_variables.scss";
+
+.clientSectionContainer {
+  padding: 2rem;
+  background: #f3f6f8;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+}
+
+.clientSectionHeading {
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 700;
+  border-left: 4px solid $primary;
+  padding-left: 16px;
+  margin-bottom: 16px;
+  color: $mud-gray;
+}
+
+.clientSectionContent {
+  margin-left: 0;
+  margin-top: 40px;
+  padding-left: 16px;
+}
