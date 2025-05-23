@@ -24,27 +24,45 @@
   top: 0;
   z-index: 100;
 
+  @include respond-to("medium") {
+    padding: 5px 20px;
+  }
+
+  @include respond-to("small") {
+    padding: 5px 15px;
+  }
+
   .headerControls {
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
 
-  .profileSection {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    .userName {
-      font-size: 1rem;
-      color: #333;
+    @include respond-to("medium") {
+      gap: 0.5rem;
     }
 
-    .profileImage {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #ccc;
+    .profileSection {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .userName {
+        font-size: 1rem;
+        color: #333;
+      }
+
+      .profileImage {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #ccc;
+      }
+
+      @include respond-to("medium") {
+        .userName {
+          display: none;
+        }
+      }
     }
   }
 
@@ -172,6 +190,16 @@
   margin: 30px 30px;
   position: relative;
   z-index: 1;
+
+  @include respond-to("medium") {
+    margin: 20px 20px;
+    font-size: 20px;
+  }
+
+  @include respond-to("small") {
+    margin: 15px 15px;
+    font-size: 18px;
+  }
 }
 
 .topProfileCardWrapper {
@@ -180,6 +208,14 @@
   margin: 30px 30px;
   position: relative;
   z-index: 1;
+
+  @include respond-to("medium") {
+    margin: 20px 20px;
+  }
+
+  @include respond-to("small") {
+    margin: 15px 15px;
+  }
 }
 
 .topProfileCard {
@@ -206,6 +242,14 @@
   margin: auto 30px;
   position: relative;
   z-index: 1;
+
+  @include respond-to("medium") {
+    margin: auto 20px;
+  }
+
+  @include respond-to("small") {
+    margin: auto 15px;
+  }
 }
 
 .langSelect {
@@ -346,6 +390,14 @@
   margin-top: 40px;
   position: relative;
   z-index: 2;
+
+  @include respond-to("medium") {
+    margin: 30px 20px;
+  }
+
+  @include respond-to("small") {
+    margin: 20px 15px;
+  }
 }
 
 .contactSection {
@@ -367,11 +419,24 @@
     color: $mud-gray;
     margin-bottom: 24px;
   }
+
+  @include respond-to("medium") {
+    padding: 30px 20px;
+  }
+
+  @include respond-to("small") {
+    padding: 20px 15px;
+  }
 }
 
 .contactGrid {
   display: flex;
   gap: 32px;
+
+  @include respond-to("large") {
+    flex-direction: column;
+    gap: 24px;
+  }
 }
 
 .contactItem {
