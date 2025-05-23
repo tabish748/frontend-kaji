@@ -7,6 +7,10 @@ import ClientSection from "@/components/client-section/client-section";
 import Accordion, { AccordionItem } from "@/components/molecules/accordion";
 import ImageLabel from "@/components/image-lable/image-lable";
 import { FaRegAddressCard } from "react-icons/fa";
+import { Form } from "@/components/form/form";
+import InputField from "@/components/input-field/input-field";
+import Button from "@/components/button/button";
+import CustomSelectField from "@/components/custom-select/custom-select";
 
 // Simulate paginated server response
 const PAGE_SIZE = 5;
@@ -140,9 +144,15 @@ export default function Login() {
     getPlansPage(1, PAGE_SIZE)
   );
 
+  const [errors, setErrors] = useState<any>({});
+
   React.useEffect(() => {
     setPlans(getPlansPage(page, PAGE_SIZE));
   }, [page]);
+
+  const handleSubmit = () => {
+    console.log("submit");
+  };
 
   return (
     <ClientSection heading={t("login.title")}>
@@ -187,6 +197,9 @@ export default function Login() {
           </AccordionItem>
         ))}
       </Accordion>
+
+
+
     </ClientSection>
   );
 }

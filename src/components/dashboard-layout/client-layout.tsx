@@ -276,7 +276,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
         <ClientSection heading="Contact">
           <div className={styles.contactSection}>
             <h3>Contact with us</h3>
-            <div className={styles.contactGrid}>
+            <div className={`${styles.contactGrid}`}>
               <div className={styles.contactItem}>
                 <div className={`${styles.contactIcon} ${styles.contact}`}>
                   <IoMdPhonePortrait size={16} />

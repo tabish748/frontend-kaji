@@ -10,7 +10,6 @@ import SelectField from "../select-field/select-field";
 import InputDateField from "../input-date/input-date";
 import CustomDateField from "../custom-date-field/custom-date-field";
 import TextAreaField from "../text-area/text-area";
-import RequestForm from "../insurance/request-form";
 import PropertyOrderForm from "../customer-tabs-content/property-order-form";
 
 interface FormProps {
@@ -119,15 +118,6 @@ export const Form: React.FC<FormProps> = ({
                   }
                 });
               });
-          } else if (child.type === RequestForm) {
-            const error = validateField('proposalDate', child.props.proposalDate, [{ type: "required" }], placeholder);
-            if (error) {
-              newErrors['proposalDate'] = error;
-              formValid = false;
-              if (!firstInvalidField) {
-                firstInvalidField = 'proposalDate';
-              }
-            }
           } else if (child.props && child.props.children) {
             traverseAndValidate(child.props.children);
           }
@@ -165,11 +155,6 @@ export const Form: React.FC<FormProps> = ({
           const error = validateField(name, value, validations, placeholder);
           newErrors[name] = error;
         }
-      } else if (React.isValidElement(child) && child.type === RequestForm) {
-        const error = validateField('proposalDate', (child.props as any).proposalDate, [{ type: "required" }], '');
-        if (error) {
-          newErrors['proposalDate'] = error;
-        }
       } else if (React.isValidElement(child) && child.props && (child.props as any).children) {
         traverseAndHandleInputChange((child.props as any).children, name, value, newErrors);
       }
@@ -190,12 +175,7 @@ export const Form: React.FC<FormProps> = ({
           const error = validateField(name, value, validations, placeholder);
           newErrors[name] = error;
         }
-      } else if (React.isValidElement(child) && child.type === RequestForm) {
-        const error = validateField('proposalDate', (child.props as any).proposalDate, [{ type: "required" }], '');
-        if (error) {
-          newErrors['proposalDate'] = error;
-        }
-      } else if (React.isValidElement(child) && child.props && (child.props as any).children) {
+      }  else if (React.isValidElement(child) && child.props && (child.props as any).children) {
         traverseAndHandleInputChange((child.props as any).children, name, value, newErrors);
       }
     });
