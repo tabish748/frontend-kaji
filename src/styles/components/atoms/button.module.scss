@@ -10,7 +10,9 @@
   // justify-content: space-evenly;
   outline: none;
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 400;
   white-space: nowrap;
   text-align: center;
@@ -24,8 +26,7 @@
   line-height: 1.5714285714285714;
   color: #455560;
   font-size: 12px;
-  height: 40px;
-  padding: 8px 15px;
+  padding: 0 15px;
   border-radius: 10px;
 
   &:disabled {
@@ -81,17 +82,20 @@
 
   &.small {
     font-size: 12px;
-    padding: 9px 10px;
+    height: 32px;
+    padding: 0 10px;
   }
 
   &.medium {
     font-size: 16px;
-    padding: 11px 15px;
+    height: 40px;
+    padding: 0 15px;
   }
 
   &.large {
     font-size: 20px;
-    padding: 15px 30px;
+    height: 48px;
+    padding: 0 30px;
   }
 
   .icon {

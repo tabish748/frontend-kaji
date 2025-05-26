@@ -7,7 +7,6 @@ import Style from "../../styles/pages/employees.module.scss";
 import InusranceStyle from "../../styles/pages/insurance.module.scss";
 import ProjectStyle from "@/styles/pages/project-confirmed.module.scss";
 import InquiryStyle from "@/styles/pages/inquiry.module.scss";
-import { fetchProjectConfirmed } from "@/app/features/project/projectConfirmedListingSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store";
 import { useRouter } from "next/router";
@@ -376,12 +375,12 @@ const SearchFilters: React.FC<any> = ({
       // dispatch(fetchProjectConfirmed(finalState));
       const hasQueryChanged = JSON.stringify(finalState) !== JSON.stringify(lastQueryState);
 
-      if (hasQueryChanged) {
-        setLastQueryState(finalState);
-        if (currentTab == queryParams.active_tab) {
-          dispatch(fetchProjectConfirmed(finalState)); // Your API dispatch
-        }
-      }
+      // if (hasQueryChanged) {
+      //   setLastQueryState(finalState);
+      //   if (currentTab == queryParams.active_tab) {
+      //     dispatch(fetchProjectConfirmed(finalState)); // Your API dispatch
+      //   }
+      // }
     }
 
   }, [router.query]);

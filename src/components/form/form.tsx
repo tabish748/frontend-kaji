@@ -10,7 +10,6 @@ import SelectField from "../select-field/select-field";
 import InputDateField from "../input-date/input-date";
 import CustomDateField from "../custom-date-field/custom-date-field";
 import TextAreaField from "../text-area/text-area";
-import PropertyOrderForm from "../customer-tabs-content/property-order-form";
 
 interface FormProps {
   children: ReactNode;
@@ -28,7 +27,9 @@ interface FormProps {
   registerBtnText?: string;
   showConfirmation?: boolean;
   disabledSubmitForm?: boolean;
-  setErrors?: React.Dispatch<React.SetStateAction<Record<string, string | null>>>;
+  setErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string | null>>
+  >;
   errors?: Record<string, string | null>;
 }
 
@@ -55,7 +56,7 @@ export const Form: React.FC<FormProps> = ({
   showConfirmation = true,
   disabledSubmitForm = false,
   setErrors,
-  errors
+  errors,
 }) => {
   const { t } = useLanguage();
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -64,9 +65,14 @@ export const Form: React.FC<FormProps> = ({
   // Ref to store references to each field
   const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  const validateField = (name: string, value: any, validations: any[], placeholder: string) => {
+  const validateField = (
+    name: string,
+    value: any,
+    validations: any[],
+    placeholder: string
+  ) => {
     for (let validation of validations) {
-      if (validation.type === 'required') {
+      if (validation.type === "required") {
         if (!validation.params) {
           validation.params = {};
         }
@@ -92,9 +98,21 @@ export const Form: React.FC<FormProps> = ({
         if (React.isValidElement(child)) {
           const { name, value, validations, placeholder } = child.props;
 
-          if (child.type === InputField || child.type === TextAreaField || child.type === CustomSelectField || child.type === SelectField || child.type === InputDateField || child.type === CustomDateField) {
+          if (
+            child.type === InputField ||
+            child.type === TextAreaField ||
+            child.type === CustomSelectField ||
+            child.type === SelectField ||
+            child.type === InputDateField ||
+            child.type === CustomDateField
+          ) {
             if (validations) {
-              const error = validateField(name, value, validations, placeholder);
+              const error = validateField(
+                name,
+                value,
+                validations,
+                placeholder
+              );
               if (error) {
                 newErrors[name] = error;
                 formValid = false;
@@ -103,21 +121,6 @@ export const Form: React.FC<FormProps> = ({
                 }
               }
             }
-          } else if (child.type == PropertyOrderForm) {
-            const { propertyFormsData } = child.props;
-
-            propertyFormsData &&
-              propertyFormsData.forEach((dataObject: any, index: number) => {
-                Object.keys(dataObject).forEach((key) => {
-                  if (key !== 'comment' && !dataObject[key]) {
-                    newErrors[`${key}-${index}`] = `${t(key)} は必須項目です。`;
-                    formValid = false;
-                    if (!firstInvalidField) {
-                      firstInvalidField = `${key}-${index}`;
-                    }
-                  }
-                });
-              });
           } else if (child.props && child.props.children) {
             traverseAndValidate(child.props.children);
           }
@@ -132,14 +135,16 @@ export const Form: React.FC<FormProps> = ({
 
     // Scroll to the first invalid field
     if (firstInvalidField && fieldRefs.current[firstInvalidField]) {
-      const elementPosition = fieldRefs.current[firstInvalidField]?.getBoundingClientRect().top as any + window.pageYOffset;
+      const elementPosition =
+        (fieldRefs.current[firstInvalidField]?.getBoundingClientRect()
+          .top as any) + window.pageYOffset;
 
       // Scroll to the calculated position minus 100px for the desired offset
       window.scrollTo({
-        top: elementPosition - 100,  // Scroll to the element with an extra offset
-        behavior: 'smooth',
+        top: elementPosition - 100, // Scroll to the element with an extra offset
+        behavior: "smooth",
       });
-            fieldRefs.current[firstInvalidField]?.focus();
+      fieldRefs.current[firstInvalidField]?.focus();
     }
 
     return formValid;
@@ -149,14 +154,32 @@ export const Form: React.FC<FormProps> = ({
     setTouched((prevTouched) => ({ ...prevTouched, [name]: true }));
     const newErrors = { ...errors };
     React.Children.forEach(children, (child) => {
-      if (React.isValidElement(child) && (child.type === InputField || child.type === TextAreaField || child.type === CustomSelectField || child.type === SelectField || child.type === InputDateField || child.type === CustomDateField) && child.props.name === name) {
+      if (
+        React.isValidElement(child) &&
+        (child.type === InputField ||
+          child.type === TextAreaField ||
+          child.type === CustomSelectField ||
+          child.type === SelectField ||
+          child.type === InputDateField ||
+          child.type === CustomDateField) &&
+        child.props.name === name
+      ) {
         const { validations, placeholder } = child.props;
         if (validations) {
           const error = validateField(name, value, validations, placeholder);
           newErrors[name] = error;
         }
-      } else if (React.isValidElement(child) && child.props && (child.props as any).children) {
-        traverseAndHandleInputChange((child.props as any).children, name, value, newErrors);
+      } else if (
+        React.isValidElement(child) &&
+        child.props &&
+        (child.props as any).children
+      ) {
+        traverseAndHandleInputChange(
+          (child.props as any).children,
+          name,
+          value,
+          newErrors
+        );
       }
     });
     if (setErrors) setErrors(newErrors);
@@ -169,33 +192,57 @@ export const Form: React.FC<FormProps> = ({
     newErrors: Record<string, string | null>
   ) => {
     React.Children.forEach(elements, (child) => {
-      if (React.isValidElement(child) && (child.type === InputField || child.type === TextAreaField || child.type === CustomSelectField || child.type === SelectField || child.type === InputDateField || child.type === CustomDateField) && child.props.name === name) {
+      if (
+        React.isValidElement(child) &&
+        (child.type === InputField ||
+          child.type === TextAreaField ||
+          child.type === CustomSelectField ||
+          child.type === SelectField ||
+          child.type === InputDateField ||
+          child.type === CustomDateField) &&
+        child.props.name === name
+      ) {
         const { validations, placeholder }: any = child.props;
         if (validations) {
           const error = validateField(name, value, validations, placeholder);
           newErrors[name] = error;
         }
-      }  else if (React.isValidElement(child) && child.props && (child.props as any).children) {
-        traverseAndHandleInputChange((child.props as any).children, name, value, newErrors);
+      } else if (
+        React.isValidElement(child) &&
+        child.props &&
+        (child.props as any).children
+      ) {
+        traverseAndHandleInputChange(
+          (child.props as any).children,
+          name,
+          value,
+          newErrors
+        );
       }
     });
   };
 
-  const traverseAndCloneChildren = (elements: React.ReactNode): React.ReactNode => {
+  const traverseAndCloneChildren = (
+    elements: React.ReactNode
+  ): React.ReactNode => {
     return React.Children.map(elements, (child) => {
       if (React.isValidElement(child)) {
-        if (child.type === InputField || child.type === TextAreaField || child.type === CustomSelectField || child.type === SelectField || child.type === InputDateField || child.type === CustomDateField) {
-          return React.cloneElement(
-            child as any,
-            {
-              errorText: errors && errors[child.props.name] || undefined,
-              onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                if (child.props.onChange) child.props.onChange(e);
-                handleInputChange(child.props.name, e.target.value);
-              },
-              ref: (el: any) => (fieldRefs.current[child.props.name] = el)
-            }
-          );
+        if (
+          child.type === InputField ||
+          child.type === TextAreaField ||
+          child.type === CustomSelectField ||
+          child.type === SelectField ||
+          child.type === InputDateField ||
+          child.type === CustomDateField
+        ) {
+          return React.cloneElement(child as any, {
+            errorText: (errors && errors[child.props.name]) || undefined,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              if (child.props.onChange) child.props.onChange(e);
+              handleInputChange(child.props.name, e.target.value);
+            },
+            ref: (el: any) => (fieldRefs.current[child.props.name] = el),
+          });
         } else if (child.props && child.props.children) {
           return React.cloneElement(
             child,
@@ -234,7 +281,7 @@ export const Form: React.FC<FormProps> = ({
       {showConfirmBox && (
         <ConfirmationBox
           isOpen={showConfirmBox}
-          title={t('編集内容を確定します。')}
+          title={t("編集内容を確定します。")}
           onConfirm={handleConfirmSubmit}
           onCancel={() => setShowConfirmBox(false)}
           secondText="よろしいですか？"
@@ -255,7 +302,6 @@ export const Form: React.FC<FormProps> = ({
             isLoading={isLoading}
             onClick={handleFormSubmit}
             disabled={disabledSubmitForm}
-
           />
         )}
         {showDeleteButton ? (
@@ -268,13 +314,17 @@ export const Form: React.FC<FormProps> = ({
             isLoading={deleteButtonLoading}
             onClick={onClickDeleteButton}
           />
-        ) : <span></span>}
+        ) : (
+          <span></span>
+        )}
       </div>
       <div className={Style.formContainer}>
         <form onSubmit={handleFormSubmit} className={className}>
           {traverseAndCloneChildren(children)}
           <div
-            className={`d-flex justify-content-between mt-2 gap-1 ${isSubmitFix === true && "submitFixBg"}`}
+            className={`d-flex justify-content-between mt-2 gap-1 ${
+              isSubmitFix === true && "submitFixBg"
+            }`}
           >
             <span></span>
             <div className="d-flex justify-content-between gap-1">

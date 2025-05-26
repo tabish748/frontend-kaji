@@ -1,5 +1,14 @@
 {
-  "login": "Login",
+  "clientDashboard": {
+    "title": "Login",
+    "staff": "Staff",
+    "service": "Service",
+    "time": "Time",
+    "request": "Request",
+    "announcement":"ANNOUNCEMENT",
+    "publication":"Publication",
+    "detail":"Detail"
+  },
   "email": "Email",
   "password": "Password",
   "rememberMe": "Remember Me",
@@ -12,5 +21,24 @@
   "quotation": "Quotation",
   "announcement": "Announcement",
   "request": "Request",
-  "changePassword": "Change Password"
+  "changePassword": "Change Password",
+  "contact": {
+    "title": "Contact",
+    "phoneNumber": "0120-699-100",
+    "email": "info@chezvous.co.jp",
+    "address": {
+      "title": "Address",
+      "postalCode": "〒160-0008",
+      "line1": "1st & 3rd Floor, 1-13 Saneicho, Yotsuya,",
+      "line2": "Shinjuku-ku, Tokyo, Japan"
+    },
+    "website": {
+      "title": "Website",
+      "url": "https://www.chezvous.co.jp/"
+    }
+  },
+  "buttons": {
+    "rescheduling" : "Rescheduling",
+    "cancel" : "Cancel"
+  }
 }

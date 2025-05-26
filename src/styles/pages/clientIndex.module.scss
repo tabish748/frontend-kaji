@@ -1,0 +1,43 @@
+@import "../base/colors.scss";
+@import "../base/_mixins.scss";
+
+.accordionContent {
+  margin: 0 30px 30px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 10px;
+  column-gap: 20px;
+  align-items: center;
+
+  @include respond-to(small) {
+    margin: 0 15px 20px;
+    grid-template-columns: 1fr;
+    row-gap: 5px;
+  }
+
+  p {
+    margin: 0;
+    color: $label-color;
+
+    @include respond-to(small) {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.accordionLabel {
+  margin: 0;
+  padding: 0 !important;
+  justify-content: flex-start !important;
+
+  @include respond-to(small) {
+    margin-bottom: 2px;
+  }
+}
+
+.buttonContainer {
+  @include respond-to(small) {
+    flex-direction: column;
+  }
+}

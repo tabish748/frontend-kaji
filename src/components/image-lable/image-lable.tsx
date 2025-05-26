@@ -20,11 +20,10 @@ const ImageLabel: React.FC<ImageLabelProps> = ({
   iconAlt = "icon",
 }) => (
   <button className={`${styles.imageLabelButton} ${className}`} onClick={onClick}>
-    {icon ? (
-      <span className={styles.imageLabelIcon}>{icon}</span>
-    ) : (
-      iconSrc && <Image src={iconSrc} alt={iconAlt} width={20} height={20} className={styles.imageLabelIcon} />
-    )}
+    <span className={styles.imageLabelIcon}>      {icon || (iconSrc && (
+        <Image src={iconSrc} alt={iconAlt} width={20} height={20} />
+      ))}
+    </span>
     <span className={styles.imageLabelText}>{label}</span>
   </button>
 );

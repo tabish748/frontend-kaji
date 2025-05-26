@@ -232,7 +232,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
             />
             <div>
               <p className={styles.userName}>Sonya Taylor</p>
-              <p className={styles.userName}>提携法人</p>
+              <p className={styles.userNameJp}>提携法人</p>
             </div>
           </div>
         </div>
@@ -282,9 +282,9 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                   <IoMdPhonePortrait size={16} />
                 </div>
                 <div>
-                  <p>Contact</p>
-                  <p>0120-699-100</p>
-                  <p>info@chezvous.co.jp</p>
+                  <p>{t("contact.title")}</p>
+                  <p>{t("contact.phoneNumber")}</p>
+                  <p>{t("contact.email")}</p>
                 </div>
               </div>
               <div className={styles.contactItem}>
@@ -292,10 +292,10 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                   <BiCurrentLocation size={16} />
                 </div>
                 <div>
-                  <p>Address</p>
-                  <p>〒160-0008</p>
-                  <p>1st & 3rd Floor, 1-13 Saneicho, Yotsuya,</p>
-                  <p>Shinjuku-ku, Tokyo, Japan</p>
+                  <p>{t("contact.address.title")}</p>
+                  <p>{t("contact.address.postalCode")}</p>
+                  <p>{t("contact.address.line1")}</p>
+                  <p>{t("contact.address.line2")}</p>
                 </div>
               </div>
               <div className={styles.contactItem}>
@@ -303,14 +303,14 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
                   <IoLinkSharp size={16} />
                 </div>
                 <div>
-                  <p>Website</p>
+                  <p>{t("contact.website.title")}</p>
                   <p>
                     <a
-                      href="https://www.chezvous.co.jp/"
+                      href={t("contact.website.url")}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      https://www.chezvous.co.jp/
+                      {t("contact.website.url")}
                     </a>
                   </p>
                 </div>
@@ -318,11 +318,10 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
             </div>
           </div>
         </ClientSection>
-
-        <div className={styles.footerCopyright}>
-          Copyright © {new Date().getFullYear()} Chez Vous All Rights Reserved
-        </div>
       </footer>
+      <div className={styles.footerCopyright}>
+        Copyright © {new Date().getFullYear()} Chez Vous All Rights Reserved
+      </div>
     </div>
   );
 };

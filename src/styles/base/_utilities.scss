@@ -1,6 +1,5 @@
-@import './mixins';
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
-
+@import "./mixins";
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap");
 
 /* utilities.scss */
 html {
@@ -8,7 +7,7 @@ html {
 }
 
 body {
-  font-family: 'Ubuntu', sans-serif !important;
+  font-family: "Ubuntu", sans-serif !important;
 }
 
 // Spacing
@@ -70,11 +69,11 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 input[type="date"],
 input[type="datetime-local"],
 input[type="month"] {
-  background-image: url('/assets/svg/calendar-event.svg');
+  background-image: url("/assets/svg/calendar-event.svg");
   background-position: right 1em center;
   background-repeat: no-repeat;
   background-size: 20px;
-  font-family: 'Ubuntu', 'Arial', sans-serif !important;
+  font-family: "Ubuntu", "Arial", sans-serif !important;
   height: 40px;
 
   &:disabled {
@@ -254,9 +253,15 @@ input[type="number"] {
 .gap-1 {
   gap: 1rem;
 }
+.gap-2 {
+  gap: 2rem;
+}
+.gap-3 {
+  gap: 3rem;
+}
 
 .gap-half {
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 // Position utilities
@@ -300,12 +305,12 @@ h1 {
 .mt-1half {
   margin-top: 12px !important;
 }
-  .mt-11px {
-    margin-top: 11px
-  }
-  .mt-3px {
-    margin-top: 3px
-  }
+.mt-11px {
+  margin-top: 11px;
+}
+.mt-3px {
+  margin-top: 3px;
+}
 h1 {
   @include responsive-font(1.5rem, 2.25rem);
 }
@@ -320,7 +325,7 @@ p {
 }
 
 i {
-  color: #4D4D4D;
+  color: #4d4d4d;
 }
 
 p,
@@ -386,7 +391,7 @@ span {
   width: 100%;
   height: 1px;
   background-color: #dedede;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 hr {
@@ -403,22 +408,22 @@ hr {
   font-size: 1.8rem;
   display: none;
 
-  @include respond-to('large') {
+  @include respond-to("large") {
     display: flex;
   }
 }
 
 .error {
-  color: $danger ;
+  color: $danger;
   text-align: left;
 
   input {
     background-color: $danger-light !important;
-    color: $danger!important ;
+    color: $danger !important ;
   }
 
   i {
-    color: $danger!important ;
+    color: $danger !important ;
   }
 }
 
@@ -429,7 +434,7 @@ hr {
     height: 8px;
     background-color: $white;
     border-radius: 4px;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
 
     .progress-bar {
       height: 100%;
@@ -438,21 +443,21 @@ hr {
       background-color: $primary;
       /* Blue color */
       border-radius: 4px;
-      transition: width .22s ease-in-out;
+      transition: width 0.22s ease-in-out;
     }
   }
 
   .progress-counter {
     text-align: left;
     display: block;
-    margin-top: .6rem;
+    margin-top: 0.6rem;
   }
 }
 
 .hide-mob {
   display: none;
 
-  @include respond-to('large') {
+  @include respond-to("large") {
     display: block;
   }
 }
@@ -566,14 +571,14 @@ hr {
 }
 
 .customer-tag {
-  background: rgba(62, 121, 247, .1);
+  background: rgba(62, 121, 247, 0.1);
   color: $primary;
   border: none;
   display: inline-flex !important;
 }
 
 .futureCustomer-tag {
-  background: rgba(255, 197, 66, .1);
+  background: rgba(255, 197, 66, 0.1);
   color: $warning;
   border: none;
   display: inline-flex !important;
@@ -612,27 +617,27 @@ textarea {
   border-radius: 6px;
   opacity: 1;
   transition: all 0.2s;
-  text-align: start
+  text-align: start;
 }
 
 .bg-primary {
-  background-color: #E7F3FF;
+  background-color: #e7f3ff;
   color: $mud-gray;
   border: thin solid $primary;
   display: inline-flex !important;
 }
 
 .bg-success {
-  background-color: #E7F3FF;
+  background-color: #e7f3ff;
   color: $mud-gray;
   border: thin solid $success;
   display: inline-flex !important;
 }
 
 .bg-warning {
-  background-color: #F3F1FF;
+  background-color: #f3f1ff;
   color: #444;
-  border: thin solid #7659FF;
+  border: thin solid #7659ff;
   display: inline-flex !important;
 }
 
@@ -672,7 +677,6 @@ textarea {
 
 .bg-whitesmoke {
   background-color: #f7f7ff !important;
-
 }
 
 .blue-border {
@@ -709,7 +713,6 @@ textarea {
   }
 }
 
-
 .success-text {
   font-size: 12px;
   color: $success;
@@ -734,7 +737,6 @@ textarea {
   z-index: 10000;
 }
 
-
 textarea {
   width: 100%;
   padding: 12px 16px;
@@ -743,7 +745,7 @@ textarea {
   border: 1px solid #e6ebf1 !important;
   border-radius: 10px;
   font-size: 13px !important;
-  font-family: 'Ubuntu', 'Arial', sans-serif !important;
+  font-family: "Ubuntu", "Arial", sans-serif !important;
   color: $mud-gray;
 
   &:hover,
@@ -824,72 +826,72 @@ td.danger {
 }
 
 .magenta-bag {
-  color: #C41D7F;
-  background: #FFF0F6;
-  border: 1px solid #FFADD2;
+  color: #c41d7f;
+  background: #fff0f6;
+  border: 1px solid #ffadd2;
   display: inline-flex !important;
 }
 
 .geekBlue-bag {
-  color: #1D39C4;
-  background: #F0F5FF;
-  border: 1px solid #ADC6FF;
+  color: #1d39c4;
+  background: #f0f5ff;
+  border: 1px solid #adc6ff;
   display: inline-flex !important;
 }
 
 .green-bag {
-  color: #389E0D;
-  background: #F6FFED;
-  border: 1px solid #B7EB8F;
+  color: #389e0d;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
   display: inline-flex !important;
 }
 
 .gold-bag {
-  color: #D48806;
-  background: #FFFBE6;
-  border: 1px solid #FFE58F;
+  color: #d48806;
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
   display: inline-flex !important;
 }
 
 .purple-bag {
-  color: #531DAB;
-  background: #F9F0FF;
-  border: 1px solid #D3ADF7;
+  color: #531dab;
+  background: #f9f0ff;
+  border: 1px solid #d3adf7;
   display: inline-flex !important;
 }
 
 .cyan-bag {
-  color: #08979C;
-  background: #E6FFFB;
-  border: 1px solid #87E8DE;
+  color: #08979c;
+  background: #e6fffb;
+  border: 1px solid #87e8de;
   display: inline-flex !important;
 }
 
 .orange-bag {
-  color: #D46B08;
-  background: #FFF7E6;
-  border: 1px solid #FFD591;
+  color: #d46b08;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
   display: inline-flex !important;
 }
 
 .blue-bag {
-  color: #0958D9;
-  background: #E6F4FF;
-  border: 1px solid #91CAFF;
+  color: #0958d9;
+  background: #e6f4ff;
+  border: 1px solid #91caff;
   display: inline-flex !important;
 }
 
 .volcano-bag {
-  color: #D4380D;
-  background: #FFF2E8;
-  border: 1px solid #FFBB96;
+  color: #d4380d;
+  background: #fff2e8;
+  border: 1px solid #ffbb96;
   display: inline-flex !important;
 }
 
 .red-bag {
-  color: #CF1322;
-  background: #FFF1F0;
-  border: 1px solid #FFA39E;
+  color: #cf1322;
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
 }
 
 .disabledLink {
@@ -949,7 +951,7 @@ table {
 .customDateFieldWrapper {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 th:nth-child(2).sub-header {
@@ -973,10 +975,10 @@ th:nth-child(2).sub-header {
   z-index: 102;
 }
 .stickyTh3.top76 {
-  top: 59px!important;
+  top: 59px !important;
 }
 .z-1000 {
-  z-index: 1000!important;
+  z-index: 1000 !important;
 }
 
 .gray-background {
@@ -986,10 +988,10 @@ th:nth-child(2).sub-header {
   background-color: #e6f4ff;
 }
 .inactive-column {
-  background-color: #FFFFFF; /* Set this to whatever the default background color is */
+  background-color: #ffffff; /* Set this to whatever the default background color is */
 }
 .orange-background {
-  background-color: #FFC78F;
+  background-color: #ffc78f;
 }
 .loading-screen {
   width: 100%;
@@ -1000,17 +1002,18 @@ th:nth-child(2).sub-header {
   width: 100%;
 }
 .dangerinputField {
-  background-color: $danger!important;
-  color: $white!important;
+  background-color: $danger !important;
+  color: $white !important;
   font-weight: bold;
 }
 .warninginputfield {
-  background-color: $warning!important;
-  color: $white!important;
-  font-weight: bold; 
+  background-color: $warning !important;
+  color: $white !important;
+  font-weight: bold;
 }
 .greyInputFieldd {
-  background: #dadada  url("http://sozu.japanstation.com.pk/vs_web/views/img/bg-stripe.png"); 
+  background: #dadada
+    url("http://sozu.japanstation.com.pk/vs_web/views/img/bg-stripe.png");
 }
 .spanColor {
   color: $mud-gray !important;
@@ -1020,7 +1023,6 @@ th:nth-child(2).sub-header {
 // .customer-srch .inputWrapper .mlNeg {
 //   margin-left: -30px!important;
 // }
-
 
 td.month-border {
   border-right: thin solid #d3d0d0;

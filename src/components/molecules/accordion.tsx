@@ -6,46 +6,49 @@ interface AccordionItemProps {
   heading: string;
   label: string;
   children: React.ReactNode;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 export const AccordionItem: React.FC<AccordionItemProps> = ({
   heading,
   label,
   children,
+  isOpen = false,
+  onToggle,
 }) => {
-  const [open, setOpen] = useState(false);
   return (
     <div className={styles.accordionItem}>
       <button
         className={styles.accordionLabel}
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
+        onClick={onToggle}
+        aria-expanded={isOpen}
         aria-controls={`panel-${label}`}
       >
         <div>
-          {heading} <span className="red"> {label} </span>
+          {heading}{" "}
+          {label ? <span className={styles.labelWarn}> {label} </span> : ""}
         </div>
         <span className={styles.accordionIcon}>
-          {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
+          {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
         </span>
       </button>
       <div
         id={`panel-${label}`}
         className={
-          open
+          isOpen
             ? `${styles.accordionPanel} ${styles.panelOpen}`
             : `${styles.accordionPanel} ${styles.panelClosed}`
         }
-        style={{ display: open ? "block" : "block" }}
       >
-        {children}
+        <div className={styles.panelContent}>{children}</div>
       </div>
     </div>
   );
 };
 
 interface AccordionProps {
-  children: React.ReactNode[];
+  children: React.ReactNode;
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
@@ -57,9 +60,25 @@ const Accordion: React.FC<AccordionProps> = ({
   totalPages = 1,
   onPageChange,
 }) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <div className={styles.accordionWrapper}>
-      {children}
+      {React.Children.map(children, (child, index) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(
+            child as React.ReactElement<AccordionItemProps>,
+            {
+              isOpen: openIndex === index,
+              onToggle: () =>
+                setOpenIndex((currentIndex) =>
+                  currentIndex === index ? null : index
+                ),
+            }
+          );
+        }
+        return child;
+      })}
       {totalPages > 1 && onPageChange && (
         <div className={styles.pagination}>
           <button onClick={() => onPageChange(page - 1)} disabled={page === 1}>

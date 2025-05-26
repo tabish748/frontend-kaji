@@ -3,11 +3,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 16px;
   border-radius: 6px;
   padding: 6px 0;
   font-size: 1rem;
-  color: $lable-color;
+  color: $label-color;
   cursor: pointer;
   transition: background 0.2s, border 0.2s;
 
@@ -15,17 +15,25 @@
     background: #f8fafc;
     border-color: #b3c2d1;
   }
-
   .imageLabelIcon {
     width: 20px;
     height: 20px;
-    object-fit: contain;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img,
+    svg {
+      color: $label-color;
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
   }
 
   .imageLabelText {
     margin-left: 4px;
     font-weight: 500;
-    color: $lable-color;
+    color: $label-color;
   }
 }
