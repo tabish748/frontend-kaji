@@ -53,13 +53,13 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
   const navLinks = [
     { name: t("top"), path: "/" },
-    { name: t("about"), path: "/about" },
-    { name: t("schedule"), path: "/schedule" },
-    { name: t("invoice"), path: "/invoice" },
-    { name: t("quotation"), path: "/quotation" },
-    { name: t("announcement"), path: "/announcement" },
-    { name: t("request"), path: "/request" },
-    { name: t("changePassword"), path: "/change-password" },
+    { name: t("about"), path: "/cn-about" },
+    { name: t("schedule"), path: "/cn-schedule" },
+    { name: t("invoice"), path: "/cn-invoice" },
+    { name: t("quotation"), path: "/cn-quotation" },
+    { name: t("announcement"), path: "/cn-announcement" },
+    { name: t("request"), path: "/cn-request" },
+    { name: t("changePassword"), path: "/cn-changepassword" },
   ];
 
   useEffect(() => {
@@ -275,7 +275,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
       <footer className={styles.clientFooter}>
         <ClientSection heading="Contact">
           <div className={styles.contactSection}>
-            <h3>Contact with us</h3>
+            <h2 className={styles.contactHeading}>{t("contact.heading")}</h2>
             <div className={`${styles.contactGrid}`}>
               <div className={styles.contactItem}>
                 <div className={`${styles.contactIcon} ${styles.contact}`}>

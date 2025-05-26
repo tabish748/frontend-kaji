@@ -1,4 +1,5 @@
 // global-loader.module.scss
+@import "../base/_colors.scss";
 
 @keyframes load {
     0% {
@@ -15,7 +16,7 @@
     left: 0;
     width: 100%;
     height: 6px; // Minimal height for the loader
-    background: rgba(29, 161, 242, 0.8); // Solid color for clear visibility
+    background: $primary; // Solid color for clear visibility
     animation: load 2s infinite;
     z-index: 9999;
 }

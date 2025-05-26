@@ -1,6 +1,5 @@
 @import "../../base/_colors.scss";
 
-
 .inputWrapper {
   position: relative;
   margin-bottom: 10px;
@@ -27,12 +26,14 @@
     font-size: 12px;
     line-height: 1.5714285714285714;
     list-style: none;
-    font-family: 'Ubuntu',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     position: relative;
     display: inline-block;
     width: 100%;
     min-width: 0;
-    background-color: #ffffff;
+    background-color: transparent;
     border-width: 1px;
     border-style: solid;
     border-color: $gray-light;
@@ -40,7 +41,7 @@
     transition: all 0.2s;
     height: 40px;
     &:focus {
-      // border-color: #699dff; 
+      // border-color: #699dff;
       // background-color: #FCFADE;
       // outline: none;
       // box-shadow: 0 0 5px rgba(153, 145, 40, 0.5) !important;
@@ -69,13 +70,14 @@
   }
   textarea {
     &.error {
-      border-color: $danger!important;
+      border-color: $danger !important;
     }
   }
   input[readonly] {
-    background-color: #f6f7fb; 
-    cursor: default; 
-    &:focus , &:hover {
+    background-color: #f6f7fb;
+    cursor: default;
+    &:focus,
+    &:hover {
       border: 0.5px solid $gray-light !important;
       box-shadow: none !important;
     }
@@ -83,6 +85,10 @@
   .errorText {
     color: $danger;
     font-size: 12px;
+  }
+
+  .hasError .iconWrapper {
+    border-color: $danger;
   }
 }
 
@@ -92,21 +98,40 @@
   font-size: 0.6em;
   text-transform: capitalize;
   margin-left: 8px;
-  color: $white; 
+  color: $white;
 }
 
 .tagFirstTime {
-  background-color: $warning!important; // Assuming you have a $yellow variable defined
+  background-color: $warning !important; // Assuming you have a $yellow variable defined
 }
 
 .tagInherit {
-  background-color: $white!important;
+  background-color: $white !important;
   color: $black; // Change text color for contrast
 }
 
 .tagRequired {
-  background-color: $danger!important; // Use the existing $danger variable for red
+  background-color: $danger !important; // Use the existing $danger variable for red
 }
 .tagDefault {
-  background-color: $danger!important;
+  background-color: $danger !important;
+}
+
+.iconWrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $mud-gray;
+  pointer-events: none;
+  z-index: 1;
+  background-color: $white;
+  border: 1px solid $gray-light;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-size: 10px;
 }

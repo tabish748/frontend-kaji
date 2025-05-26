@@ -1,13 +1,23 @@
 {
   "clientDashboard": {
-    "title": "Login",
+    "schedule": "SCHEDULE",
     "staff": "Staff",
     "service": "Service",
     "time": "Time",
     "request": "Request",
-    "announcement":"ANNOUNCEMENT",
-    "publication":"Publication",
-    "detail":"Detail"
+    "announcement": "ANNOUNCEMENT",
+    "publication": "Publication",
+    "detail": "Detail"
+  },
+  "schedulePage": {
+    "tabs": {
+      "upcomingSchedule": "Upcoming schedule",
+      "pastSchedule": "Past schedules and reports"
+    }
+  },
+  "aboutPage": {
+    "customerInfo": "CUSTOMER INFORMATION",
+    "description": "Chez Vous is a premium home service company in Japan, providing high-quality cleaning and concierge services. Our mission is to enhance the quality of life for our clients by offering exceptional service tailored to their needs."
   },
   "email": "Email",
   "password": "Password",
@@ -23,6 +33,7 @@
   "request": "Request",
   "changePassword": "Change Password",
   "contact": {
+    "heading": "Contact with us",
     "title": "Contact",
     "phoneNumber": "0120-699-100",
     "email": "info@chezvous.co.jp",
@@ -38,7 +49,20 @@
     }
   },
   "buttons": {
-    "rescheduling" : "Rescheduling",
-    "cancel" : "Cancel"
+    "rescheduling": "Rescheduling",
+    "cancel": "Cancel",
+    "pafDownload": "PDF Download"
+  },
+  "error": {
+    "invalidEmail": "Invalid email address",
+    "minLength": "Input must be at least {min} characters long.",
+    "maxLength": "Input must be no more than {max} characters long.",
+    "required": "{field} is required.",
+    "notNumber": "Input must be a number",
+    "strongPassword": "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character",
+    "noSpace": "Spaces are not allowed.",
+    "onlyKana": "Only Kana characters and spaces are allowed.",
+    "minDate": "Date must be on or after {date}.",
+    "alphanumeric": "Please enter alphanumeric characters only."
   }
 }

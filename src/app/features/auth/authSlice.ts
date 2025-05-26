@@ -66,7 +66,8 @@ const initialState: AuthState = {
   userDepartment: null,
   userOffice: null,
   userCity: null,
-  userTeam: null
+  userTeam: null,
+  userRole: {name: "client"}
 };
 
 type PayloadType = {

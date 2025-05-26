@@ -20,7 +20,7 @@ interface InputFieldProps {
   ref?: any;
   readOnly?: boolean;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-
+  icon?: React.ReactNode | string; // Add icon prop
 }
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
  
@@ -40,7 +40,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   readOnly,
   onClick,
   onBlur,
-  labelClassName
+  labelClassName,
+  icon
 }, ref) => { 
     
   const getTagClass = (tagValue: string) => {
@@ -71,7 +72,25 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
     return null; 
   };
 
-    
+  // Render function for icon
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'string') {
+      // Check if the string is a URL (simple check)
+      if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
+        return (
+          <span className={styles.iconWrapper}>
+            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+          </span>
+        );
+      } else {
+        // Handle text icon
+        return <span className={styles.iconWrapper}>{icon}</span>;
+      }
+    }
+    return <span className={styles.iconWrapper}>{icon}</span>;
+  };
+
   return (
     <div className={styles.inputWrapper}>
       <label htmlFor={name} className={labelClassName}>
@@ -79,22 +98,26 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
         {/* {tag && <span className={styles.tag}>{tag}</span>} */}
         {renderTags()}
       </label>
-      <input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={onChange}
-        name={name}
-        onBlur={onBlur}
-        onClick={onClick}
-        disabled={disabled}
-        ref={ref}
-        autoComplete={autocomplete}
-        className={`${errorText ? styles.error : ""} ${className}`} // Handle className here
-        // data-placeholder= {label}
-        readOnly={readOnly}
-        id={id}
-      />
+      <div style={{ position: 'relative' }} className={errorText ? styles.hasError : ""}>
+        {renderIcon()}
+        <input
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          onChange={onChange}
+          name={name}
+          onBlur={onBlur}
+          onClick={onClick}
+          disabled={disabled}
+          ref={ref}
+          autoComplete={autocomplete}
+          className={`${errorText ? styles.error : ""} ${className}`}
+          // data-placeholder= {label}
+          readOnly={readOnly}
+          id={id}
+          style={icon ? { paddingLeft: 50 } : {}} // Add left padding if icon
+        />
+      </div>
       {errorText && <div className={styles.errorText}>{errorText}</div>}
     </div>
   );

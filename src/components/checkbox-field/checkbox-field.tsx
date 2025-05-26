@@ -1,5 +1,5 @@
 import React from "react";
-import Style from "../../styles/pages/settings.module.scss";
+// import Style from "../../styles/pages/settings.module.scss";
 import styles from "../../styles/components/atoms/input.module.scss";
 
 export interface CheckboxFieldProps {
@@ -13,6 +13,7 @@ export interface CheckboxFieldProps {
   errorText?: any; // New prop for error text
   validation?: any
   tag?: any;
+  validations?: any; // <-- Add this line for validations
 
 }
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
@@ -24,7 +25,8 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   className,
   disabled = false, // Default to false if not provided
   errorText, // Destructure errorText
-  tag
+  tag,
+  validations // <-- Add this line to destructure validations
 
 }) => {
 
@@ -65,7 +67,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   };
 
   return (
-    <div className={`checkbox-field-container ${className || ""}`}>
+    <div className={`${styles.inputWrapper} ${className || ""} ${errorText ? styles.hasError : ''}`}>
       <label>{label}{renderTags()}</label>
       
       <div className="d-flex mt-2">
@@ -78,13 +80,14 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
               value={option.value}
               checked={selectedValues.includes(String(option?.value))}
               onChange={(e) => handleCheckboxChange(e)}
-              disabled={disabled} // Apply the disabled prop here
+              disabled={disabled}
+              className={errorText ? styles.error : ''}
             />
             <label htmlFor={`${name}_${option.value}`}>{option.label}</label>
           </div>
         ))}
       </div>
-      {errorText && <div className={Style.errorText}>{errorText}</div>}
+      {errorText && <div className={styles.errorText}>{errorText}</div>}
 
     </div>
   );

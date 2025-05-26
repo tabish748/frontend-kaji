@@ -10,6 +10,7 @@ import SelectField from "../select-field/select-field";
 import InputDateField from "../input-date/input-date";
 import CustomDateField from "../custom-date-field/custom-date-field";
 import TextAreaField from "../text-area/text-area";
+import CheckboxField from "../checkbox-field/checkbox-field";
 
 interface FormProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ interface FormProps {
   registerBtnText?: string;
   showConfirmation?: boolean;
   disabledSubmitForm?: boolean;
+  showBottomSubmitBtn?: boolean;
   setErrors?: React.Dispatch<
     React.SetStateAction<Record<string, string | null>>
   >;
@@ -52,7 +54,8 @@ export const Form: React.FC<FormProps> = ({
   className,
   isSubmitFix,
   registerBtnText,
-  showTobSubmitBtn = true,
+  showTobSubmitBtn = false,
+  showBottomSubmitBtn = false,
   showConfirmation = true,
   disabledSubmitForm = false,
   setErrors,
@@ -104,12 +107,22 @@ export const Form: React.FC<FormProps> = ({
             child.type === CustomSelectField ||
             child.type === SelectField ||
             child.type === InputDateField ||
-            child.type === CustomDateField
+            child.type === CustomDateField ||
+            child.type === CheckboxField // <-- Add CheckboxField here
           ) {
             if (validations) {
+              // For CheckboxField, value should be array length or joined string
+              let checkValue = value;
+              if (child.type === CheckboxField) {
+                checkValue = Array.isArray(value)
+                  ? value.length > 0
+                    ? value.join(",")
+                    : ""
+                  : value;
+              }
               const error = validateField(
                 name,
-                value,
+                checkValue,
                 validations,
                 placeholder
               );
@@ -339,16 +352,18 @@ export const Form: React.FC<FormProps> = ({
                   onClick={onClickResetButton}
                 />
               )}
-              <Button
-                text={registerBtnText ? registerBtnText : t("register")}
-                type="primary"
-                size="small"
-                htmlType="submit"
-                className={`${Style.SubmitBtn} ${Style.centerSubmitBtn} `}
-                isLoading={isLoading}
-                onClick={handleFormSubmit}
-                disabled={disabledSubmitForm}
-              />
+              {showBottomSubmitBtn && (
+                <Button
+                  text={registerBtnText ? registerBtnText : t("register")}
+                  type="primary"
+                  size="small"
+                  htmlType="submit"
+                  className={`${Style.SubmitBtn} ${Style.centerSubmitBtn} `}
+                  isLoading={isLoading}
+                  onClick={handleFormSubmit}
+                  disabled={disabledSubmitForm}
+                />
+              )}
             </div>
             {showDeleteButton ? (
               <Button

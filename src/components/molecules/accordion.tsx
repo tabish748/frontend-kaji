@@ -89,7 +89,7 @@ const Accordion: React.FC<AccordionProps> = ({
               key={i}
               className={page === i + 1 ? styles.activePage : ""}
               onClick={() => onPageChange(i + 1)}
-              disabled={page === i + 1}
+              // disabled={page === i + 1}
             >
               {i + 1}
             </button>

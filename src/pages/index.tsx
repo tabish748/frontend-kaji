@@ -10,8 +10,8 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { FaRegAddressCard } from "react-icons/fa";
 import Button from "@/components/button/button";
 // Simulate paginated server response
-const PAGE_SIZE = 5;
-type Plan = {
+export const PAGE_SIZE = 5;
+export type Plan = {
   date: string;
   staff: string;
   service: string;
@@ -21,7 +21,7 @@ type Plan = {
   label: string;
 };
 
-interface PlansPage {
+export interface PlansPage {
   data: Plan[];
   total: number;
   page: number;
@@ -29,7 +29,7 @@ interface PlansPage {
   totalPages: number;
 }
 
-const ALL_PLANS: Plan[] = [
+export const ALL_PLANS: Plan[] = [
   {
     date: "23/05/2025",
     staff: "シェヴ 花子",
@@ -139,7 +139,7 @@ const ANNOUNCEMENTS = [
   },
 ];
 
-function getPlansPage(page: number, pageSize: number): PlansPage {
+export function getPlansPage(page: number, pageSize: number): PlansPage {
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
   return {
@@ -158,19 +158,14 @@ export default function Home() {
     getPlansPage(1, PAGE_SIZE)
   );
 
-  const [errors, setErrors] = useState<any>({});
-
   React.useEffect(() => {
     setPlans(getPlansPage(page, PAGE_SIZE));
   }, [page]);
 
-  const handleSubmit = () => {
-    console.log("submit");
-  };
   return (
     <div className="d-flex flex-column gap-2">
       {/* Schedule Section */}
-      <ClientSection heading={t("clientDashboard.title")}>
+      <ClientSection heading={t("clientDashboard.schedule")}>
         <Accordion
           page={page}
           totalPages={plans.totalPages}
@@ -221,7 +216,11 @@ export default function Home() {
         <div className={Style.announcementContainer}>
           <Accordion page={1} totalPages={1} onPageChange={() => {}}>
             {ANNOUNCEMENTS.map((item, idx) => (
-              <AccordionItem key={idx} heading={`${item.date} ${item.title || ''}`} label="">
+              <AccordionItem
+                key={idx}
+                heading={`${item.date} ${item.title || ""}`}
+                label=""
+              >
                 <div className={Style.accordionContent}>
                   <ImageLabel
                     icon={<FaRegAddressCard />}

@@ -1,4 +1,5 @@
 @import "../../base/_colors.scss"; // Adjust this path based on where your _colors.scss file is located
+@import "../../base/_variables.scss"; // Adjust this path based on where your _variables.scss file is located
 
 .button {
   // padding: 10px 20px;
@@ -27,7 +28,7 @@
   color: #455560;
   font-size: 12px;
   padding: 0 15px;
-  border-radius: 10px;
+  border-radius: $border-radius;
 
   &:disabled {
     background-color: #f6f7fb !important;
@@ -45,9 +46,9 @@
   }
 
   &.secondary {
-    // background-color: $white;
-    // color: $primary;
-    // border: thin solid $primary;
+    background-color: $white;
+    color: $primary;
+    border: thin solid $primary;
     background-color: #ffffff;
     border: 2px solid $gray-light;
     box-shadow: 0 2px 0 rgba(69, 85, 96, 0.02);
@@ -58,8 +59,7 @@
     }
 
     &:not(:disabled):hover {
-      color: $blue-lighter;
-      border-color: $blue-lighter;
+      background-color: $blue-lighter;
     }
   }
 

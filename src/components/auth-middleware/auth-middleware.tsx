@@ -1,6 +1,9 @@
 import React, { useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { useLanguage } from "@/localization/LocalContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+
 interface AuthMiddlewareProps {
   children: ReactNode;
 }
@@ -9,13 +12,14 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const { t } = useLanguage();
+  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const currentPath = router.pathname;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const departmentId =
       String(JSON.parse(localStorage.getItem("userDepartment") || "{}")?.id || null);
     const loggedInUserRole = localStorage.getItem("loggedInUserRoleId");
-    const currentPath = router.pathname;
 
     if (!token) {
       window.location.href = "/login";
@@ -31,15 +35,13 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
       }
     }
 
-    if ((currentPath.includes('projectLegal/listing/')
-    ) && departmentId) {
+    if (currentPath.includes('projectLegal/listing/') && departmentId) {
       const LegalAllowedRoles = ["1", '2'];
       if (!LegalAllowedRoles.includes(departmentId)) {
         router.push('/unauthenticated');
         return;
       }
     }
-
 
     if (currentPath.includes('projectConfirmed') && departmentId) {
       const TaxAllowedRoles = ['1', "2"];
@@ -82,8 +84,26 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
         return;
       }
     }
+
+    if (userRole === "client") {
+      const allowedUrls = [
+        "/",
+        "/cn-about",
+        "/cn-schedule",
+        "/cn-invoice",
+        "/cn-quotation",
+        "/cn-announcement",
+        "/cn-request",
+        "/cn-changepassword"
+      ];
+      if (!allowedUrls.includes(currentPath)) {
+        router.push("/unauthenticated");
+        return;
+      }
+    }
+
     setIsLoading(false);
-  }, [router]);
+  }, [router, userRole, currentPath]);
 
 
   if (isLoading) {
