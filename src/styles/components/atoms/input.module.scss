@@ -2,12 +2,12 @@
 
 .inputWrapper {
   position: relative;
-  margin-bottom: 10px;
+  // margin-bottom: 12px;
 
   label {
     display: inline-block;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   input {
@@ -23,7 +23,7 @@
     margin: 0;
     padding: 9.3px 12px;
     color: #455560;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.5714285714285714;
     list-style: none;
     font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -67,6 +67,48 @@
     &.error {
       border-color: $danger;
     }
+
+    // Checkbox specific styling
+    &[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      margin-right: 8px;
+      appearance: none;
+      border: 1px solid $gray-400;
+      border-radius: 3px;
+      transition: all 0.2s;
+      position: relative;
+      cursor: pointer;
+
+      &:checked {
+        background-color: $primary;
+        border-color: $primary;
+
+        &:before {
+          content: "✓";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 16px;
+        }
+      }
+
+      &:hover:not(:disabled) {
+        border-color: $primary;
+      }
+
+      &:focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 2px rgba($primary, 0.25);
+      }
+    }
   }
   textarea {
     &.error {
@@ -84,7 +126,7 @@
   }
   .errorText {
     color: $danger;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .hasError .iconWrapper {
@@ -134,4 +176,17 @@
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   font-size: 10px;
+}
+
+// Checkbox option container styling
+.checkboxOption {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+
+  label {
+    font-weight: 600;
+    margin-left: 8px;
+    cursor: pointer;
+  }
 }

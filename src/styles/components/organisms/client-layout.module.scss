@@ -12,8 +12,16 @@
   height: 80px;
   width: 177px;
   @include respond-to("small") {
+    display: none;
     height: 80px;
     width: 120px;
+  }
+
+  .logoMobile{
+    display: none;
+    @include respond-to("small") {
+      display: block;
+    }
   }
 }
 
@@ -33,7 +41,7 @@
   }
 
   @include respond-to("small") {
-    padding: 5px 15px;
+    padding: 15px 15px;
   }
 
   .headerControls {
@@ -98,7 +106,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
 
   align-items: center;
 

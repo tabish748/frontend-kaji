@@ -20,6 +20,7 @@ interface SelectFieldProps {
   ref?: any;
   shadowPlaceholder?: string;
   onClear?: () => void;
+  icon?: React.ReactNode | string;
 }
 
 // Forward ref to allow the parent component to access the DOM node
@@ -38,7 +39,8 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
   hidden,
   onClear,
   shadowPlaceholder,
-  loading = false
+  loading = false,
+  icon
 }, forwardedRef) => {
   const { t } = useLanguage();
 
@@ -55,6 +57,25 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
 
   // Merge wrapperRef with forwardedRef
   useImperativeHandle(forwardedRef, () => wrapperRef.current as any);
+
+  // Render function for icon
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'string') {
+      // Check if the string is a URL (simple check)
+      if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
+        return (
+          <span className={styles.iconWrapper}>
+            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+          </span>
+        );
+      } else {
+        // Handle text icon
+        return <span className={styles.iconWrapper}>{icon}</span>;
+      }
+    }
+    return <span className={styles.iconWrapper}>{icon}</span>;
+  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -210,25 +231,35 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
         {label && <>{label}</>}
         {renderTags()}
       </label>}
-      <div
-        className={`${styles.placeholderWrapper} ${selectedLabel ? styles.hasValue : ""
-          } ${(errorText && !disabled) ? styles.error : ""}  ${disabled ? styles.disabledSelect : ''}`}
-        onMouseDown={handleMouseDown} // Use mousedown to handle opening
-        tabIndex={0} 
-        onFocus={() => {
-          if (!isOpen) {
-            setIsOpen(true);
-          }
-        }}
-        onBlur={handleBlur}
-      >
-        {loading && <div className={styles.spinner}></div>}
-        {selectedLabel || (shadowPlaceholder && <p className={styles.placeholder}>{shadowPlaceholder}</p>)}
-        {(selectedLabel && !disabled) && (
-          <span className={styles.crossButton} onMouseDown={handleClearValue}>
-            ✖
-          </span>
-        )}
+      <div style={{ position: 'relative' }} className={errorText ? styles.hasError : ""}>
+        {renderIcon()}
+        <div
+          className={`${styles.placeholderWrapper} ${selectedLabel ? styles.hasValue : ""
+            } ${(errorText && !disabled) ? styles.error : ""}  ${disabled ? styles.disabledSelect : ''}`}
+          onMouseDown={handleMouseDown} // Use mousedown to handle opening
+          tabIndex={0} 
+          onFocus={() => {
+            if (!isOpen) {
+              setIsOpen(true);
+            }
+          }}
+          onBlur={handleBlur}
+          style={icon ? { paddingLeft: 50 } : {}} // Add left padding if icon
+        >
+          {loading && <div className={styles.spinner}></div>}
+          {selectedLabel ? (
+            <span>{selectedLabel}</span>
+          ) : (
+            <span className={styles.placeholder}>
+              {shadowPlaceholder || placeholder || t('pleaseSelect')}
+            </span>
+          )}
+          {(selectedLabel && !disabled) && (
+            <span className={styles.crossButton} onMouseDown={handleClearValue}>
+              ✖
+            </span>
+          )}
+        </div>
       </div>
       {isOpen && (
         <div className={styles.dropdown}>

@@ -1,5 +1,4 @@
 import React from "react";
-// import Style from "../../styles/pages/settings.module.scss";
 import styles from "../../styles/components/atoms/input.module.scss";
 
 export interface CheckboxFieldProps {
@@ -11,10 +10,9 @@ export interface CheckboxFieldProps {
   className?: string;
   disabled?: boolean; // New prop for disabled state
   errorText?: any; // New prop for error text
-  validation?: any
+  validation?: any;
   tag?: any;
   validations?: any; // <-- Add this line for validations
-
 }
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   label,
@@ -26,34 +24,37 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   disabled = false, // Default to false if not provided
   errorText, // Destructure errorText
   tag,
-  validations // <-- Add this line to destructure validations
-
+  validations, // <-- Add this line to destructure validations
 }) => {
-
   const renderTags = () => {
     if (Array.isArray(tag)) {
       return tag.map((item, index) => (
-        <span key={index} className={`${styles.tag} ${getTagClass(item.value)}`}>
+        <span
+          key={index}
+          className={`${styles.tag} ${getTagClass(item.value)}`}
+        >
           {item.label}
         </span>
       ));
-    } else if (typeof tag === 'string') {
+    } else if (typeof tag === "string") {
       // Render a simple text tag with a default red color
-      return <span className={`${styles.tag} ${styles.tagDefault}`}>{tag}</span>;
+      return (
+        <span className={`${styles.tag} ${styles.tagDefault}`}>{tag}</span>
+      );
     }
-    return null; 
+    return null;
   };
 
   const getTagClass = (tagValue: string) => {
     switch (tagValue) {
-      case 'firstTime':
-        return 'tagFirstTime';
-      case 'inherit':
-        return 'tagInherit';
-      case 'required':
-        return 'tagRequired';
+      case "firstTime":
+        return "tagFirstTime";
+      case "inherit":
+        return "tagInherit";
+      case "required":
+        return "tagRequired";
       default:
-        return 'tagDefault'; // Default class for simple text tags
+        return "tagDefault"; // Default class for simple text tags
     }
   };
 
@@ -67,12 +68,19 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   };
 
   return (
-    <div className={`${styles.inputWrapper} ${className || ""} ${errorText ? styles.hasError : ''}`}>
-      <label>{label}{renderTags()}</label>
-      
-      <div className="d-flex mt-2">
+    <div
+      className={`${styles.inputWrapper} ${className || ""} ${
+        errorText ? styles.hasError : ""
+      }`}
+    >
+      <label className={`${label ? '': "d-none"} `}>
+        {label}
+        {renderTags()}
+      </label>
+
+      <div className="d-flex ">
         {options?.map((option) => (
-          <div key={option.value} className="checkbox-option">
+          <div key={option.value} className={styles.checkboxOption}>
             <input
               type="checkbox"
               id={`${name}_${option.value}`}
@@ -81,17 +89,15 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
               checked={selectedValues.includes(String(option?.value))}
               onChange={(e) => handleCheckboxChange(e)}
               disabled={disabled}
-              className={errorText ? styles.error : ''}
+              className={errorText ? styles.error : ""}
             />
             <label htmlFor={`${name}_${option.value}`}>{option.label}</label>
           </div>
         ))}
       </div>
       {errorText && <div className={styles.errorText}>{errorText}</div>}
-
     </div>
   );
 };
 
 export default CheckboxField;
-

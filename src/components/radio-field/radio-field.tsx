@@ -1,5 +1,7 @@
-import React from 'react';
-import Style from '../../styles/components/atoms/radio-field.module.scss'
+import React from "react";
+import Style from "../../styles/components/atoms/radio-field.module.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 interface RadioOption {
   label: string;
   value: string | number;
@@ -22,18 +24,33 @@ const RadioField: React.FC<RadioFieldProps> = ({
   name,
   selectedValue,
   onChange,
-  className = '',
+  className = "",
   disabled = false,
-  hidden=false,
+  hidden = false,
 }) => {
+  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const isClient = userRole === "client";
 
   return (
-    <div className={className} style={{display: hidden ? 'none' : 'unset'}}>
-      {label && <div className={`${Style.radioLabel} d-block`}>{label}</div>}
-      <div className='d-flex gap-1 mt-1'>
+    <div className={className} style={{ display: hidden ? "none" : "unset" }}>
+      {label && (
+        <div
+          className={
+            `${isClient ? Style.clientRadioLabel : Style.adminRadioLabel} d-block`
+          }
+        >
+          {label}
+        </div>
+      )}
+      <div className="d-flex gap-1 ">
         {options.map((option, index) => (
           <div key={index}>
-            <label htmlFor={`${name}_${option.value}`} className={Style.radioLabel}>
+            <label
+              htmlFor={`${name}_${option.value}`}
+              className={
+                isClient ? Style.clientRadioLabel : Style.adminRadioLabel
+              }
+            >
               <input
                 type="radio"
                 id={`${name}_${option.value}`}
@@ -42,8 +59,8 @@ const RadioField: React.FC<RadioFieldProps> = ({
                 checked={selectedValue === option.value}
                 onChange={onChange}
                 disabled={disabled}
-                className='mr-1'
               />
+              <span></span>
               {option.label}
             </label>
           </div>

@@ -19,9 +19,10 @@ interface SelectFieldProps {
   readonly?: any;
   ref?: any;
   labelClassName?: string;
+  icon?: React.ReactNode | string;
 }
 
-const SelectField: React.FC<SelectFieldProps> = forwardRef<HTMLDivElement, SelectFieldProps>(({
+const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(({
   label,
   tag,
   options,
@@ -36,7 +37,8 @@ const SelectField: React.FC<SelectFieldProps> = forwardRef<HTMLDivElement, Selec
   id,
   hidden,
   readonly,
-  labelClassName
+  labelClassName,
+  icon
 }, ref) => {
   const getTagClass = (tagValue: string) => {
     switch (tagValue) {
@@ -66,6 +68,25 @@ const SelectField: React.FC<SelectFieldProps> = forwardRef<HTMLDivElement, Selec
     return null; 
   };
 
+  // Render function for icon
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'string') {
+      // Check if the string is a URL (simple check)
+      if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
+        return (
+          <span className={styles.iconWrapper}>
+            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+          </span>
+        );
+      } else {
+        // Handle text icon
+        return <span className={styles.iconWrapper}>{icon}</span>;
+      }
+    }
+    return <span className={styles.iconWrapper}>{icon}</span>;
+  };
+
   return (
     <div className={`${styles.selectWrapper} ${parentClassName}`} hidden={hidden} ref={ref}>
     {
@@ -75,25 +96,29 @@ const SelectField: React.FC<SelectFieldProps> = forwardRef<HTMLDivElement, Selec
       {renderTags()}
     </label>
     }
-      <select
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className={`${errorText ? styles.error : ''} ${className}`}
-        name={name}
-        id={id}
-        
-      >
-        {placeholder && (
-          <option value="">
-          </option>
-        )}
-        {options?.map((option, index) => (
-          <option key={index} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div style={{ position: 'relative' }} className={errorText ? styles.hasError : ""}>
+        {renderIcon()}
+        <select
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={`${errorText ? styles.error : ''} ${className}`}
+          name={name}
+          id={id}
+          style={icon ? { paddingLeft: 50 } : {}}
+        >
+          {placeholder && (
+            <option value="" className={styles.placeholder}>
+              {placeholder}
+            </option>
+          )}
+          {options?.map((option, index) => (
+            <option key={index} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       {errorText && <div className={styles.errorText}>{errorText}</div>}
     </div>
   );

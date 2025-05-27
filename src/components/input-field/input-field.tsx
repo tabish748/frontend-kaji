@@ -93,7 +93,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
 
   return (
     <div className={styles.inputWrapper}>
-      <label htmlFor={name} className={labelClassName}>
+      <label htmlFor={name} className={` ${label ? "":"d-none"} ${labelClassName}`}>
         {label && <>{label}</>}
         {/* {tag && <span className={styles.tag}>{tag}</span>} */}
         {renderTags()}

@@ -72,17 +72,19 @@ export const Form: React.FC<FormProps> = ({
     name: string,
     value: any,
     validations: any[],
-    placeholder: string
+    placeholder: string,
+    label?: string // Add label param
   ) => {
     for (let validation of validations) {
       if (validation.type === "required") {
         if (!validation.params) {
           validation.params = {};
         }
-        validation.params.placeholder = placeholder;
+        // Prefer label, then placeholder, then name
+        validation.params.placeholder = label || placeholder || name;
       }
       if (Validators[validation.type]) {
-        const error = Validators[validation.type]({ value }, placeholder);
+        const error = Validators[validation.type]({ value }, label || placeholder || name);
         if (error) {
           return error;
         }
@@ -99,7 +101,7 @@ export const Form: React.FC<FormProps> = ({
     const traverseAndValidate = (elements: React.ReactNode) => {
       React.Children.forEach(elements, (child) => {
         if (React.isValidElement(child)) {
-          const { name, value, validations, placeholder } = child.props;
+          const { name, value, validations, placeholder, label } = child.props;
 
           if (
             child.type === InputField ||
@@ -108,10 +110,9 @@ export const Form: React.FC<FormProps> = ({
             child.type === SelectField ||
             child.type === InputDateField ||
             child.type === CustomDateField ||
-            child.type === CheckboxField // <-- Add CheckboxField here
+            child.type === CheckboxField
           ) {
             if (validations) {
-              // For CheckboxField, value should be array length or joined string
               let checkValue = value;
               if (child.type === CheckboxField) {
                 checkValue = Array.isArray(value)
@@ -120,11 +121,13 @@ export const Form: React.FC<FormProps> = ({
                     : ""
                   : value;
               }
+              // Pass label to validator
               const error = validateField(
                 name,
                 checkValue,
                 validations,
-                placeholder
+                placeholder,
+                label // Pass label here
               );
               if (error) {
                 newErrors[name] = error;

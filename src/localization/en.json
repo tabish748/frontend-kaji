@@ -63,6 +63,7 @@
     "noSpace": "Spaces are not allowed.",
     "onlyKana": "Only Kana characters and spaces are allowed.",
     "minDate": "Date must be on or after {date}.",
-    "alphanumeric": "Please enter alphanumeric characters only."
+    "alphanumeric": "Please enter alphanumeric characters only.",
+    "default": "Field"
   }
 }

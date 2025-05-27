@@ -147,6 +147,13 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
             height={40}
             alt="Logo"
           />
+          <Image
+            className={`${styles.logoMobile}`}
+            src="/assets/svg/logo-mobile.svg"
+            width={40}
+            height={40}
+            alt="Logo"
+          />
           {/* Hamburger for mobile */}
           <button
             ref={hamburgerButtonRef}

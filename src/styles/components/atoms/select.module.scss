@@ -2,79 +2,94 @@
 
 .selectWrapper {
   position: relative;
-  margin-bottom: 10px;
+  // margin-bottom: 10px;
 
   label {
     display: inline-block;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   select {
-  // width: 100%;
-  // padding: 12px 16px;
-  // margin: 5px 0;
-  // box-sizing: border-box;
-  // background-color: $white !important;
-  // border: 1px solid #dedede;
-  // border-radius: 4px;
-  // font-size: 12px;
-  // appearance: none; // This is to remove default browser styling
-  // background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
-  // background-position: right 10px top 50% !important;
-  // background-size: 24px;
     width: 100%;
     box-sizing: border-box;
     cursor: pointer;
     padding: 0 11px;
     color: #455560;
     border: 1px solid $gray-light;
-    font-size: 12px;
-    // line-height: 1.5714285714285714;
+    font-size: 16px;
     list-style: none;
     appearance: none; // This is to remove default browser styling
-    background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
+    background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') transparent no-repeat !important;
     background-position: right 10px top 50% !important;
     font-family: 'Ubuntu',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
     display: flex;
     border-radius: 10px;
     height: 40px;
     option {
-      font-size: 12px;
+      font-size: 16px;
+      
+      &.placeholder {
+        color: $gray-light;
+      }
     }
-  &:hover {
-    background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') white no-repeat !important;
-    background-position: right 10px top 50% !important;
-    border-color: $blue-lighter !important;
-    
-  }
+    &:hover {
+      background: url('data:image/svg+xml;utf8,<svg fill="lightgray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') transparent no-repeat !important;
+      background-position: right 10px top 50% !important;
+      border-color: $blue-lighter !important;
+      
+    }
 
-  &:focus, &:active {
-    // border-color: $primary !important;
-    // outline: none;
-    // background-color: #FCFADE !important;
-    border: 1px solid $blue-light !important;
-  }
+    &:focus, &:active {
+      border: 1px solid $blue-light !important;
+    }
 
-  &:disabled {
-    background-color: #f6f7fb!important;
-    cursor: not-allowed;
+    &:disabled {
+      background-color: #f6f7fb!important;
+      cursor: not-allowed;
 
-    &:hover, &:focus {
-      border: 1px solid $gray-light !important;
+      &:hover, &:focus {
+        border: 1px solid $gray-light !important;
+      }
+    }
+
+    &.error {
+      border-color: $danger;
     }
   }
 
-  &.error {
+  .errorText {
+    color: $danger; 
+    font-size: 16px;
+  }
+  
+  .hasError .iconWrapper {
     border-color: $danger;
   }
 }
 
+.iconWrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $mud-gray;
+  pointer-events: none;
+  z-index: 1;
+  background-color: $white;
+  border: 1px solid $gray-light;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  font-size: 10px;
+}
 
-  .errorText {
-    color: $danger; 
-    font-size: 12px;
-  }
+.placeholder {
+  color: $gray-light;
+  font-style: italic;
 }
 
 .tag {
