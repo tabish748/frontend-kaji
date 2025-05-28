@@ -141,7 +141,7 @@ const ANNOUNCEMENTS = [
 
 export function getPlansPage(page: number, pageSize: number): PlansPage {
   const start = (page - 1) * pageSize;
-  const end = start + pageSize;
+  const end = Math.min(start + pageSize, ALL_PLANS.length);
   return {
     data: ALL_PLANS.slice(start, end),
     total: ALL_PLANS.length,

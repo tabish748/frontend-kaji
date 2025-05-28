@@ -42,7 +42,7 @@ const RadioField: React.FC<RadioFieldProps> = ({
           {label}
         </div>
       )}
-      <div className="d-flex gap-1 ">
+      <div className="d-flex gap-1 " style={{ flexWrap: "wrap" }}>
         {options.map((option, index) => (
           <div key={index}>
             <label

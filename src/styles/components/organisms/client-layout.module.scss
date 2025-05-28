@@ -11,17 +11,17 @@
 .logo {
   height: 80px;
   width: 177px;
-  @include respond-to("small") {
+  @include respond-to("large") {
     display: none;
     height: 80px;
     width: 120px;
   }
+}
 
-  .logoMobile{
-    display: none;
-    @include respond-to("small") {
-      display: block;
-    }
+.logoMobile {
+  display: none;
+  @include respond-to("large") {
+    display: block;
   }
 }
 
@@ -61,11 +61,18 @@
       .userName {
         font-size: 1rem;
         color: $label-color;
+
+        @include respond-to("large") {
+          display: none;
+        }
       }
 
       .userNameJp {
         font-size: 10px;
         color: #adb0bb;
+        @include respond-to("large") {
+          display: none;
+        }
       }
 
       .profileImage {

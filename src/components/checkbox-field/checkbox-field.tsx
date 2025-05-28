@@ -78,7 +78,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
         {renderTags()}
       </label>
 
-      <div className="d-flex ">
+      <div className="d-flex" style={{ flexWrap: "wrap" }}>
         {options?.map((option) => (
           <div key={option.value} className={styles.checkboxOption}>
             <input

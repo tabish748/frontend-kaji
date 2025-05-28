@@ -19,8 +19,11 @@ import {
   FaTrain,
   FaGlobe,
   FaBell,
+  FaRegAddressCard,
 } from "react-icons/fa";
 import styles from "@/styles/pages/cnabout.module.scss";
+import Accordion, { AccordionItem } from "@/components/molecules/accordion";
+import ImageLabel from "@/components/image-lable/image-lable";
 
 // Define contract and plan structure
 interface Plan {
@@ -39,6 +42,12 @@ export default function CnAbout() {
   const { t } = useLanguage();
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
+  const [billingFormErrors, setBillingFormErrors] = React.useState<
+    Record<string, string | null>
+  >({});
+  const [paymentFormErrors, setPaymentFormErrors] = React.useState<
+    Record<string, string | null>
+  >({});
   const [formValues, setFormValues] = useState({
     firstName: "",
     fullNameKatakana: "",
@@ -65,17 +74,62 @@ export default function CnAbout() {
     age: "",
     language: "japanese",
     advertising: "subscribe",
+  });
+
+  const [contractFormValues, setContractFormValues] = useState({
     contractType: "general",
+    service: "",
+    plan: "",
     timeRange: "with",
     timeExtension: "with",
-    monday: ["monday"],
-    tuesday: [] as string[],
-    wednesday: [] as string[],
-    thursday: [] as string[],
-    friday: [] as string[],
-    saturday: [] as string[],
-    sunday: [] as string[],
+    contractPeriod: "2025-04-14 to 2025-04-19",
+    startTime: "",
+    endTime: "",
+    weekdays: ["monday"] as string[],
   });
+
+  const [billingFormValues, setBillingFormValues] = useState({
+    firstName: "",
+    fullNameKatakana: "",
+    phone1: "",
+    phone2: "",
+    phone3: "",
+    email1: "",
+    email2: "",
+    postalCode: "",
+    prefecture: "",
+    address1: "",
+    address2: "",
+    building: "",
+  });
+
+  const [paymentFormValues, setPaymentFormValues] = useState({
+    paymentMethod: "credit",
+  });
+
+  const POSSESSION = [
+    {
+      head: "key 1",
+      dateOfRecieved: "2025-04-14",
+      dateOfReturn: "2025-04-19",
+      nameStaff: "John Doe",
+      receiptOfCustody: <FaBell size={12} />,
+    },
+    {
+      head: "key 2",
+      dateOfRecieved: "2025-04-14",
+      dateOfReturn: "2025-04-19",
+      nameStaff: "Jane Smith",
+      receiptOfCustody: <FaBell size={12} />,
+    },
+    {
+      head: "key 3",
+      dateOfRecieved: "2025-04-14",
+      dateOfReturn: "2025-04-19",
+      nameStaff: "Alice Johnson",
+      receiptOfCustody: <FaBell size={12} />,
+    },
+  ];
 
   // Contract and plan data
   const contracts: Contract[] = [
@@ -170,6 +224,36 @@ export default function CnAbout() {
     }));
   };
 
+  const handleContractInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setContractFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleBillingInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setBillingFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handlePaymentInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setPaymentFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleCheckboxChange = (name: string, value: boolean) => {
     setFormValues((prev) => ({
       ...prev,
@@ -197,7 +281,21 @@ export default function CnAbout() {
   };
 
   const handleContractSubmit = () => {
-    console.log("contract form submitted");
+    console.log("Contract form submitted with values:", contractFormValues);
+  };
+
+  const handleBillingSubmit = () => {
+    // Form validation is handled by the Form component through the errors/setErrors props
+    // Just handle the actual submission here
+    console.log("Billing form submitted with values:", billingFormValues);
+    // TODO: Add your API call or data processing here
+
+    // Reset any billing form errors
+    setBillingFormErrors({});
+  };
+
+  const handlePaymentSubmit = () => {
+    console.log("Billing form submitted with values:", paymentFormValues);
   };
 
   return (
@@ -211,12 +309,12 @@ export default function CnAbout() {
         >
           <div className={styles.formGrid}>
             {/* Name Section */}
-            <div className={styles.label}>Name</div>
+            <div className={styles.label}>{t("aboutPage.nameLabel")}</div>
             <div className={styles.fieldGroup}>
               <div className={styles.fieldRow}>
                 <InputField
                   name="firstName"
-                  placeholder="First Name"
+                  placeholder={t("aboutPage.firstNamePlaceholder")}
                   value={formValues.firstName}
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
@@ -226,7 +324,7 @@ export default function CnAbout() {
                 />
                 <InputField
                   name="fullNameKatakana"
-                  placeholder="Full name in Katakana"
+                  placeholder={t("aboutPage.fullNameKatakanaPlaceholder")}
                   value={formValues.fullNameKatakana}
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
@@ -238,11 +336,11 @@ export default function CnAbout() {
             </div>
 
             {/* Phone Section */}
-            <div className={styles.label}>Phone</div>
+            <div className={styles.label}>{t("aboutPage.phoneLabel")}</div>
             <div className={styles.fieldGroup}>
               <InputField
                 name="phone1"
-                placeholder="Phone 1"
+                placeholder={t("aboutPage.phone1Placeholder")}
                 value={formValues.phone1}
                 onChange={handleInputChange}
                 validations={[{ type: "required" }]}
@@ -252,7 +350,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="phone2"
-                placeholder="Phone 2"
+                placeholder={t("aboutPage.phone2Placeholder")}
                 value={formValues.phone2}
                 onChange={handleInputChange}
                 icon={<FaPhone size={12} />}
@@ -260,7 +358,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="phone3"
-                placeholder="Phone 3"
+                placeholder={t("aboutPage.phone3Placeholder")}
                 value={formValues.phone3}
                 onChange={handleInputChange}
                 icon={<FaPhone size={12} />}
@@ -269,11 +367,11 @@ export default function CnAbout() {
             </div>
 
             {/* Email Section */}
-            <div className={styles.label}>E-mail</div>
+            <div className={styles.label}>{t("aboutPage.emailLabel")}</div>
             <div className={styles.fieldGroup}>
               <InputField
                 name="email1"
-                placeholder="Email 1"
+                placeholder={t("aboutPage.email1Placeholder")}
                 type="email"
                 value={formValues.email1}
                 onChange={handleInputChange}
@@ -284,7 +382,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="email2"
-                placeholder="Email 2"
+                placeholder={t("aboutPage.email2Placeholder")}
                 type="email"
                 value={formValues.email2}
                 onChange={handleInputChange}
@@ -296,12 +394,12 @@ export default function CnAbout() {
             </div>
 
             {/* Address Section */}
-            <div className={styles.label}>Address</div>
+            <div className={styles.label}>{t("aboutPage.addressLabel")}</div>
             <div className={styles.fieldGroup}>
               <div className={styles.fieldRow}>
                 <InputField
                   name="postalCode"
-                  placeholder="Postal code"
+                  placeholder={t("aboutPage.postalCodePlaceholder")}
                   value={formValues.postalCode}
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
@@ -311,55 +409,12 @@ export default function CnAbout() {
                 />
                 <SelectField
                   name="prefecture"
-                  placeholder="Prefecture"
+                  placeholder={t("aboutPage.prefecturePlaceholder")}
                   options={[
                     { label: "Hokkaido", value: "hokkaido" },
                     { label: "Aomori", value: "aomori" },
                     { label: "Iwate", value: "iwate" },
                     { label: "Miyagi", value: "miyagi" },
-                    { label: "Akita", value: "akita" },
-                    { label: "Yamagata", value: "yamagata" },
-                    { label: "Fukushima", value: "fukushima" },
-                    { label: "Ibaraki", value: "ibaraki" },
-                    { label: "Tochigi", value: "tochigi" },
-                    { label: "Gunma", value: "gunma" },
-                    { label: "Saitama", value: "saitama" },
-                    { label: "Chiba", value: "chiba" },
-                    { label: "Tokyo", value: "tokyo" },
-                    { label: "Kanagawa", value: "kanagawa" },
-                    { label: "Niigata", value: "niigata" },
-                    { label: "Toyama", value: "toyama" },
-                    { label: "Ishikawa", value: "ishikawa" },
-                    { label: "Fukui", value: "fukui" },
-                    { label: "Yamanashi", value: "yamanashi" },
-                    { label: "Nagano", value: "nagano" },
-                    { label: "Gifu", value: "gifu" },
-                    { label: "Shizuoka", value: "shizuoka" },
-                    { label: "Aichi", value: "aichi" },
-                    { label: "Mie", value: "mie" },
-                    { label: "Shiga", value: "shiga" },
-                    { label: "Kyoto", value: "kyoto" },
-                    { label: "Osaka", value: "osaka" },
-                    { label: "Hyogo", value: "hyogo" },
-                    { label: "Nara", value: "nara" },
-                    { label: "Wakayama", value: "wakayama" },
-                    { label: "Tottori", value: "tottori" },
-                    { label: "Shimane", value: "shimane" },
-                    { label: "Okayama", value: "okayama" },
-                    { label: "Hiroshima", value: "hiroshima" },
-                    { label: "Yamaguchi", value: "yamaguchi" },
-                    { label: "Tokushima", value: "tokushima" },
-                    { label: "Kagawa", value: "kagawa" },
-                    { label: "Ehime", value: "ehime" },
-                    { label: "Kochi", value: "kochi" },
-                    { label: "Fukuoka", value: "fukuoka" },
-                    { label: "Saga", value: "saga" },
-                    { label: "Nagasaki", value: "nagasaki" },
-                    { label: "Kumamoto", value: "kumamoto" },
-                    { label: "Oita", value: "oita" },
-                    { label: "Miyazaki", value: "miyazaki" },
-                    { label: "Kagoshima", value: "kagoshima" },
-                    { label: "Okinawa", value: "okinawa" },
                   ]}
                   value={formValues.prefecture}
                   onChange={handleInputChange}
@@ -371,7 +426,7 @@ export default function CnAbout() {
               </div>
               <InputField
                 name="address1"
-                placeholder="Address 1"
+                placeholder={t("aboutPage.address1Placeholder")}
                 value={formValues.address1}
                 onChange={handleInputChange}
                 validations={[{ type: "required" }]}
@@ -381,7 +436,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="address2"
-                placeholder="Address 2"
+                placeholder={t("aboutPage.address2Placeholder")}
                 value={formValues.address2}
                 onChange={handleInputChange}
                 icon={<FaHome size={12} />}
@@ -389,7 +444,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="building"
-                placeholder="Building"
+                placeholder={t("aboutPage.buildingPlaceholder")}
                 value={formValues.building}
                 onChange={handleInputChange}
                 icon={<FaHome size={12} />}
@@ -398,12 +453,12 @@ export default function CnAbout() {
             </div>
 
             {/* Train Station Section */}
-            <div className={styles.label}>Train Station</div>
+            <div className={styles.label}>{t("aboutPage.trainStationLabel")}</div>
             <div className={styles.fieldGroup}>
               <div className={styles.stationGroup}>
                 <InputField
                   name="railwayCompany1"
-                  placeholder="Railway company 1"
+                  placeholder={t("aboutPage.railwayCompany1Placeholder")}
                   value={formValues.railwayCompany1}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -411,7 +466,7 @@ export default function CnAbout() {
                 />
                 <InputField
                   name="trainLine1"
-                  placeholder="Train line 1"
+                  placeholder={t("aboutPage.trainLine1Placeholder")}
                   value={formValues.trainLine1}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -419,7 +474,7 @@ export default function CnAbout() {
                 />
                 <InputField
                   name="trainStation1"
-                  placeholder="Train station 1"
+                  placeholder={t("aboutPage.trainStation1Placeholder")}
                   value={formValues.trainStation1}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -429,7 +484,7 @@ export default function CnAbout() {
               <div className={styles.stationGroup}>
                 <InputField
                   name="railwayCompany2"
-                  placeholder="Railway company 2"
+                  placeholder={t("aboutPage.railwayCompany2Placeholder")}
                   value={formValues.railwayCompany2}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -437,7 +492,7 @@ export default function CnAbout() {
                 />
                 <InputField
                   name="trainLine2"
-                  placeholder="Train line 2"
+                  placeholder={t("aboutPage.trainLine2Placeholder")}
                   value={formValues.trainLine2}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -445,7 +500,7 @@ export default function CnAbout() {
                 />
                 <InputField
                   name="trainStation2"
-                  placeholder="Train station 2"
+                  placeholder={t("aboutPage.trainStation2Placeholder")}
                   value={formValues.trainStation2}
                   onChange={handleInputChange}
                   icon={<FaTrain size={12} />}
@@ -455,13 +510,13 @@ export default function CnAbout() {
             </div>
 
             {/* Gender Section */}
-            <div className={styles.label}>Gender</div>
+            <div className={styles.label}>{t("aboutPage.genderLabel")}</div>
             <RadioField
               name="gender"
               options={[
-                { label: "Male", value: "male" },
-                { label: "Female", value: "female" },
-                { label: "Other", value: "other" },
+                { label: t("aboutPage.male"), value: "male" },
+                { label: t("aboutPage.female"), value: "female" },
+                { label: t("aboutPage.other"), value: "other" },
               ]}
               selectedValue={formValues.gender}
               onChange={handleInputChange}
@@ -470,11 +525,11 @@ export default function CnAbout() {
             />
 
             {/* Date of Birth Section */}
-            <div className={styles.label}>Date of birth</div>
+            <div className={styles.label}>{t("aboutPage.dateOfBirthLabel")}</div>
             <div className={styles.dateGroup}>
               <SelectField
                 name="birthYear"
-                placeholder="Year"
+                placeholder={t("aboutPage.yearPlaceholder")}
                 options={Array.from({ length: 100 }, (_, i) => ({
                   label: String(new Date().getFullYear() - i),
                   value: String(new Date().getFullYear() - i),
@@ -488,7 +543,7 @@ export default function CnAbout() {
               />
               <SelectField
                 name="birthMonth"
-                placeholder="Month"
+                placeholder={t("aboutPage.monthPlaceholder")}
                 options={Array.from({ length: 12 }, (_, i) => ({
                   label: String(i + 1),
                   value: String(i + 1),
@@ -502,7 +557,7 @@ export default function CnAbout() {
               />
               <SelectField
                 name="birthDay"
-                placeholder="Day"
+                placeholder={t("aboutPage.dayPlaceholder")}
                 options={Array.from({ length: 31 }, (_, i) => ({
                   label: String(i + 1),
                   value: String(i + 1),
@@ -516,7 +571,7 @@ export default function CnAbout() {
               />
               <InputField
                 name="age"
-                placeholder="Age"
+                placeholder={t("aboutPage.agePlaceholder")}
                 value={formValues.age}
                 onChange={handleInputChange}
                 icon={<SlCalender size={12} />}
@@ -525,13 +580,13 @@ export default function CnAbout() {
             </div>
 
             {/* Language Section */}
-            <div className={styles.label}>Language</div>
+            <div className={styles.label}>{t("aboutPage.languageLabel")}</div>
             <RadioField
               name="language"
               options={[
-                { label: "Japanese", value: "japanese" },
-                { label: "English", value: "english" },
-                { label: "Both", value: "both" },
+                { label: t("aboutPage.japanese"), value: "japanese" },
+                { label: t("aboutPage.english"), value: "english" },
+                { label: t("aboutPage.both"), value: "both" },
               ]}
               selectedValue={formValues.language}
               onChange={handleInputChange}
@@ -540,12 +595,12 @@ export default function CnAbout() {
             />
 
             {/* Advertising Email Section */}
-            <div className={styles.label}>Advertising email</div>
+            <div className={styles.label}>{t("aboutPage.advertisingEmailLabel")}</div>
             <RadioField
               name="advertising"
               options={[
-                { label: "Subscribe", value: "subscribe" },
-                { label: "Unsubscribe", value: "unsubscribe" },
+                { label: t("aboutPage.subscribe"), value: "subscribe" },
+                { label: t("aboutPage.unsubscribe"), value: "unsubscribe" },
               ]}
               selectedValue={formValues.advertising}
               onChange={handleInputChange}
@@ -554,14 +609,9 @@ export default function CnAbout() {
             />
           </div>
 
-          <div style={{ marginTop: "2rem" }}>
-            <Button
-              htmlType="submit"
-              type="primary"
-              text={t("Submit")}
-              disabled
-            />
-          </div>
+          {/* <div style={{ marginTop: "2rem" }}>
+            <Button htmlType="submit" type="primary" text={t("Submit")} />
+          </div> */}
         </Form>
       </ClientSection>
       <ClientSection heading={t("aboutPage.customerInfo")}>
@@ -603,7 +653,7 @@ export default function CnAbout() {
               .filter((plan) => plan.id === activePlanId)
               .map((plan) => (
                 <>
-                  <h1 className={styles.contractHeading}>{plan.name}</h1>
+                  <h1 className={styles.contractHeading}>{t(`aboutPage.plan.contactdetails`)}</h1>
 
                   <Form
                     className={styles.customerForm}
@@ -613,189 +663,419 @@ export default function CnAbout() {
                   >
                     <div className={`${styles.formGrid}`}>
                       {/* Contract Type Section */}
-                      <div className={styles.label}>Contract Type</div>
+                      <div className={styles.label}>{t("aboutPage.contractTypeLabel")}</div>
                       <RadioField
                         name="contractType"
                         options={[
-                          { label: "General", value: "general" },
+                          { label: t("aboutPage.general"), value: "general" },
                           {
-                            label: "Affiliated corporation",
+                            label: t("aboutPage.affiliated"),
                             value: "affiliated",
                           },
                         ]}
-                        selectedValue={formValues.contractType}
-                        onChange={handleInputChange}
+                        selectedValue={contractFormValues.contractType}
+                        onChange={handleContractInputChange}
                         className={styles.radioGroup}
+                        disabled
                       />
 
                       {/* Contract Plan Section */}
-                      <div className={styles.label}>Contract Plan</div>
+                      <div className={styles.label}>{t("aboutPage.contractPlanLabel")}</div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
                           <CustomSelectField
                             name="service"
-                            placeholder="Service"
+                            placeholder={t("aboutPage.servicePlaceholder")}
+                            options={[
+                              { label: t("aboutPage.basic"), value: "basic" },
+                              { label: t("aboutPage.premium"), value: "premium" },
+                              { label: t("aboutPage.enterprise"), value: "enterprise" },
+                            ]}
                             icon={<FaGlobe size={12} />}
+                            value={contractFormValues.service}
+                            onChange={handleContractInputChange}
+                            disabled
                           />
                           <CustomSelectField
                             name="plan"
-                            placeholder="Plan"
+                            placeholder={t("aboutPage.planPlaceholder")}
+                            options={[
+                              { label: t("aboutPage.monthly"), value: "monthly" },
+                              { label: t("aboutPage.quarterly"), value: "quarterly" },
+                              { label: t("aboutPage.annual"), value: "annual" },
+                            ]}
                             icon={<FaGlobe size={12} />}
+                            value={contractFormValues.plan}
+                            onChange={handleContractInputChange}
+                            disabled
                           />
                         </div>
                       </div>
 
                       {/* Time Range Section */}
-                      <div className={styles.label}>Time Range</div>
+                      <div className={styles.label}>{t("aboutPage.timeRangeLabel")}</div>
                       <RadioField
                         name="timeRange"
                         options={[
-                          { label: "With time range", value: "with" },
-                          { label: "Without time range", value: "without" },
+                          { label: t("aboutPage.withTimeRange"), value: "with" },
+                          { label: t("aboutPage.withoutTimeRange"), value: "without" },
                         ]}
-                        selectedValue={formValues.timeRange}
-                        onChange={handleInputChange}
+                        selectedValue={contractFormValues.timeRange}
+                        onChange={handleContractInputChange}
                         className={styles.radioGroup}
+                        disabled
                       />
 
                       {/* Time Extension Section */}
-                      <div className={styles.label}>Time Extension</div>
+                      <div className={styles.label}>{t("aboutPage.timeExtensionLabel")}</div>
                       <RadioField
                         name="timeExtension"
                         options={[
-                          { label: "With time extension", value: "with" },
-                          { label: "Without time extension", value: "without" },
+                          { label: t("aboutPage.withTimeExtension"), value: "with" },
+                          { label: t("aboutPage.withoutTimeExtension"), value: "without" },
                         ]}
-                        selectedValue={formValues.timeExtension}
-                        onChange={handleInputChange}
+                        selectedValue={contractFormValues.timeExtension}
+                        onChange={handleContractInputChange}
                         className={styles.radioGroup}
+                        disabled
                       />
 
                       {/* Contract Period Section */}
-                      <div className={styles.label}>Contract Period</div>
+                      <div className={styles.label}>{t("aboutPage.contractPeriodLabel")}</div>
                       <div className={styles.fieldGroup}>
                         <InputDateField
                           name="contractPeriod"
                           value="2025-04-14 to 2025-04-19"
+                          isRange={true}
+                          startPlaceholder={t("aboutPage.startDatePlaceholder")}
+                          endPlaceholder={t("aboutPage.endDatePlaceholder")}
+                          disabled
                         />
                       </div>
 
                       {/* Day of the Week Section */}
-                      <div className={styles.label}>Day of the Week</div>
+                      <div className={styles.label}>{t("aboutPage.dayOfWeekLabel")}</div>
                       <div className={styles.fieldGroup}>
-                        <div
-                          className={styles.weekdayCheckboxes}
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns:
-                              "repeat(auto-fill, minmax(120px, 1fr))",
-                            gap: "8px",
-                          }}
-                        >
+                        <div className={styles.weekdayCheckboxes}>
                           <CheckboxField
-                            name="monday"
-                            options={[{ value: "monday", label: "Monday" }]}
-                            selectedValues={formValues.monday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                monday: values,
-                              }))
-                            }
-                          />
-                          <CheckboxField
-                            name="tuesday"
-                            options={[{ value: "tuesday", label: "Tuesday" }]}
-                            selectedValues={formValues.tuesday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                tuesday: values,
-                              }))
-                            }
-                          />
-                          <CheckboxField
-                            name="wednesday"
+                            name="weekdays"
                             options={[
-                              { value: "wednesday", label: "Wednesday" },
+                              { value: "monday", label: t("aboutPage.monday") },
+                              { value: "tuesday", label: t("aboutPage.tuesday") },
+                              { value: "wednesday", label: t("aboutPage.wednesday") },
+                              { value: "thursday", label: t("aboutPage.thursday") },
+                              { value: "friday", label: t("aboutPage.friday") },
+                              { value: "saturday", label: t("aboutPage.saturday") },
+                              { value: "sunday", label: t("aboutPage.sunday") },
                             ]}
-                            selectedValues={formValues.wednesday}
+                            selectedValues={contractFormValues.weekdays}
                             onChange={(values) =>
-                              setFormValues((prev) => ({
+                              setContractFormValues((prev) => ({
                                 ...prev,
-                                wednesday: values,
+                                weekdays: values,
                               }))
                             }
-                          />
-                          <CheckboxField
-                            name="thursday"
-                            options={[{ value: "thursday", label: "Thursday" }]}
-                            selectedValues={formValues.thursday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                thursday: values,
-                              }))
-                            }
-                          />
-                          <CheckboxField
-                            name="friday"
-                            options={[{ value: "friday", label: "Friday" }]}
-                            selectedValues={formValues.friday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                friday: values,
-                              }))
-                            }
-                          />
-                          <CheckboxField
-                            name="saturday"
-                            options={[{ value: "saturday", label: "Saturday" }]}
-                            selectedValues={formValues.saturday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                saturday: values,
-                              }))
-                            }
-                          />
-                          <CheckboxField
-                            name="sunday"
-                            options={[{ value: "sunday", label: "Sunday" }]}
-                            selectedValues={formValues.sunday}
-                            onChange={(values) =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                sunday: values,
-                              }))
-                            }
+                            disabled
                           />
                         </div>
                       </div>
 
                       {/* Time Section */}
-                      <div className={styles.label}>Time</div>
+                      <div className={styles.label}>{t("aboutPage.timeLabel")}</div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
-                          <InputField
-                            name="startTime"
-                            placeholder="Start time"
-                            icon={<SlCalender size={12} />}
-                          />
-                          <div className={styles.timeConnector}>~</div>
-                          <InputField
-                            name="endTime"
-                            placeholder="End time"
-                            icon={<SlCalender size={12} />}
-                          />
+                          <div className="d-flex justify-content-between align-items-center ">
+                            <InputField
+                              name="startTime"
+                              placeholder={t("aboutPage.startTimePlaceholder")}
+                              icon={<SlCalender size={12} />}
+                              type="time"
+                              value={contractFormValues.startTime}
+                              onChange={handleContractInputChange}
+                              disabled
+                            />
+                            <span className={styles.timeConnector}>~</span>
+                          </div>
+                          <div className="d-flex justify-content-between align-items-center ">
+                            <span className={styles.timeConnector}></span>
+                            <InputField
+                              name="endTime"
+                              placeholder={t("aboutPage.endTimePlaceholder")}
+                              icon={<SlCalender size={12} />}
+                              type="time"
+                              value={contractFormValues.endTime}
+                              onChange={handleContractInputChange}
+                              disabled
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                    {/* <div style={{ marginTop: "2rem" }}>
+                      <Button
+                        htmlType="submit"
+                        type="primary"
+                        text={t("Submit")}
+                      />
+                    </div> */}
+                  </Form>
+                  <h1 className={styles.contractHeading}>{t("aboutPage.plan.billingInfo")}</h1>
+                  <Form
+                    className={styles.customerForm}
+                    onSubmit={handleBillingSubmit}
+                    errors={billingFormErrors}
+                    setErrors={setBillingFormErrors}
+                  >
+                    <div className={`${styles.formGrid}`}>
+                      {/* Name Section */}
+                      <div className={styles.label}>{t("aboutPage.nameLabel")}</div>
+                      <div className={styles.fieldGroup}>
+                        <div className={styles.fieldRow}>
+                          <InputField
+                            name="firstName"
+                            placeholder={t("aboutPage.firstNamePlaceholder")}
+                            value={billingFormValues.firstName}
+                            onChange={handleBillingInputChange}
+                            validations={[{ type: "required" }]}
+                            errorText={
+                              billingFormErrors["firstName"] || undefined
+                            }
+                            icon={<FaUser size={12} />}
+                            disabled
+                          />
+                          <InputField
+                            name="fullNameKatakana"
+                            placeholder={t("aboutPage.fullNameKatakanaPlaceholder")}
+                            value={billingFormValues.fullNameKatakana}
+                            onChange={handleBillingInputChange}
+                            validations={[{ type: "required" }]}
+                            errorText={
+                              billingFormErrors["fullNameKatakana"] || undefined
+                            }
+                            icon={<FaUser size={12} />}
+                            disabled
+                          />
+                        </div>
+                      </div>
+
+                      {/* Phone Section */}
+                      <div className={styles.label}>{t("aboutPage.phoneLabel")}</div>
+                      <div className={styles.fieldGroup}>
+                        <InputField
+                          name="phone1"
+                          placeholder={t("aboutPage.phone1Placeholder")}
+                          value={billingFormValues.phone1}
+                          onChange={handleBillingInputChange}
+                          validations={[{ type: "required" }]}
+                          errorText={billingFormErrors["phone1"] || undefined}
+                          icon={<FaPhone size={12} />}
+                          disabled
+                        />
+                        <InputField
+                          name="phone2"
+                          placeholder={t("aboutPage.phone2Placeholder")}
+                          value={billingFormValues.phone2}
+                          onChange={handleBillingInputChange}
+                          icon={<FaPhone size={12} />}
+                          disabled
+                        />
+                        <InputField
+                          name="phone3"
+                          placeholder={t("aboutPage.phone3Placeholder")}
+                          value={billingFormValues.phone3}
+                          onChange={handleBillingInputChange}
+                          icon={<FaPhone size={12} />}
+                          disabled
+                        />
+                      </div>
+
+                      {/* Email Section */}
+                      <div className={styles.label}>{t("aboutPage.emailLabel")}</div>
+                      <div className={styles.fieldGroup}>
+                        <InputField
+                          name="email1"
+                          placeholder={t("aboutPage.email1Placeholder")}
+                          type="email"
+                          value={billingFormValues.email1}
+                          onChange={handleBillingInputChange}
+                          validations={[
+                            { type: "required" },
+                            { type: "email" },
+                          ]}
+                          errorText={billingFormErrors["email1"] || undefined}
+                          icon={<FaEnvelope size={12} />}
+                          disabled
+                        />
+                        <InputField
+                          name="email2"
+                          placeholder={t("aboutPage.email2Placeholder")}
+                          type="email"
+                          value={billingFormValues.email2}
+                          onChange={handleBillingInputChange}
+                          validations={[{ type: "email" }]}
+                          errorText={billingFormErrors["email2"] || undefined}
+                          icon={<FaEnvelope size={12} />}
+                          disabled
+                        />
+                      </div>
+
+                      {/* Address Section */}
+                      <div className={styles.label}>{t("aboutPage.addressLabel")}</div>
+                      <div className={styles.fieldGroup}>
+                        <div className={styles.fieldRow}>
+                          <InputField
+                            name="postalCode"
+                            placeholder={t("aboutPage.postalCodePlaceholder")}
+                            value={billingFormValues.postalCode}
+                            onChange={handleBillingInputChange}
+                            validations={[{ type: "required" }]}
+                            errorText={
+                              billingFormErrors["postalCode"] || undefined
+                            }
+                            icon={<FaHome size={12} />}
+                            disabled
+                          />
+                          <SelectField
+                            name="prefecture"
+                            placeholder={t("aboutPage.prefecturePlaceholder")}
+                            options={[
+                              { label: "Hokkaido", value: "hokkaido" },
+                              { label: "Aomori", value: "aomori" },
+                              { label: "Iwate", value: "iwate" },
+                              { label: "Miyagi", value: "miyagi" },
+                            ]}
+                            value={billingFormValues.prefecture}
+                            onChange={handleBillingInputChange}
+                            validations={[{ type: "required" }]}
+                            errorText={
+                              billingFormErrors["prefecture"] || undefined
+                            }
+                            icon={<FaHome size={12} />}
+                            disabled
+                          />
+                        </div>
+                        <InputField
+                          name="address1"
+                          placeholder={t("aboutPage.address1Placeholder")}
+                          value={billingFormValues.address1}
+                          onChange={handleBillingInputChange}
+                          validations={[{ type: "required" }]}
+                          errorText={billingFormErrors["address1"] || undefined}
+                          icon={<FaHome size={12} />}
+                          disabled
+                        />
+                        <InputField
+                          name="address2"
+                          placeholder={t("aboutPage.address2Placeholder")}
+                          value={billingFormValues.address2}
+                          onChange={handleBillingInputChange}
+                          icon={<FaHome size={12} />}
+                          disabled
+                        />
+                        <InputField
+                          name="building"
+                          placeholder={t("aboutPage.buildingPlaceholder")}
+                          value={billingFormValues.building}
+                          onChange={handleBillingInputChange}
+                          icon={<FaHome size={12} />}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    {/* <div style={{ marginTop: "2rem" }}>
+                      <Button
+                        htmlType="submit"
+                        type="primary"
+                        text={t("Submit")}
+                      />
+                    </div> */}
+                  </Form>
+                  <h1 className={styles.contractHeading}>{t("aboutPage.plan.paymentInfo")}</h1>
+                  <Form
+                    className={styles.customerForm}
+                    onSubmit={handlePaymentSubmit}
+                    errors={{}}
+                    setErrors={() => {}}
+                  >
+                    <div className={`${styles.formGrid}`}>
+                      {/* Payment Method Section */}
+                      <div className={styles.label}>{t("aboutPage.paymentMethodLabel")}</div>
+                      <RadioField
+                        name="paymentMethod"
+                        options={[
+                          { label: t("aboutPage.bank"), value: "bank" },
+                          { label: t("aboutPage.credit"), value: "credit" },
+                          { label: t("aboutPage.invoice"), value: "invoice" },
+                          {
+                            label: t("aboutPage.convenience"),
+                            value: "convenience",
+                          },
+                        ]}
+                        selectedValue={paymentFormValues.paymentMethod}
+                        onChange={handlePaymentInputChange}
+                        className={styles.radioGroup}
+                        disabled
+                      />
+                    </div>
+                    {/* <div style={{ marginTop: "2rem" }}>
+                      <Button
+                        htmlType="submit"
+                        type="primary"
+                        text={t("Submit")}
+                      />
+                    </div> */}
                   </Form>
                 </>
               ))}
           </div>
+        </div>
+      </ClientSection>
+
+      {/* key in possession */}
+      <ClientSection heading={t("aboutPage.keyPossession")}>
+        <div className={styles.announcementContainer}>
+          <Accordion page={1} totalPages={1} onPageChange={() => {}}>
+            {POSSESSION.map((item, idx) => (
+              <AccordionItem key={idx} heading={item.head} label="">
+                <div className={styles.accordionContent}>
+                  <ImageLabel
+                    icon={<FaRegAddressCard />}
+                    label={t("aboutPage.keyName")}
+                    className={styles.accordionLabel}
+                  />
+                  <p>{item.head}</p>
+
+                  <ImageLabel
+                    icon={<FaRegAddressCard />}
+                    label={t("aboutPage.dateOfReceived")}
+                    className={styles.accordionLabel}
+                  />
+                  <p>{item.dateOfRecieved}</p>
+
+                  <ImageLabel
+                    icon={<FaRegAddressCard />}
+                    label={t("aboutPage.dateOfReturn")}
+                    className={styles.accordionLabel}
+                  />
+                  <p>{item.dateOfReturn}</p>
+
+                  <ImageLabel
+                    icon={<FaRegAddressCard />}
+                    label={t("aboutPage.staffName")}
+                    className={styles.accordionLabel}
+                  />
+                  <p>{item.nameStaff}</p>
+
+                  <ImageLabel
+                    icon={<FaRegAddressCard />}
+                    label={t("aboutPage.receiptOfCustody")}
+                    className={styles.accordionLabel}
+                  />
+                  <p>{item.receiptOfCustody}</p>
+                </div>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </ClientSection>
     </div>

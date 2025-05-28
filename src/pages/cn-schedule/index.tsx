@@ -11,6 +11,11 @@ import { GiAlarmClock } from "react-icons/gi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { getPlansPage, PAGE_SIZE, PlansPage } from "../index";
 import { useRouter } from "next/router";
+import { Form } from "@/components/form/form";
+import RadioField from "@/components/radio-field/radio-field";
+import InputDateField from "@/components/input-date/input-date";
+import CustomSelectField from "@/components/custom-select/custom-select";
+import InputField from "@/components/input-field/input-field";
 
 export default function CnSchedule() {
   const { t } = useLanguage();
@@ -19,6 +24,14 @@ export default function CnSchedule() {
     getPlansPage(1, PAGE_SIZE)
   );
   const router = useRouter();
+
+  // Form state to track form values
+  const [formValues, setFormValues] = React.useState({
+    service: "",
+    plan: "",
+    contract: "",
+    date: "",
+  });
 
   // Tab state from query param
   const tab = router.query.tab === "past" ? "past" : "upcoming";
@@ -38,8 +51,23 @@ export default function CnSchedule() {
     setPlans(getPlansPage(page, PAGE_SIZE));
   }, [page]);
 
+  const handleFormSubmit = () => {
+    // Check if at least one filter has a value
+    const hasValue = Object.values(formValues).some(
+      (value) => value !== undefined && value !== null && value !== ""
+    );
+
+    if (!hasValue) {
+      alert(t("schedulePage.alert.selectOneFilter"));
+      return;
+    }
+
+    // TODO: Add your filter logic here
+    console.log("Form values:", formValues);
+  };
+
   return (
-    <ClientSection heading={t("clientDashboard.schedule")}>  
+    <ClientSection heading={t("clientDashboard.schedule")}>
       <div className={Style.tabsWrapper}>
         <Button
           className={tab === "upcoming" ? Style.activeTab : Style.tab}
@@ -54,6 +82,63 @@ export default function CnSchedule() {
           type="secondary"
         />
       </div>
+      <Form className={Style.formGrid} onSubmit={handleFormSubmit}>
+        <CustomSelectField
+          label={t("schedulePage.form.service")}
+          name="service"
+          value={formValues.service}
+          onChange={(e) =>
+            setFormValues((prev) => ({ ...prev, service: e.target.value }))
+          }
+          options={[
+            { label: t("aboutPage.basic"), value: "basic" },
+            { label: t("aboutPage.premium"), value: "premium" },
+            { label: t("aboutPage.enterprise"), value: "enterprise" },
+          ]}
+        />
+        <CustomSelectField
+          label={t("schedulePage.form.plan")}
+          name="plan"
+          value={formValues.plan}
+          onChange={(e) =>
+            setFormValues((prev) => ({ ...prev, plan: e.target.value }))
+          }
+          options={[
+            { label: t("aboutPage.basic"), value: "basic" },
+            { label: t("aboutPage.premium"), value: "premium" },
+            { label: t("aboutPage.enterprise"), value: "enterprise" },
+          ]}
+        />
+        <CustomSelectField
+          label={t("schedulePage.form.contract")}
+          name="contract"
+          value={formValues.contract}
+          onChange={(e) =>
+            setFormValues((prev) => ({ ...prev, contract: e.target.value }))
+          }
+          options={[
+            { label: t("aboutPage.basic"), value: "basic" },
+            { label: t("aboutPage.premium"), value: "premium" },
+            { label: t("aboutPage.enterprise"), value: "enterprise" },
+          ]}
+        />
+
+        <div className={Style.fieldGroup}>
+          <InputDateField
+            label={t("schedulePage.form.date")}
+            name="date"
+            value="2025-04-14 to 2025-04-19"
+            isRange={true}
+            startPlaceholder={t("schedulePage.form.startDatePlaceholder")}
+            endPlaceholder={t("schedulePage.form.endDatePlaceholder")}
+            icon={<FaRegAddressCard />}
+          />
+        </div>
+
+        <div className={Style.formButton}>
+          <Button htmlType="submit" type="primary" text={t("schedulePage.form.display")} />
+        </div>
+      </Form>
       {tab === "upcoming" && (
         <Accordion
           page={page}
@@ -102,9 +187,7 @@ export default function CnSchedule() {
         </Accordion>
       )}
       {tab === "past" && (
-        <div className={Style.tabContent}>
-          {t("Tab 2 content goes here.")}
-        </div>
+        <div className={Style.tabContent}>{t("schedulePage.tab2Content")}</div>
       )}
     </ClientSection>
   );

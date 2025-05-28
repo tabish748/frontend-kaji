@@ -9,15 +9,169 @@
     "publication": "Publication",
     "detail": "Detail"
   },
+  "aboutPage": {
+    "customerInfo": "CUSTOMER INFORMATION",
+    "keyPossession": "KEY IN OUR POSSESSION",
+    "description": "Chez Vous is a premium home service company in Japan, providing high-quality cleaning and concierge services. Our mission is to enhance the quality of life for our clients by offering exceptional service tailored to their needs.",
+    "nameLabel": "Name",
+    "firstNamePlaceholder": "First Name",
+    "fullNameKatakanaPlaceholder": "Full name in Katakana",
+    "phoneLabel": "Phone",
+    "phone1Placeholder": "Phone 1",
+    "phone2Placeholder": "Phone 2",
+    "phone3Placeholder": "Phone 3",
+    "emailLabel": "E-mail",
+    "email1Placeholder": "Email 1",
+    "email2Placeholder": "Email 2",
+    "addressLabel": "Address",
+    "postalCodePlaceholder": "Postal code",
+    "prefecturePlaceholder": "Prefecture",
+    "address1Placeholder": "Address 1",
+    "address2Placeholder": "Address 2",
+    "buildingPlaceholder": "Building",
+    "trainStationLabel": "Train Station",
+    "railwayCompany1Placeholder": "Railway company 1",
+    "trainLine1Placeholder": "Train line 1",
+    "trainStation1Placeholder": "Train station 1",
+    "railwayCompany2Placeholder": "Railway company 2",
+    "trainLine2Placeholder": "Train line 2",
+    "trainStation2Placeholder": "Train station 2",
+    "genderLabel": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "dateOfBirthLabel": "Date of birth",
+    "yearPlaceholder": "Year",
+    "monthPlaceholder": "Month",
+    "dayPlaceholder": "Day",
+    "agePlaceholder": "Age",
+    "languageLabel": "Language",
+    "japanese": "Japanese",
+    "english": "English",
+    "both": "Both",
+    "advertisingEmailLabel": "Advertising email",
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "contractTypeLabel": "Contract Type",
+    "general": "General",
+    "affiliated": "Affiliated corporation",
+    "contractPlanLabel": "Contract Plan",
+    "servicePlaceholder": "Service",
+    "basic": "Basic",
+    "premium": "Premium",
+    "enterprise": "Enterprise",
+    "planPlaceholder": "Plan",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "annual": "Annual",
+    "timeRangeLabel": "Time Range",
+    "withTimeRange": "With time range",
+    "withoutTimeRange": "Without time range",
+    "timeExtensionLabel": "Time Extension",
+    "withTimeExtension": "With time extension",
+    "withoutTimeExtension": "Without time extension",
+    "contractPeriodLabel": "Contract Period",
+    "startDatePlaceholder": "Start date",
+    "endDatePlaceholder": "End date",
+    "dayOfWeekLabel": "Day of the Week",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "timeLabel": "Time",
+    "startTimePlaceholder": "Start time",
+    "endTimePlaceholder": "End time",
+    "billingInfoHeading": "BILLING INFORMATION",
+    "paymentInfoHeading": "PAYMENT INFORMATION",
+    "paymentMethodLabel": "Payment Method",
+    "bank": "Bank Transfer",
+    "credit": "Credit Card",
+    "invoice": "Invoice Payment",
+    "convenience": "Convenience Store Payment",
+    "keyName": "Key Name",
+    "dateOfReceived": "Date of Received",
+    "dateOfReturn": "Date of Return",
+    "staffName": "Staff Name",
+    "receiptOfCustody": "Receipt of Custody",
+    "plan": {
+      "contactdetails": "Contact details",
+      "billingInfo": "BILLING INFORMATION",
+      "paymentInfo": "PAYMENT INFORMATION"
+    }
+  },
   "schedulePage": {
     "tabs": {
       "upcomingSchedule": "Upcoming schedule",
       "pastSchedule": "Past schedules and reports"
-    }
+    },
+    "form": {
+      "service": "Service",
+      "plan": "Plan",
+      "contract": "Contract",
+      "date": "Date",
+      "startDatePlaceholder": "Start date",
+      "endDatePlaceholder": "End date",
+      "display": "Display"
+    },
+    "alert": {
+      "selectOneFilter": "Please select at least one filter."
+    },
+    "tab2Content": "Tab 2 content goes here."
   },
-  "aboutPage": {
-    "customerInfo": "CUSTOMER INFORMATION",
-    "description": "Chez Vous is a premium home service company in Japan, providing high-quality cleaning and concierge services. Our mission is to enhance the quality of life for our clients by offering exceptional service tailored to their needs."
+  "invoicePage": {
+    "invoice": "Invoice",
+    "tabs": {
+      "billingCurr": "Billing for the current month",
+      "billingPrev": "Billing for previous months"
+    },
+    "form": {
+      "contract": "Contract",
+      "date": "Date",
+      "startDatePlaceholder": "Start date",
+      "endDatePlaceholder": "End date",
+      "display": "Display"
+    },
+    "alert": {
+      "selectOneFilter": "Please select at least one filter."
+    },
+    "tab2Content": "Tab 2 content goes here."
+  },
+  "quotationPage": {
+    "quotation": "Quotation",
+    "tabs": {
+      "billingCurr": "Quotations for the current month",
+      "billingPrev": "Quotations for previous months"
+    },
+    "form": {
+      "date": "Date",
+      "startDatePlaceholder": "Start date",
+      "endDatePlaceholder": "End date",
+      "display": "Display"
+    },
+    "alert": {
+      "selectOneFilter": "Please select at least one filter."
+    },
+    "tab2Content": "Tab 2 content goes here."
+  },
+  "announcementPage": {
+    "announcement": "Announcement",
+    "tabs": {
+      "current": "Announcements for the current month",
+      "previous": "Announcements for previous months"
+    },
+    "form": {
+      "date": "Date",
+      "startDatePlaceholder": "Start date",
+      "endDatePlaceholder": "End date",
+      "display": "Display"
+    },
+    "alert": {
+      "selectOneFilter": "Please select at least one filter."
+    },
+    "tab2Content": "Tab 2 content goes here."
   },
   "email": "Email",
   "password": "Password",
