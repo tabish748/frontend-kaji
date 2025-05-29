@@ -994,8 +994,8 @@ export default function CnAbout() {
                   <Form
                     className={styles.customerForm}
                     onSubmit={handlePaymentSubmit}
-                    errors={{}}
-                    setErrors={() => {}}
+                    setErrors={setPaymentFormErrors}
+                    errors={paymentFormErrors}
                   >
                     <div className={`${styles.formGrid}`}>
                       {/* Payment Method Section */}

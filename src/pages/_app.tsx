@@ -9,7 +9,7 @@ import DashboardLayout from '@/components/dashboard-layout/dashboard-layout';
 import { useRouter } from 'next/router';
 import GlobalLoader from '@/components/global-loader/global-loader';
 import LayoutSelector from '@/components/dashboard-layout/dashboard-selector';
-
+import AuthMiddleware from '@/components/auth-middleware/auth-middleware';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -35,17 +35,14 @@ export default function App({ Component, pageProps }: AppProps) {
       <LanguageProvider>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-         
           <meta name="csrf-token" content="your-csrf-token-here" />
         </Head>
-        <GlobalLoader isLoading={loading} /> {/* Add this line */}
-        {(router.pathname === '/login' || router.pathname === '/sign-up') ? (
-          <Component {...pageProps} />
-        ) : (
+        <GlobalLoader isLoading={loading} />
+        <AuthMiddleware>
           <LayoutSelector>
             <Component {...pageProps} />
           </LayoutSelector>
-        )}
+        </AuthMiddleware>
       </LanguageProvider>
     </Provider>
   );

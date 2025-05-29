@@ -1,0 +1,103 @@
+@import "../../styles/base/_mixins.scss";
+@import "../../styles/base/_variables.scss";
+@import "../../styles/base/_colors.scss";
+
+.gridTable {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  border-radius: 4px;
+  margin-top: 24px;
+  font-family: inherit;
+  border: 1px solid $border;
+  gap: 1px;
+  overflow: hidden;
+
+  @include respond-to("medium") {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: none;
+    background: none;
+    overflow: visible;
+  }
+}
+
+.header {
+  font-size: 1rem;
+  background: $secondary-background-color;
+  font-weight: 600;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid $border;
+  background-color: $secondary-background-color;
+
+  @include respond-to("medium") {
+    display: none;
+  }
+}
+
+.header.cell {
+  background-color: transparent;
+}
+
+.row {
+  display: contents;
+
+  @include respond-to("medium") {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid $border;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+
+    .cell {
+      border-bottom: 1px solid $border;
+      min-height: auto;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .cell:first-child {
+    font-weight: 600;
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-size: 16px;
+  min-height: 72px;
+  background-color: white;
+  border-bottom: 1px solid $border;
+
+  &:not(:last-child) {
+    border-right: 1px solid $border;
+  }
+
+  @include respond-to("medium") {
+    padding: 16px;
+    border: none;
+    text-align: left;
+    justify-content: flex-start;
+
+    &:not(:last-child) {
+      border-right: none;
+    }
+
+    &[data-label]:before {
+      content: attr(data-label);
+      width: 40%;
+      font-weight: 600;
+      color: #666;
+    }
+  }
+}

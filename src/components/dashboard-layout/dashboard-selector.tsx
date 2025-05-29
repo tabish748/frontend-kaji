@@ -2,6 +2,11 @@
 import ClientLayout from "./client-layout";
 import DashboardLayout from "./dashboard-layout";
 import { useEffect, useState } from "react";
+import AuthMiddleware from "../auth-middleware/auth-middleware";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+import { useRouter } from "next/router";
+import { PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES } from "@/libs/constants";
 
 interface LayoutSelectorProps {
   children: React.ReactNode;
@@ -9,17 +14,48 @@ interface LayoutSelectorProps {
 
 const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   const [role, setRole] = useState<string | null>(null);
+  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const isLoggedIn = true;
+  const router = useRouter();
+  const currentPath = router.pathname;
+
+  const isClientRoute = CLIENT_ROUTES.includes(currentPath);
+  const isAdminRoute = [...CLIENT_ROUTES, ...ADMIN_ROUTES].includes(currentPath);
+  const isPublicRoute = PUBLIC_ROUTES.includes(currentPath);
 
   useEffect(() => {
-    // Example: get role from localStorage or Redux
-    const userRole = localStorage.getItem("loggedInUserRoleId");
-    setRole("client");
-  }, []);
+    const loggedInUserRole = localStorage.getItem("loggedInUserRoleId");
+    setRole(userRole || "client");
+  }, [userRole]);
 
-  if (role === "client") {
-    return <ClientLayout>{children}</ClientLayout>;
+  // Redirect to /unauthenticated if route is not allowed
+  useEffect(() => {
+    if (!isPublicRoute && !isClientRoute && !isAdminRoute) {
+      router.replace('/unauthenticated');
+    }
+  }, [currentPath, isPublicRoute, isClientRoute, isAdminRoute, router]);
+
+  // Public pages: no layout
+  if (isPublicRoute) {
+    return <>{children}</>;
   }
-  return <DashboardLayout>{children}</DashboardLayout>;
+
+  // No layout for /unauthenticated
+  if (currentPath === '/unauthenticated') {
+    return <>{children}</>;
+  }
+
+  return (
+    <AuthMiddleware>
+      {role === "client" && isLoggedIn && isClientRoute ? (
+        <ClientLayout>{children}</ClientLayout>
+      ) : role === "admin" && isLoggedIn && isAdminRoute ? (
+        <DashboardLayout>{children}</DashboardLayout>
+      ) : (
+        <>{children}</>
+      )}
+    </AuthMiddleware>
+  );
 };
 
 export default LayoutSelector;

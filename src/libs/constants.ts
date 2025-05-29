@@ -4,3 +4,29 @@
 // 3	Staff	スタッフ
 
 // export const FINANCE_EMPLOYEE = "finance_employee"
+
+export const PUBLIC_ROUTES = ['/login', '/sign-up', '/404', '/unauthenticated'];
+
+export const CLIENT_ROUTES = [
+  "/",
+  "/cn-schedule",
+  "/cn-about",
+  "/cn-invoice",
+  "/cn-quotation",
+  "/cn-announcement",
+  "/cn-request",
+  "/cn-request/update-paymentMethod",
+  "/cn-changepassword"
+];
+
+export const ADMIN_ROUTES = [
+  "/settings",
+  "/projectLegal",
+  "/projectConfirmed",
+  "/legalDashboard",
+  "/insurance",
+  "/employees",
+  "/inquiry",
+  "/interview",
+  "/customer"
+];

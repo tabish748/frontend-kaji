@@ -16,7 +16,7 @@
   overflow: auto;
 
   > div:nth-child(2n-1) {
-    background: #eaedf0;
+    background: $secondary-background-color;
     border: 1px solid $border;
   }
 

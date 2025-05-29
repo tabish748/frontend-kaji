@@ -185,7 +185,15 @@
   "quotation": "Quotation",
   "announcement": "Announcement",
   "request": "Request",
-  "changePassword": "Change Password",
+  "changePasswordPage": {
+    "current": "Current Password",
+    "new": "New Password",
+    "confirm": "Confirm New Password",
+    "currentRequired": "Current password is required.",
+    "newRequired": "New password is required.",
+    "notMatch": "Passwords do not match.",
+    "title": "Change Password"
+  },
   "contact": {
     "heading": "Contact with us",
     "title": "Contact",
@@ -205,7 +213,8 @@
   "buttons": {
     "rescheduling": "Rescheduling",
     "cancel": "Cancel",
-    "pafDownload": "PDF Download"
+    "pafDownload": "PDF Download",
+    "submit": "Submit"
   },
   "error": {
     "invalidEmail": "Invalid email address",
@@ -219,5 +228,10 @@
     "minDate": "Date must be on or after {date}.",
     "alphanumeric": "Please enter alphanumeric characters only.",
     "default": "Field"
+  },
+  "requestPage": {
+    "title": "Request",
+    "action": "Action",
+    "detail": "Detail"
   }
 }
