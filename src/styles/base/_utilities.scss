@@ -1,5 +1,7 @@
 @import "./mixins";
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap");
+@import "./variables";
+@import "./colors";
+@import url("https://fonts.googleapis.com/css2?family=ubuntu:wght@300;400;500;600;700;900&display=swap");
 
 /* utilities.scss */
 html {
@@ -37,6 +39,11 @@ $spacing-unit: 8px;
 
   .p-#{$i} {
     padding: $spacing-unit * $i !important;
+  }
+
+  .px-#{$i} {
+    padding-left: $spacing-unit * $i !important;
+    padding-right: $spacing-unit * $i !important;
   }
 
   .pt-#{$i} {
@@ -1030,4 +1037,25 @@ td.month-border {
 
 th.month-border {
   border-right: thin solid #d3d0d0;
+}
+
+.cn-seperator-heading {
+  @include flex-center;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 1.25rem 0;
+  margin-bottom: 1rem;
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  text-transform: uppercase;
+}
+
+.cn-seperator-heading.primary {
+  background-color: $blue-light;
+  color: $primary;
+}
+
+.cn-seperator-heading.danger {
+  background-color: $danger-light;
+  color: $danger;
 }

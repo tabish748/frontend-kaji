@@ -7,6 +7,8 @@ interface RadioOption {
   value: string | number;
 }
 
+type GridColumnCount = 1 | 2 | 3 | 4 | 5 | 6;
+
 export interface RadioFieldProps {
   label?: string; // label for the entire group
   options: RadioOption[]; // array of options
@@ -16,6 +18,9 @@ export interface RadioFieldProps {
   className?: string; // additional class names
   disabled?: boolean; // disable the radio group
   hidden?: boolean; // hidden the radio group
+  columnsLg?: GridColumnCount; // number of columns for large screens
+  columnsMd?: GridColumnCount; // number of columns for medium screens
+  columnsSm?: GridColumnCount; // number of columns for small screens
 }
 
 const RadioField: React.FC<RadioFieldProps> = ({
@@ -27,22 +32,28 @@ const RadioField: React.FC<RadioFieldProps> = ({
   className = "",
   disabled = false,
   hidden = false,
+  columnsLg = 4, // default to 2 columns for large screens
+  columnsMd = 2, // default to 2 columns for medium screens
+  columnsSm = 1, // default to 2 columns for small screens
 }) => {
   const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
   const isClient = userRole === "client";
+
+  const responsiveClass =
+    Style[`responsiveCols_${columnsLg}_${columnsMd}_${columnsSm}`];
 
   return (
     <div className={className} style={{ display: hidden ? "none" : "unset" }}>
       {label && (
         <div
-          className={
-            `${isClient ? Style.clientRadioLabel : Style.adminRadioLabel} d-block`
-          }
+          className={`${
+            isClient ? Style.clientRadioLabel : Style.adminRadioLabel
+          } d-block`}
         >
           {label}
         </div>
       )}
-      <div className="d-flex gap-1 " style={{ flexWrap: "wrap" }}>
+      <div className={`${Style.radioGrid} ${responsiveClass}`}>
         {options.map((option, index) => (
           <div key={index}>
             <label

@@ -254,13 +254,6 @@ export default function CnAbout() {
     }));
   };
 
-  const handleCheckboxChange = (name: string, value: boolean) => {
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   // Handle contract tab change
   const handleContractChange = (contractId: number) => {
     setActiveContractId(contractId);

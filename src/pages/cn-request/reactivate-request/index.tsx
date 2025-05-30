@@ -11,46 +11,48 @@ interface PaymentFormValues {
   paymentMethod: string;
 }
 
-export default function UpdatePaymentMethod() {
+export default function ReactivateRequest() {
   const { t } = useLanguage();
 
   // Static previous value (as if fetched from backend)
   const prevPaymentValues: PaymentFormValues = {
-    paymentMethod: "credit",
+    paymentMethod: "active",
   };
 
   // Editable current value
   const [formValues, setFormValues] = useState<PaymentFormValues>({
-    paymentMethod: "credit",
+    paymentMethod: "active",
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string | null>>(
     {}
   );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-    setFormErrors({});
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = () => {
     if (formValues.paymentMethod === prevPaymentValues.paymentMethod) {
-      alert("Please select a different payment method than the previous one.");
-      setFormErrors({
-        paymentMethod:
-          "New payment method must be different from the previous one.",
-      });
+      alert("Please select a different value");
+
       return;
     }
 
     alert(`Payment method updated to: ${formValues.paymentMethod}`);
-    setFormErrors({});
   };
 
   return (
-    <ClientSection heading={t("changePaymentMethodPage.heading")}>
-      <h3 className={styles.subHeading}>{t("changePaymentMethodPage.subHeading")}</h3>
+    <ClientSection heading={t("reactivateRequestPage.heading")}>
+      <h3 className={styles.subHeading}>
+        {t("reactivateRequestPage.subHeading")}
+      </h3>
       {/* Previous Info */}
       <h1 className="cn-seperator-heading primary">
         {t("changePaymentMethodPage.prev")}
@@ -62,21 +64,20 @@ export default function UpdatePaymentMethod() {
         setErrors={() => {}}
       >
         <div className={styles.formGrid}>
-          <div className={styles.label}>
-            {t("aboutPage.paymentMethodLabel")}
-          </div>
+          <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
           <RadioField
-            name="paymentMethodReadOnly"
+            name="ReactivateReadOnly"
             options={[
-              { label: t("aboutPage.bank"), value: "bank" },
-              { label: t("aboutPage.credit"), value: "credit" },
-              { label: t("aboutPage.invoice"), value: "invoice" },
-              { label: t("aboutPage.convenience"), value: "convenience" },
+              { label: t("reactivateRequestPage.active"), value: "active" },
+              {
+                label: t("reactivateRequestPage.suspended"),
+                value: "suspended",
+              },
             ]}
             selectedValue={prevPaymentValues.paymentMethod}
             onChange={() => {}}
             className={styles.radioGroup}
-            columnsLg={4}
+            columnsLg={2}
             columnsMd={2}
             columnsSm={1}
             disabled
@@ -95,21 +96,20 @@ export default function UpdatePaymentMethod() {
         setErrors={setFormErrors}
       >
         <div className={styles.formGrid}>
-          <div className={styles.label}>
-            {t("aboutPage.paymentMethodLabel")}
-          </div>
+          <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
           <RadioField
             name="paymentMethod"
             options={[
-              { label: t("aboutPage.bank"), value: "bank" },
-              { label: t("aboutPage.credit"), value: "credit" },
-              { label: t("aboutPage.invoice"), value: "invoice" },
-              { label: t("aboutPage.convenience"), value: "convenience" },
+              { label: t("reactivateRequestPage.active"), value: "active" },
+              {
+                label: t("reactivateRequestPage.suspended"),
+                value: "suspended",
+              },
             ]}
             selectedValue={formValues.paymentMethod}
             onChange={handleChange}
             className={styles.radioGroup}
-            columnsLg={4}
+            columnsLg={2}
             columnsMd={2}
             columnsSm={1}
           />
@@ -129,6 +129,6 @@ export default function UpdatePaymentMethod() {
 }
 
 // ⬇ Layout integration
-UpdatePaymentMethod.getLayout = function getLayout(page: React.ReactElement) {
+ReactivateRequest.getLayout = function getLayout(page: React.ReactElement) {
   return <SubRouteLayout>{page}</SubRouteLayout>;
 };

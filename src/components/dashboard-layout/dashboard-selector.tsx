@@ -20,7 +20,9 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   const currentPath = router.pathname;
 
   const isClientRoute = CLIENT_ROUTES.includes(currentPath);
-  const isAdminRoute = [...CLIENT_ROUTES, ...ADMIN_ROUTES].includes(currentPath);
+  const isAdminRoute = [...CLIENT_ROUTES, ...ADMIN_ROUTES].includes(
+    currentPath
+  );
   const isPublicRoute = PUBLIC_ROUTES.includes(currentPath);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   // Redirect to /unauthenticated if route is not allowed
   useEffect(() => {
     if (!isPublicRoute && !isClientRoute && !isAdminRoute) {
-      router.replace('/unauthenticated');
+      router.replace("/unauthenticated");
     }
   }, [currentPath, isPublicRoute, isClientRoute, isAdminRoute, router]);
 
@@ -41,14 +43,18 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   }
 
   // No layout for /unauthenticated
-  if (currentPath === '/unauthenticated') {
+  if (currentPath === "/unauthenticated") {
     return <>{children}</>;
   }
+
+  const shouldHideHeader = CLIENT_ROUTES.some((route) =>
+    currentPath.startsWith(route + "/")
+  );
 
   return (
     <AuthMiddleware>
       {role === "client" && isLoggedIn && isClientRoute ? (
-        <ClientLayout>{children}</ClientLayout>
+        <ClientLayout header={!shouldHideHeader}>{children}</ClientLayout>
       ) : role === "admin" && isLoggedIn && isAdminRoute ? (
         <DashboardLayout>{children}</DashboardLayout>
       ) : (

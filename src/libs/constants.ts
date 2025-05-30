@@ -16,6 +16,8 @@ export const CLIENT_ROUTES = [
   "/cn-announcement",
   "/cn-request",
   "/cn-request/update-paymentMethod",
+  "/cn-request/reactivate-request",
+  "/cn-request/update-address",
   "/cn-changepassword"
 ];
 

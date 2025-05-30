@@ -1,3 +1,7 @@
+@import "../../../styles/base/_mixins.scss";
+@import "../../../styles/base/_variables.scss";
+@import "../../../styles/base/_colors.scss";
+
 .clientRadioLabel {
   font-size: 16px;
   cursor: pointer;
@@ -16,27 +20,27 @@
     width: 16px;
     height: 16px;
     margin-right: 12px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid $border;
     border-radius: 50%;
     position: relative;
-    background-color: white;
+    background-color: $white;
   }
 
   input[type="radio"]:checked + span {
     border: 4px solid;
-    border-color: #2dcca7;
+    border-color: $primary;
   }
 
   input[type="radio"]:checked:disabled + span {
-    border: 4px solid #2dcca7;
-    background-color: #f5f5f5;
+    border: 4px solid $primary;
+    background-color: $border;
     cursor: not-allowed;
   }
 
   input[type="radio"]:disabled + span {
     cursor: not-allowed;
     background-color: #f5f5f5;
-    border-color: #e0e0e0;
+    border-color: $border;
   }
 
   input[type="radio"]:disabled + span + * {
@@ -60,7 +64,7 @@
   input[type="radio"]:disabled + span {
     cursor: not-allowed;
     background-color: #f5f5f5;
-    border-color: #e0e0e0;
+    border-color: $border;
   }
 
   input[type="radio"]:disabled + span + * {
@@ -76,8 +80,32 @@
   }
 
   input[type="radio"]:checked:disabled + span {
-    border: 4px solid #2dcca7;
+    border: 4px solid $primary;
     background-color: #f5f5f5;
     cursor: not-allowed;
+  }
+}
+
+.radioGrid {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+}
+
+@for $lg from 1 through 6 {
+  @for $md from 1 through 6 {
+    @for $sm from 1 through 6 {
+      .responsiveCols_#{$lg}_#{$md}_#{$sm} {
+        grid-template-columns: repeat(#{$lg}, 1fr);
+
+        @include respond-to("large") {
+          grid-template-columns: repeat(#{$md}, 1fr);
+        }
+
+        @include respond-to("small") {
+          grid-template-columns: repeat(#{$sm}, 1fr);
+        }
+      }
+    }
   }
 }

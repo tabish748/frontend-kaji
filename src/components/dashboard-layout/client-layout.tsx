@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, ReactNode } from "react";
 import styles from "../../styles/components/organisms/client-layout.module.scss";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,7 +42,17 @@ const userInfoItems = [
   },
 ];
 
-const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
+interface ClientLayoutProps {
+  header?: boolean;
+  footer?: boolean;
+  children: ReactNode;
+}
+
+const ClientLayout: React.FC<ClientLayoutProps> = ({
+  header = true,
+  footer = true,
+  children,
+}) => {
   const { t, currentLanguage, setLanguage } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
@@ -246,89 +256,99 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
         {/* customer top view */}
       </header>
-      <h1 className={styles.topHeading}> PROFILE </h1>
-      <div className={styles.topProfileCardWrapper}>
-        <div className={styles.topProfileCard}>
-          <h1> Sonya Taylor </h1>
-          <div className={styles.customerTopView}>
-            {userInfoItems.map((item) => (
-              <ImageLabel
-                key={item.key}
-                iconSrc={`/${item.icon}`}
-                label={item.label}
-              />
-            ))}
-          </div>
-          {/* Desktop Nav Bar */}
-          <nav className={styles.desktopNav}>
-            <ul>
-              {navLinks.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    href={link.path}
-                    className={
-                      router.pathname === link.path ? styles.active : ""
-                    }
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <main className={styles.clientContent}>{children}</main>
-      <footer className={styles.clientFooter}>
-        <ClientSection heading="Contact">
-          <div className={styles.contactSection}>
-            <h2 className={styles.contactHeading}>{t("contact.heading")}</h2>
-            <div className={`${styles.contactGrid}`}>
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.contact}`}>
-                  <IoMdPhonePortrait size={16} />
-                </div>
-                <div>
-                  <p>{t("contact.title")}</p>
-                  <p>{t("contact.phoneNumber")}</p>
-                  <p>{t("contact.email")}</p>
-                </div>
+      {header && (
+        <>
+          <h1 className={styles.topHeading}> {t("profile")} </h1>
+          <div className={styles.topProfileCardWrapper}>
+            <div className={styles.topProfileCard}>
+              <h1> Sonya Taylor </h1>
+              <div className={styles.customerTopView}>
+                {userInfoItems.map((item) => (
+                  <ImageLabel
+                    key={item.key}
+                    iconSrc={`/${item.icon}`}
+                    label={item.label}
+                  />
+                ))}
               </div>
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.address}`}>
-                  <BiCurrentLocation size={16} />
-                </div>
-                <div>
-                  <p>{t("contact.address.title")}</p>
-                  <p>{t("contact.address.postalCode")}</p>
-                  <p>{t("contact.address.line1")}</p>
-                  <p>{t("contact.address.line2")}</p>
-                </div>
-              </div>
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.link}`}>
-                  <IoLinkSharp size={16} />
-                </div>
-                <div>
-                  <p>{t("contact.website.title")}</p>
-                  <p>
-                    <a
-                      href={t("contact.website.url")}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t("contact.website.url")}
-                    </a>
-                  </p>
-                </div>
-              </div>
+              {/* Desktop Nav Bar */}
+              <nav className={styles.desktopNav}>
+                <ul>
+                  {navLinks.map((link) => (
+                    <li key={link.path}>
+                      <Link
+                        href={link.path}
+                        className={
+                          router.pathname === link.path ? styles.active : ""
+                        }
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
           </div>
-        </ClientSection>
-      </footer>
-      <div className={styles.footerCopyright}>
-        Copyright © {new Date().getFullYear()} Chez Vous All Rights Reserved
-      </div>
+        </>
+      )}
+      <main className={styles.clientContent}>{children}</main>
+      {footer && (
+        <>
+          <footer className={styles.clientFooter}>
+            <ClientSection heading="Contact">
+              <div className={styles.contactSection}>
+                <h2 className={styles.contactHeading}>
+                  {t("contact.heading")}
+                </h2>
+                <div className={`${styles.contactGrid}`}>
+                  <div className={styles.contactItem}>
+                    <div className={`${styles.contactIcon} ${styles.contact}`}>
+                      <IoMdPhonePortrait size={16} />
+                    </div>
+                    <div>
+                      <p>{t("contact.title")}</p>
+                      <p>{t("contact.phoneNumber")}</p>
+                      <p>{t("contact.email")}</p>
+                    </div>
+                  </div>
+                  <div className={styles.contactItem}>
+                    <div className={`${styles.contactIcon} ${styles.address}`}>
+                      <BiCurrentLocation size={16} />
+                    </div>
+                    <div>
+                      <p>{t("contact.address.title")}</p>
+                      <p>{t("contact.address.postalCode")}</p>
+                      <p>{t("contact.address.line1")}</p>
+                      <p>{t("contact.address.line2")}</p>
+                    </div>
+                  </div>
+                  <div className={styles.contactItem}>
+                    <div className={`${styles.contactIcon} ${styles.link}`}>
+                      <IoLinkSharp size={16} />
+                    </div>
+                    <div>
+                      <p>{t("contact.website.title")}</p>
+                      <p>
+                        <a
+                          href={t("contact.website.url")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t("contact.website.url")}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ClientSection>
+          </footer>
+          <div className={styles.footerCopyright}>
+            Copyright © {new Date().getFullYear()} Chez Vous All Rights Reserved
+          </div>
+        </>
+      )}
     </div>
   );
 };

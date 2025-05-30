@@ -1,4 +1,5 @@
 {
+  "profile": "PROFILE",
   "clientDashboard": {
     "schedule": "SCHEDULE",
     "staff": "Staff",
@@ -193,6 +194,27 @@
     "newRequired": "New password is required.",
     "notMatch": "Passwords do not match.",
     "title": "Change Password"
+  },
+  "changePaymentMethodPage": {
+    "heading": "PAYMENT METHOD CHANGE REQUEST",
+    "subHeading": "Please confirm your registered information and provide the necessary changes",
+    "contractInfo": "Customer Information",
+    "prev": "Previous Information",
+    "update": "Updated Information"
+  },
+  "reactivateRequestPage": {
+    "heading": "SERVICE SUSPENSION / REACTIVATION REQUEST",
+    "subHeading": "Please confirm your registered information and provide the necessary changes",
+    "active": "Active",
+    "suspended": "Suspended",
+    "label": "Usage Status"
+  },
+  "updateAddressPage": {
+    "heading": "ADDRESS CHANGE REQUEST",
+    "subHeading": "Please confirm your registered information and provide the necessary changes",
+    "active": "Active",
+    "suspended": "Suspended",
+    "label": "Usage Status"
   },
   "contact": {
     "heading": "Contact with us",

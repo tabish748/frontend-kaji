@@ -4,7 +4,7 @@ import { Form } from "@/components/form/form";
 import InputField from "@/components/input-field/input-field";
 import { useLanguage } from "@/localization/LocalContext";
 import { FaLock } from "react-icons/fa";
-import styles from "@/styles/pages/cn-changepassword.module.scss";
+import styles from "@/styles/pages/cnChangepassword.module.scss";
 import Button from "@/components/button/button";
 
 export default function CnChangePassword() {
