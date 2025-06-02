@@ -1,5 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useRouter } from 'next/router';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/router";
 import { generateDateTranslations } from "@/libs/utils";
 
 type LanguageContextType = {
@@ -12,7 +18,9 @@ type LanguageProviderProps = {
   children: ReactNode;
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
@@ -22,64 +30,100 @@ export const useLanguage = () => {
   return context;
 };
 
+// Supported languages
+const supportedLanguages = ["en", "jp"];
+
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const router = useRouter();
-  const [language, setLanguage] = useState<string>("en"); // Set to 'jp' by default
+  const [language, setLanguageState] = useState<string | null>(null);
   const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+    localStorage.setItem("preferredLanguage", lang);
+
+    // Update the URL with ?lang=... using shallow routing
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, lang },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   useEffect(() => {
-    // Check if 'lang' query parameter exists
-    const queryLang = router.query.lang as string;
-
-    // If 'lang' query parameter exists and it's either 'en' or 'jp', use it
-    if (queryLang && (queryLang === 'en' || queryLang === 'jp')) {
-      setLanguage(queryLang);
+    if (!loading) {
+      if (language) {
+        document.documentElement.lang = language;
+      }
     }
-  }, [router.query.lang]);
+  }, [language, loading]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const queryLang = router.query.lang as string;
+    const storedLang = localStorage.getItem("preferredLanguage");
+    const browserLang = navigator.language?.slice(0, 2); // e.g. "en-US" → "en"
+
+    if (queryLang && ["en", "jp"].includes(queryLang)) {
+      setLanguage(queryLang);
+    } else if (storedLang && ["en", "jp"].includes(storedLang)) {
+      setLanguage(storedLang);
+    } else if (["en", "jp"].includes(browserLang)) {
+      setLanguage(browserLang);
+    } else {
+      setLanguage("en");
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     const currentYear = new Date().getFullYear() - 20;
-    const dynamicTranslations = generateDateTranslations(2000, currentYear + 80); // Generate date translations from 2000 to 20 years in the future
+    const dynamicTranslations = generateDateTranslations(
+      2000,
+      currentYear + 80
+    );
 
-    setLoading(true); // Set loading state to true before loading translations
+    setLoading(true);
     import(`./${language}.json`)
       .then((module) => {
-        // Combine static translations with dynamically generated date translations
         setTranslations({ ...module.default, ...dynamicTranslations });
       })
       .catch((error) => {
-        console.error('Failed to load language file:', error);
-        // Fallback to empty translations if the import fails
+        console.error("Failed to load language file:", error);
         setTranslations(dynamicTranslations);
       })
-      .finally(() => {
-        setLoading(false); // Set loading to false after translations are loaded or if there was an error
-      });
+      .finally(() => setLoading(false));
   }, [language]);
 
   const t = (key: string) => {
-    const keys = key.split('.');
+    const keys = key.split(".");
     let value: any = translations;
-    
+
     for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
+      if (value && typeof value === "object" && k in value) {
         value = value[k];
       } else {
-        return key; // Return the key if translation is not found
+        return key;
       }
     }
-    
+
     return value;
   };
+
   const contextValue = {
     t,
     setLanguage,
-    currentLanguage: language,
+    currentLanguage: language || "en", // fallback so it's never null
   };
+
   if (loading) {
-    return <div className="loading-screen"></div>; // Render a loading screen or spinner
+    return <div className="loading-screen"></div>;
   }
+
   return (
     <LanguageContext.Provider value={contextValue}>
       {children}

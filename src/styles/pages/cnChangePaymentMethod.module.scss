@@ -81,6 +81,10 @@
   font-size: 20px;
   color: $mud-gray;
   margin-bottom: 1.5rem;
+  margin-top: -20px;
+  @include respond-to("small") {
+    font-size: 17px;
+  }
 }
 
 .topHeading {
@@ -89,6 +93,7 @@
   margin: 30px 0;
   position: relative;
   z-index: 1;
+  text-transform: uppercase;
 
   @include respond-to("medium") {
     margin: 20px 20px;

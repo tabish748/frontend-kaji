@@ -7,8 +7,10 @@ import { useLanguage } from "@/localization/LocalContext";
 import { Form } from "@/components/form/form";
 import InputField from "@/components/input-field/input-field";
 import SelectField from "@/components/select-field/select-field";
-import { FaHome, FaTrain } from "react-icons/fa";
+
 import SubRouteLayout from "../layout";
+import { MdOutlineHomeWork, MdOutlineTrain } from "react-icons/md";
+import { BiHomeAlt2 } from "react-icons/bi";
 
 export default function UpdateAddress() {
   const { t } = useLanguage();
@@ -59,102 +61,108 @@ export default function UpdateAddress() {
       {/* --- Read-Only Section --- */}
       <h1 className="cn-seperator-heading primary">{t("Previous Address")}</h1>
       <Form
-        className={style.formGrid}
         onSubmit={() => {}}
         errors={{}}
         setErrors={() => {}}
       >
-        <div className={style.label}>{t("aboutPage.addressLabel")}</div>
-        <div className={style.fieldGroup}>
-          <div className={style.fieldRow}>
+        <div className={style.formGrid}>
+          <div className={style.label}>{t("aboutPage.addressLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.fieldRow}>
+              <InputField
+                name="postalCode"
+                placeholder={t("aboutPage.postalCodePlaceholder")}
+                value={formValues.postalCode}
+                onChange={() => {}}
+                icon={<MdOutlineHomeWork size={12} />}
+                disabled
+              />
+              <SelectField
+                name="prefecture"
+                options={prefectureOptions}
+                value={formValues.prefecture}
+                onChange={() => {}}
+                icon={<BiHomeAlt2 size={12} />}
+                disabled
+              />
+            </div>
             <InputField
-              name="postalCode"
-              placeholder={t("aboutPage.postalCodePlaceholder")}
-              value={formValues.postalCode}
+              name="address1"
+              value={formValues.address1}
               onChange={() => {}}
-              icon={<FaHome size={12} />}
+              icon={<BiHomeAlt2 size={12} />}
               disabled
             />
-            <SelectField
-              name="prefecture"
-              options={prefectureOptions}
-              value={formValues.prefecture}
+            <InputField
+              name="address2"
+              value={formValues.address2}
               onChange={() => {}}
-              icon={<FaHome size={12} />}
+              icon={<BiHomeAlt2 size={12} />}
+              disabled
+            />
+            <InputField
+              name="building"
+              value={formValues.building}
+              onChange={() => {}}
+              icon={<BiHomeAlt2 size={12} />}
               disabled
             />
           </div>
-          <InputField
-            name="address1"
-            value={formValues.address1}
-            onChange={() => {}}
-            icon={<FaHome size={12} />}
-            disabled
-          />
-          <InputField
-            name="address2"
-            value={formValues.address2}
-            onChange={() => {}}
-            icon={<FaHome size={12} />}
-            disabled
-          />
-          <InputField
-            name="building"
-            value={formValues.building}
-            onChange={() => {}}
-            icon={<FaHome size={12} />}
-            disabled
-          />
-        </div>
 
-        <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
-        <div className={style.fieldGroup}>
-          <div className={style.stationGroup}>
-            <InputField
-              name="railwayCompany1"
-              value={formValues.railwayCompany1}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
-            <InputField
-              name="trainLine1"
-              value={formValues.trainLine1}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
-            <InputField
-              name="trainStation1"
-              value={formValues.trainStation1}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
+          <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany1"
+                value={formValues.railwayCompany1}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
+                name="trainLine1"
+                value={formValues.trainLine1}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
+                name="trainStation1"
+                value={formValues.trainStation1}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+            </div>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany2"
+                value={formValues.railwayCompany2}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
+                name="trainLine2"
+                value={formValues.trainLine2}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
+                name="trainStation2"
+                value={formValues.trainStation2}
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+            </div>
           </div>
-          <div className={style.stationGroup}>
-            <InputField
-              name="railwayCompany2"
-              value={formValues.railwayCompany2}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
-            <InputField
-              name="trainLine2"
-              value={formValues.trainLine2}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
-            <InputField
-              name="trainStation2"
-              value={formValues.trainStation2}
-              onChange={() => {}}
-              icon={<FaTrain size={12} />}
-              disabled
-            />
-          </div>
+        </div>
+        <div className="d-flex justify-content-between mt-2 gap-1 false">
+          <span></span>
+          <div className="d-flex justify-content-between gap-1"></div>
+          <span></span>
         </div>
       </Form>
 
@@ -163,99 +171,104 @@ export default function UpdateAddress() {
         {t("Updated Address")}
       </h1>
       <Form
-        className={style.formGrid}
         onSubmit={handleSubmit}
         errors={errors}
         setErrors={setErrors}
       >
-        <div className={style.label}>{t("aboutPage.addressLabel")}</div>
-        <div className={style.fieldGroup}>
-          <div className={style.fieldRow}>
+        <div className={style.formGrid}>
+          <div className={style.label}>{t("aboutPage.addressLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.fieldRow}>
+              <InputField
+                name="postalCode"
+                value={updatedValues.postalCode}
+                onChange={handleInputChange}
+                icon={<MdOutlineHomeWork size={12} />}
+              />
+              <SelectField
+                name="prefecture"
+                options={prefectureOptions}
+                value={updatedValues.prefecture}
+                onChange={handleInputChange}
+                icon={<BiHomeAlt2 size={12} />}
+              />
+            </div>
             <InputField
-              name="postalCode"
-              value={updatedValues.postalCode}
+              name="address1"
+              value={updatedValues.address1}
               onChange={handleInputChange}
-              icon={<FaHome size={12} />}
+              icon={<BiHomeAlt2 size={12} />}
             />
-            <SelectField
-              name="prefecture"
-              options={prefectureOptions}
-              value={updatedValues.prefecture}
+            <InputField
+              name="address2"
+              value={updatedValues.address2}
               onChange={handleInputChange}
-              icon={<FaHome size={12} />}
+              icon={<BiHomeAlt2 size={12} />}
+            />
+            <InputField
+              name="building"
+              value={updatedValues.building}
+              onChange={handleInputChange}
+              icon={<BiHomeAlt2 size={12} />}
             />
           </div>
-          <InputField
-            name="address1"
-            value={updatedValues.address1}
-            onChange={handleInputChange}
-            icon={<FaHome size={12} />}
-          />
-          <InputField
-            name="address2"
-            value={updatedValues.address2}
-            onChange={handleInputChange}
-            icon={<FaHome size={12} />}
-          />
-          <InputField
-            name="building"
-            value={updatedValues.building}
-            onChange={handleInputChange}
-            icon={<FaHome size={12} />}
-          />
-        </div>
 
-        <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
-        <div className={style.fieldGroup}>
-          <div className={style.stationGroup}>
-            <InputField
-              name="railwayCompany1"
-              value={updatedValues.railwayCompany1}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
-            <InputField
-              name="trainLine1"
-              value={updatedValues.trainLine1}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
-            <InputField
-              name="trainStation1"
-              value={updatedValues.trainStation1}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
-          </div>
-          <div className={style.stationGroup}>
-            <InputField
-              name="railwayCompany2"
-              value={updatedValues.railwayCompany2}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
-            <InputField
-              name="trainLine2"
-              value={updatedValues.trainLine2}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
-            <InputField
-              name="trainStation2"
-              value={updatedValues.trainStation2}
-              onChange={handleInputChange}
-              icon={<FaTrain size={12} />}
-            />
+          <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany1"
+                value={updatedValues.railwayCompany1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+              <InputField
+                name="trainLine1"
+                value={updatedValues.trainLine1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+              <InputField
+                name="trainStation1"
+                value={updatedValues.trainStation1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+            </div>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany2"
+                value={updatedValues.railwayCompany2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+              <InputField
+                name="trainLine2"
+                value={updatedValues.trainLine2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+              <InputField
+                name="trainStation2"
+                value={updatedValues.trainStation2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
+              />
+            </div>
           </div>
         </div>
-
-        <div className="mt-2 d-flex justify-content-center align-items-center">
-          <Button
-            className="px-10"
-            htmlType="submit"
-            type="primary"
-            text={t("Submit")}
-          />
+        
+        <div className="d-flex justify-content-between mt-2 gap-1 false">
+          <span></span>
+          <div className="d-flex justify-content-between gap-1">
+            <Button
+              className="px-10"
+              htmlType="submit"
+              type="primary"
+              text={t("buttons.submit")}
+            />
+          </div>
+          <span></span>
         </div>
       </Form>
     </ClientSection>

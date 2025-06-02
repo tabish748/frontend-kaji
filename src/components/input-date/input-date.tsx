@@ -2,19 +2,6 @@ import React, { forwardRef, useState, useEffect } from "react";
 import styles from "../../styles/components/atoms/input.module.scss";
 import { parseISO, isBefore, isAfter } from 'date-fns';
 
-// Create a CSS module for custom date range styles
-const customStyles = {
-  dateRangeContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-  },
-  dateRangeSeparator: {
-    margin: "0 4px",
-    fontWeight: "500",
-  }
-};
-
 interface InputDateFieldProps {
   label?: string;
   tag?: any;
@@ -37,6 +24,7 @@ interface InputDateFieldProps {
   startPlaceholder?: string;
   endPlaceholder?: string;
   icon?: React.ReactNode | string;
+  showFormat?: boolean;
 }
 
 const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
@@ -59,11 +47,17 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
   isRange = false,
   startPlaceholder = "Start date",
   endPlaceholder = "End date",
-  icon
+  icon,
+  showFormat = true
 }, ref) => {
   // State for start and end dates when in range mode
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+
+  // Format the placeholders to include the date format
+  const formatPlaceholder = (placeholder: string) => {
+    return showFormat ? `${placeholder} (DD/MM/YYYY)` : placeholder;
+  };
 
   // Parse the value if it's a range value (e.g., "2025-04-14 to 2025-04-19")
   useEffect(() => {
@@ -160,7 +154,7 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
     return null; 
   };
 
-  // Render function for icon (copied/adapted from InputField)
+  // Render function for icon
   const renderIcon = () => {
     if (!icon) return null;
     if (typeof icon === 'string') {
@@ -185,13 +179,13 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
       </label>
       
       {isRange ? (
-        <div style={customStyles.dateRangeContainer}>
+        <div className={styles.dateRangeContainer}>
           <div style={{ position: 'relative', width: '100%' }}>
             {renderIcon()}
             <input
               type={inputType}
               value={startDate}
-              placeholder={startPlaceholder}
+              placeholder={formatPlaceholder(startPlaceholder)}
               onChange={(e) => handleRangeChange(true, e)}
               name={`${name}-start`}
               disabled={disabled}
@@ -204,13 +198,13 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
               style={icon ? { paddingLeft: 50 } : {}}
             />
           </div>
-          <span style={customStyles.dateRangeSeparator}>to</span>
+          <span style={{ margin: "0 4px", fontWeight: "500" }}>~</span>
           <div style={{ position: 'relative', width: '100%' }}>
             {renderIcon()}
             <input
               type={inputType}
               value={endDate}
-              placeholder={endPlaceholder}
+              placeholder={formatPlaceholder(endPlaceholder)}
               onChange={(e) => handleRangeChange(false, e)}
               name={`${name}-end`}
               disabled={disabled}
@@ -230,7 +224,7 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
           <input
             type={inputType}
             value={value || ""}
-            placeholder={placeholder}
+            placeholder={formatPlaceholder(placeholder || "")}
             onChange={handleInputChange}
             name={name}
             disabled={disabled}

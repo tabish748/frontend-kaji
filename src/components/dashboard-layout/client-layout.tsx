@@ -9,6 +9,13 @@ import { IoMdPhonePortrait } from "react-icons/io";
 import { BiCurrentLocation } from "react-icons/bi";
 import { IoLinkSharp } from "react-icons/io5";
 import ClientSection from "../client-section/client-section";
+import { BsPersonVcard } from "react-icons/bs";
+import { FaPhoneAlt, FaRegAddressCard, FaTaxi } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { CiFlag1 } from "react-icons/ci";
+import { LANG } from "@/libs/constants";
+import { RootState } from "@/app/store";
+import { useSelector } from "react-redux";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -17,28 +24,28 @@ interface ClientLayoutProps {
 const userInfoItems = [
   {
     key: "affiliatedCorporation",
-    label: "Affiliated Corporation",
-    icon: "assets/svg/detail.svg",
+    label: "user.affiliatedCorporation",
+    icon: <FaRegAddressCard />,
   },
   {
     key: "userPhone",
-    label: "Phone",
-    icon: "assets/svg/phone.svg",
+    label: "user.phone",
+    icon: <FaPhoneAlt />,
   },
   {
     key: "userEmail",
-    label: "E-mail",
-    icon: "assets/svg/email.svg",
+    label: "user.email",
+    icon: <MdEmail />,
   },
   {
     key: "userAddress",
-    label: "Address",
-    icon: "assets/svg/address.svg",
+    label: "user.address",
+    icon: <CiFlag1 />,
   },
   {
     key: "nearestTrainStation",
-    label: "Train Station",
-    icon: "assets/svg/train-station.svg",
+    label: "user.trainStation",
+    icon: <FaTaxi />,
   },
 ];
 
@@ -112,6 +119,8 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
     en: "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/us.svg",
     jp: "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/jp.svg",
   };
+
+  const user = useSelector((state: RootState) => state.auth.user);
 
   return (
     <div className={styles.clientLayout}>
@@ -200,32 +209,25 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
               </div>
               {isLangDropdownOpen && (
                 <div className={styles.langDropdown}>
-                  <button
-                    onClick={() => handleLanguageChange("en")}
-                    className={styles.langOption}
-                  >
-                    <Image
-                      src={flags.en}
-                      width={20}
-                      height={15}
-                      alt="English"
-                      className={styles.flagIcon}
-                    />
-                    <span>EN</span>
-                  </button>
-                  <button
-                    onClick={() => handleLanguageChange("jp")}
-                    className={styles.langOption}
-                  >
-                    <Image
-                      src={flags.jp}
-                      width={20}
-                      height={15}
-                      alt="Japanese"
-                      className={styles.flagIcon}
-                    />
-                    <span>JP</span>
-                  </button>
+                  {LANG.map((lang) => {
+                    const langLower = lang.toLowerCase() as Language; // convert to lowercase and assert type
+                    return (
+                      <button
+                        key={lang}
+                        onClick={() => handleLanguageChange(langLower)}
+                        className={styles.langOption}
+                      >
+                        <Image
+                          src={flags[langLower]}
+                          width={20}
+                          height={15}
+                          alt={langLower === "en" ? "English" : "Japanese"}
+                          className={styles.flagIcon}
+                        />
+                        <span>{lang}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -248,8 +250,8 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
               className={styles.profileImage}
             />
             <div>
-              <p className={styles.userName}>Sonya Taylor</p>
-              <p className={styles.userNameJp}>提携法人</p>
+              <p className={styles.userName}>{user?.username}</p>
+              <p className={styles.userNameJp}>{user?.affiliate}</p>
             </div>
           </div>
         </div>
@@ -261,13 +263,13 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
           <h1 className={styles.topHeading}> {t("profile")} </h1>
           <div className={styles.topProfileCardWrapper}>
             <div className={styles.topProfileCard}>
-              <h1> Sonya Taylor </h1>
+              <h1> {user?.username} </h1>
               <div className={styles.customerTopView}>
                 {userInfoItems.map((item) => (
                   <ImageLabel
                     key={item.key}
-                    iconSrc={`/${item.icon}`}
-                    label={item.label}
+                    icon={item.icon}
+                    label={t(item.label)}
                   />
                 ))}
               </div>
@@ -296,7 +298,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
       {footer && (
         <>
           <footer className={styles.clientFooter}>
-            <ClientSection heading="Contact">
+            <ClientSection heading={t("contact.title")}>
               <div className={styles.contactSection}>
                 <h2 className={styles.contactHeading}>
                   {t("contact.heading")}

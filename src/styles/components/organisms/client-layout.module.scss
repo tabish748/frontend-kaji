@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
+  background: $white;
   padding: 5px 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   position: sticky;
@@ -41,7 +41,7 @@
   }
 
   @include respond-to("small") {
-    padding: 15px 15px;
+    padding: 10px 15px;
   }
 
   .headerControls {
@@ -160,7 +160,11 @@
   li {
     padding: 1rem 2rem;
     padding-bottom: 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid $border;
+
+    &:first-child {
+      border-top: 1px solid $border;
+    }
 
     a {
       color: #222;
@@ -176,6 +180,10 @@
       &.active {
         color: $primary;
       }
+    }
+    @include respond-to("small") {
+      padding: 1rem;
+      padding-bottom: auto;
     }
   }
 
@@ -208,6 +216,7 @@
   margin: 30px 30px;
   position: relative;
   z-index: 1;
+  text-transform: uppercase;
 
   @include respond-to("medium") {
     margin: 20px 20px;
@@ -248,13 +257,21 @@
     padding-bottom: 0.75rem;
     font-size: 24px;
     font-weight: 500;
+    @include respond-to("small") {
+      padding: 1rem;
+    }
   }
   .customerTopView {
-    padding: 0 2rem;
+    padding: 0 2rem 2rem;
     // margin: 10px 0;
 
     @include respond-to("large") {
       padding: 0 2rem 2rem;
+    }
+    @include respond-to("small") {
+      padding: 0 1rem;
+
+      padding-bottom: 1.5rem;
     }
   }
 }
@@ -355,7 +372,7 @@
 
   &:last-child {
     border-radius: 0 0 8px 8px;
-    border-top: 1px solid #e6ebf1;
+    border-top: 1px solid $border;
   }
 }
 

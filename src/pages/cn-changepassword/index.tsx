@@ -30,9 +30,16 @@ export default function CnChangePassword() {
     // Add validation and API call here
     // Example validation
     const newErrors: Record<string, string> = {};
-    if (!formValues.currentPassword) newErrors.currentPassword = t("changePasswordPage.currentRequired") || "Current password is required";
-    if (!formValues.newPassword) newErrors.newPassword = t("changePasswordPage.newRequired") || "New password is required";
-    if (formValues.newPassword !== formValues.confirmPassword) newErrors.confirmPassword = t("changePasswordPage.notMatch") || "Passwords do not match";
+    if (!formValues.currentPassword)
+      newErrors.currentPassword =
+        t("changePasswordPage.currentRequired") ||
+        "Current password is required";
+    if (!formValues.newPassword)
+      newErrors.newPassword =
+        t("changePasswordPage.newRequired") || "New password is required";
+    if (formValues.newPassword !== formValues.confirmPassword)
+      newErrors.confirmPassword =
+        t("changePasswordPage.notMatch") || "Passwords do not match";
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       // Submit logic here
@@ -42,7 +49,9 @@ export default function CnChangePassword() {
 
   return (
     <div className="d-flex flex-column gap-2">
-      <ClientSection heading={t("changePasswordPage.title")}> {/* Use translation key for heading */}
+      <ClientSection heading={t("changePasswordPage.title")}>
+        {" "}
+        {/* Use translation key for heading */}
         <Form
           onSubmit={handleSubmit}
           setErrors={setErrors}
@@ -51,12 +60,16 @@ export default function CnChangePassword() {
         >
           <div className={styles.formGrid}>
             {/* Current Password */}
-            <div className={styles.label}>{t("changePasswordPage.current") || t("Current Password")}</div>
+            <div className={styles.label}>
+              {t("changePasswordPage.current") || t("Current Password")}
+            </div>
             <div className={styles.fieldGroup}>
               <InputField
                 name="currentPassword"
                 type="password"
-                placeholder={t("changePasswordPage.current") || t("Current Password")}
+                placeholder={
+                  t("changePasswordPage.current") || t("Current Password")
+                }
                 value={formValues.currentPassword}
                 onChange={handleInputChange}
                 validations={[{ type: "required" }]}
@@ -65,7 +78,9 @@ export default function CnChangePassword() {
               />
             </div>
             {/* New Password */}
-            <div className={styles.label}>{t("changePasswordPage.new") || t("New Password")}</div>
+            <div className={styles.label}>
+              {t("changePasswordPage.new") || t("New Password")}
+            </div>
             <div className={styles.fieldGroup}>
               <InputField
                 name="newPassword"
@@ -79,12 +94,16 @@ export default function CnChangePassword() {
               />
             </div>
             {/* Confirm New Password */}
-            <div className={styles.label}>{t("changePasswordPage.confirm") || t("Confirm New Password")}</div>
+            <div className={styles.label}>
+              {t("changePasswordPage.confirm") || t("Confirm New Password")}
+            </div>
             <div className={styles.fieldGroup}>
               <InputField
                 name="confirmPassword"
                 type="password"
-                placeholder={t("changePasswordPage.confirm") || t("Confirm New Password")}
+                placeholder={
+                  t("changePasswordPage.confirm") || t("Confirm New Password")
+                }
                 value={formValues.confirmPassword}
                 onChange={handleInputChange}
                 validations={[{ type: "required" }]}
@@ -93,8 +112,15 @@ export default function CnChangePassword() {
               />
             </div>
           </div>
-          <div className={"d-flex justify-content-end pt-3"}>
-            <Button htmlType="submit" type="primary" text={t("buttons.submit")} />
+          <div
+            className={"mt-2 d-flex justify-content-center align-items-center"}
+          >
+            <Button
+              className="px-10"
+              htmlType="submit"
+              type="primary"
+              text={t("buttons.submit")}
+            />
           </div>
         </Form>
       </ClientSection>

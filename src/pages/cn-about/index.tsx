@@ -7,23 +7,26 @@ import InputDateField from "@/components/input-date/input-date";
 import InputField from "@/components/input-field/input-field";
 import RadioField from "@/components/radio-field/radio-field";
 import SelectField from "@/components/select-field/select-field";
-import TextAreaField from "@/components/text-area/text-area";
 import { useLanguage } from "@/localization/LocalContext";
 import React, { ChangeEvent, useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import {
   FaUser,
   FaPhone,
-  FaEnvelope,
-  FaHome,
-  FaTrain,
-  FaGlobe,
-  FaBell,
   FaRegAddressCard,
 } from "react-icons/fa";
 import styles from "@/styles/pages/cnabout.module.scss";
 import Accordion, { AccordionItem } from "@/components/molecules/accordion";
 import ImageLabel from "@/components/image-lable/image-lable";
+import {
+  MdOutlineAlternateEmail,
+  MdOutlineHomeWork,
+  MdOutlineTrain,
+} from "react-icons/md";
+import { BiCalendar, BiHomeAlt2 } from "react-icons/bi";
+import { BsFileEarmarkText, BsPaperclip } from "react-icons/bs";
+import { GiAlarmClock } from "react-icons/gi";
+import { IoPricetagsOutline } from "react-icons/io5";
 
 // Define contract and plan structure
 interface Plan {
@@ -113,21 +116,21 @@ export default function CnAbout() {
       dateOfRecieved: "2025-04-14",
       dateOfReturn: "2025-04-19",
       nameStaff: "John Doe",
-      receiptOfCustody: <FaBell size={12} />,
+      receiptOfCustody: <BsPaperclip size={16} />,
     },
     {
       head: "key 2",
       dateOfRecieved: "2025-04-14",
       dateOfReturn: "2025-04-19",
       nameStaff: "Jane Smith",
-      receiptOfCustody: <FaBell size={12} />,
+      receiptOfCustody: <BsPaperclip size={16} />,
     },
     {
       head: "key 3",
       dateOfRecieved: "2025-04-14",
       dateOfReturn: "2025-04-19",
       nameStaff: "Alice Johnson",
-      receiptOfCustody: <FaBell size={12} />,
+      receiptOfCustody: <BsPaperclip size={16} />,
     },
   ];
 
@@ -312,7 +315,7 @@ export default function CnAbout() {
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
                   errorText={errors["firstName"] || undefined}
-                  icon={<FaUser size={12} />}
+                  icon={"abc"}
                   disabled
                 />
                 <InputField
@@ -322,7 +325,7 @@ export default function CnAbout() {
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
                   errorText={errors["fullNameKatakana"] || undefined}
-                  icon={<FaUser size={12} />}
+                  icon={"abc"}
                   disabled
                 />
               </div>
@@ -370,7 +373,7 @@ export default function CnAbout() {
                 onChange={handleInputChange}
                 validations={[{ type: "required" }, { type: "email" }]}
                 errorText={errors["email1"] || undefined}
-                icon={<FaEnvelope size={12} />}
+                icon={<MdOutlineAlternateEmail size={12} />}
                 disabled
               />
               <InputField
@@ -381,7 +384,7 @@ export default function CnAbout() {
                 onChange={handleInputChange}
                 validations={[{ type: "email" }]}
                 errorText={errors["email2"] || undefined}
-                icon={<FaEnvelope size={12} />}
+                icon={<MdOutlineAlternateEmail size={12} />}
                 disabled
               />
             </div>
@@ -397,7 +400,7 @@ export default function CnAbout() {
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
                   errorText={errors["postalCode"] || undefined}
-                  icon={<FaHome size={12} />}
+                  icon={<MdOutlineHomeWork size={12} />}
                   disabled
                 />
                 <SelectField
@@ -413,7 +416,7 @@ export default function CnAbout() {
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
                   errorText={errors["prefecture"] || undefined}
-                  icon={<FaHome size={12} />}
+                  icon={<BiHomeAlt2 size={12} />}
                   disabled
                 />
               </div>
@@ -424,7 +427,7 @@ export default function CnAbout() {
                 onChange={handleInputChange}
                 validations={[{ type: "required" }]}
                 errorText={errors["address1"] || undefined}
-                icon={<FaHome size={12} />}
+                icon={<BiHomeAlt2 size={12} />}
                 disabled
               />
               <InputField
@@ -432,7 +435,7 @@ export default function CnAbout() {
                 placeholder={t("aboutPage.address2Placeholder")}
                 value={formValues.address2}
                 onChange={handleInputChange}
-                icon={<FaHome size={12} />}
+                icon={<BiHomeAlt2 size={12} />}
                 disabled
               />
               <InputField
@@ -440,13 +443,15 @@ export default function CnAbout() {
                 placeholder={t("aboutPage.buildingPlaceholder")}
                 value={formValues.building}
                 onChange={handleInputChange}
-                icon={<FaHome size={12} />}
+                icon={<BiHomeAlt2 size={12} />}
                 disabled
               />
             </div>
 
             {/* Train Station Section */}
-            <div className={styles.label}>{t("aboutPage.trainStationLabel")}</div>
+            <div className={styles.label}>
+              {t("aboutPage.trainStationLabel")}
+            </div>
             <div className={styles.fieldGroup}>
               <div className={styles.stationGroup}>
                 <InputField
@@ -454,7 +459,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.railwayCompany1Placeholder")}
                   value={formValues.railwayCompany1}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
                 <InputField
@@ -462,7 +467,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.trainLine1Placeholder")}
                   value={formValues.trainLine1}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
                 <InputField
@@ -470,7 +475,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.trainStation1Placeholder")}
                   value={formValues.trainStation1}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
               </div>
@@ -480,7 +485,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.railwayCompany2Placeholder")}
                   value={formValues.railwayCompany2}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
                 <InputField
@@ -488,7 +493,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.trainLine2Placeholder")}
                   value={formValues.trainLine2}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
                 <InputField
@@ -496,7 +501,7 @@ export default function CnAbout() {
                   placeholder={t("aboutPage.trainStation2Placeholder")}
                   value={formValues.trainStation2}
                   onChange={handleInputChange}
-                  icon={<FaTrain size={12} />}
+                  icon={<MdOutlineTrain size={12} />}
                   disabled
                 />
               </div>
@@ -518,7 +523,9 @@ export default function CnAbout() {
             />
 
             {/* Date of Birth Section */}
-            <div className={styles.label}>{t("aboutPage.dateOfBirthLabel")}</div>
+            <div className={styles.label}>
+              {t("aboutPage.dateOfBirthLabel")}
+            </div>
             <div className={styles.dateGroup}>
               <SelectField
                 name="birthYear"
@@ -588,7 +595,9 @@ export default function CnAbout() {
             />
 
             {/* Advertising Email Section */}
-            <div className={styles.label}>{t("aboutPage.advertisingEmailLabel")}</div>
+            <div className={styles.label}>
+              {t("aboutPage.advertisingEmailLabel")}
+            </div>
             <RadioField
               name="advertising"
               options={[
@@ -646,7 +655,9 @@ export default function CnAbout() {
               .filter((plan) => plan.id === activePlanId)
               .map((plan) => (
                 <>
-                  <h1 className={styles.contractHeading}>{t(`aboutPage.plan.contactdetails`)}</h1>
+                  <h1 className={styles.contractHeading}>
+                    {t(`aboutPage.plan.contactdetails`)}
+                  </h1>
 
                   <Form
                     className={styles.customerForm}
@@ -656,7 +667,9 @@ export default function CnAbout() {
                   >
                     <div className={`${styles.formGrid}`}>
                       {/* Contract Type Section */}
-                      <div className={styles.label}>{t("aboutPage.contractTypeLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.contractTypeLabel")}
+                      </div>
                       <RadioField
                         name="contractType"
                         options={[
@@ -673,7 +686,9 @@ export default function CnAbout() {
                       />
 
                       {/* Contract Plan Section */}
-                      <div className={styles.label}>{t("aboutPage.contractPlanLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.contractPlanLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
                           <CustomSelectField
@@ -681,10 +696,16 @@ export default function CnAbout() {
                             placeholder={t("aboutPage.servicePlaceholder")}
                             options={[
                               { label: t("aboutPage.basic"), value: "basic" },
-                              { label: t("aboutPage.premium"), value: "premium" },
-                              { label: t("aboutPage.enterprise"), value: "enterprise" },
+                              {
+                                label: t("aboutPage.premium"),
+                                value: "premium",
+                              },
+                              {
+                                label: t("aboutPage.enterprise"),
+                                value: "enterprise",
+                              },
                             ]}
-                            icon={<FaGlobe size={12} />}
+                            icon={<BsFileEarmarkText size={12} />}
                             value={contractFormValues.service}
                             onChange={handleContractInputChange}
                             disabled
@@ -693,11 +714,17 @@ export default function CnAbout() {
                             name="plan"
                             placeholder={t("aboutPage.planPlaceholder")}
                             options={[
-                              { label: t("aboutPage.monthly"), value: "monthly" },
-                              { label: t("aboutPage.quarterly"), value: "quarterly" },
+                              {
+                                label: t("aboutPage.monthly"),
+                                value: "monthly",
+                              },
+                              {
+                                label: t("aboutPage.quarterly"),
+                                value: "quarterly",
+                              },
                               { label: t("aboutPage.annual"), value: "annual" },
                             ]}
-                            icon={<FaGlobe size={12} />}
+                            icon={<BsFileEarmarkText size={12} />}
                             value={contractFormValues.plan}
                             onChange={handleContractInputChange}
                             disabled
@@ -706,12 +733,20 @@ export default function CnAbout() {
                       </div>
 
                       {/* Time Range Section */}
-                      <div className={styles.label}>{t("aboutPage.timeRangeLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.timeRangeLabel")}
+                      </div>
                       <RadioField
                         name="timeRange"
                         options={[
-                          { label: t("aboutPage.withTimeRange"), value: "with" },
-                          { label: t("aboutPage.withoutTimeRange"), value: "without" },
+                          {
+                            label: t("aboutPage.withTimeRange"),
+                            value: "with",
+                          },
+                          {
+                            label: t("aboutPage.withoutTimeRange"),
+                            value: "without",
+                          },
                         ]}
                         selectedValue={contractFormValues.timeRange}
                         onChange={handleContractInputChange}
@@ -720,12 +755,20 @@ export default function CnAbout() {
                       />
 
                       {/* Time Extension Section */}
-                      <div className={styles.label}>{t("aboutPage.timeExtensionLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.timeExtensionLabel")}
+                      </div>
                       <RadioField
                         name="timeExtension"
                         options={[
-                          { label: t("aboutPage.withTimeExtension"), value: "with" },
-                          { label: t("aboutPage.withoutTimeExtension"), value: "without" },
+                          {
+                            label: t("aboutPage.withTimeExtension"),
+                            value: "with",
+                          },
+                          {
+                            label: t("aboutPage.withoutTimeExtension"),
+                            value: "without",
+                          },
                         ]}
                         selectedValue={contractFormValues.timeExtension}
                         onChange={handleContractInputChange}
@@ -734,7 +777,9 @@ export default function CnAbout() {
                       />
 
                       {/* Contract Period Section */}
-                      <div className={styles.label}>{t("aboutPage.contractPeriodLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.contractPeriodLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <InputDateField
                           name="contractPeriod"
@@ -742,23 +787,38 @@ export default function CnAbout() {
                           isRange={true}
                           startPlaceholder={t("aboutPage.startDatePlaceholder")}
                           endPlaceholder={t("aboutPage.endDatePlaceholder")}
+                          icon={<BiCalendar size={12} />}
                           disabled
                         />
                       </div>
 
                       {/* Day of the Week Section */}
-                      <div className={styles.label}>{t("aboutPage.dayOfWeekLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.dayOfWeekLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.weekdayCheckboxes}>
                           <CheckboxField
                             name="weekdays"
                             options={[
                               { value: "monday", label: t("aboutPage.monday") },
-                              { value: "tuesday", label: t("aboutPage.tuesday") },
-                              { value: "wednesday", label: t("aboutPage.wednesday") },
-                              { value: "thursday", label: t("aboutPage.thursday") },
+                              {
+                                value: "tuesday",
+                                label: t("aboutPage.tuesday"),
+                              },
+                              {
+                                value: "wednesday",
+                                label: t("aboutPage.wednesday"),
+                              },
+                              {
+                                value: "thursday",
+                                label: t("aboutPage.thursday"),
+                              },
                               { value: "friday", label: t("aboutPage.friday") },
-                              { value: "saturday", label: t("aboutPage.saturday") },
+                              {
+                                value: "saturday",
+                                label: t("aboutPage.saturday"),
+                              },
                               { value: "sunday", label: t("aboutPage.sunday") },
                             ]}
                             selectedValues={contractFormValues.weekdays}
@@ -774,33 +834,30 @@ export default function CnAbout() {
                       </div>
 
                       {/* Time Section */}
-                      <div className={styles.label}>{t("aboutPage.timeLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.timeLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
-                          <div className="d-flex justify-content-between align-items-center ">
-                            <InputField
-                              name="startTime"
-                              placeholder={t("aboutPage.startTimePlaceholder")}
-                              icon={<SlCalender size={12} />}
-                              type="time"
-                              value={contractFormValues.startTime}
-                              onChange={handleContractInputChange}
-                              disabled
-                            />
-                            <span className={styles.timeConnector}>~</span>
-                          </div>
-                          <div className="d-flex justify-content-between align-items-center ">
-                            <span className={styles.timeConnector}></span>
-                            <InputField
-                              name="endTime"
-                              placeholder={t("aboutPage.endTimePlaceholder")}
-                              icon={<SlCalender size={12} />}
-                              type="time"
-                              value={contractFormValues.endTime}
-                              onChange={handleContractInputChange}
-                              disabled
-                            />
-                          </div>
+                          <InputField
+                            name="startTime"
+                            placeholder={t("aboutPage.startTimePlaceholder")}
+                            icon={<GiAlarmClock size={12} />}
+                            type="time"
+                            value={contractFormValues.startTime}
+                            onChange={handleContractInputChange}
+                            disabled
+                          />
+                          <span className={styles.timeConnector}>~</span>
+                          <InputField
+                            name="endTime"
+                            placeholder={t("aboutPage.endTimePlaceholder")}
+                            icon={<GiAlarmClock size={12} />}
+                            type="time"
+                            value={contractFormValues.endTime}
+                            onChange={handleContractInputChange}
+                            disabled
+                          />
                         </div>
                       </div>
                     </div>
@@ -812,7 +869,9 @@ export default function CnAbout() {
                       />
                     </div> */}
                   </Form>
-                  <h1 className={styles.contractHeading}>{t("aboutPage.plan.billingInfo")}</h1>
+                  <h1 className={styles.contractHeading}>
+                    {t("aboutPage.plan.billingInfo")}
+                  </h1>
                   <Form
                     className={styles.customerForm}
                     onSubmit={handleBillingSubmit}
@@ -821,7 +880,9 @@ export default function CnAbout() {
                   >
                     <div className={`${styles.formGrid}`}>
                       {/* Name Section */}
-                      <div className={styles.label}>{t("aboutPage.nameLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.nameLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
                           <InputField
@@ -838,7 +899,9 @@ export default function CnAbout() {
                           />
                           <InputField
                             name="fullNameKatakana"
-                            placeholder={t("aboutPage.fullNameKatakanaPlaceholder")}
+                            placeholder={t(
+                              "aboutPage.fullNameKatakanaPlaceholder"
+                            )}
                             value={billingFormValues.fullNameKatakana}
                             onChange={handleBillingInputChange}
                             validations={[{ type: "required" }]}
@@ -852,7 +915,9 @@ export default function CnAbout() {
                       </div>
 
                       {/* Phone Section */}
-                      <div className={styles.label}>{t("aboutPage.phoneLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.phoneLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <InputField
                           name="phone1"
@@ -883,7 +948,9 @@ export default function CnAbout() {
                       </div>
 
                       {/* Email Section */}
-                      <div className={styles.label}>{t("aboutPage.emailLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.emailLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <InputField
                           name="email1"
@@ -896,7 +963,7 @@ export default function CnAbout() {
                             { type: "email" },
                           ]}
                           errorText={billingFormErrors["email1"] || undefined}
-                          icon={<FaEnvelope size={12} />}
+                          icon={<MdOutlineAlternateEmail size={12} />}
                           disabled
                         />
                         <InputField
@@ -907,13 +974,15 @@ export default function CnAbout() {
                           onChange={handleBillingInputChange}
                           validations={[{ type: "email" }]}
                           errorText={billingFormErrors["email2"] || undefined}
-                          icon={<FaEnvelope size={12} />}
+                          icon={<MdOutlineAlternateEmail size={12} />}
                           disabled
                         />
                       </div>
 
                       {/* Address Section */}
-                      <div className={styles.label}>{t("aboutPage.addressLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.addressLabel")}
+                      </div>
                       <div className={styles.fieldGroup}>
                         <div className={styles.fieldRow}>
                           <InputField
@@ -925,7 +994,7 @@ export default function CnAbout() {
                             errorText={
                               billingFormErrors["postalCode"] || undefined
                             }
-                            icon={<FaHome size={12} />}
+                            icon={<MdOutlineHomeWork size={12} />}
                             disabled
                           />
                           <SelectField
@@ -943,7 +1012,7 @@ export default function CnAbout() {
                             errorText={
                               billingFormErrors["prefecture"] || undefined
                             }
-                            icon={<FaHome size={12} />}
+                            icon={<BiHomeAlt2 size={12} />}
                             disabled
                           />
                         </div>
@@ -954,7 +1023,7 @@ export default function CnAbout() {
                           onChange={handleBillingInputChange}
                           validations={[{ type: "required" }]}
                           errorText={billingFormErrors["address1"] || undefined}
-                          icon={<FaHome size={12} />}
+                          icon={<BiHomeAlt2 size={12} />}
                           disabled
                         />
                         <InputField
@@ -962,7 +1031,7 @@ export default function CnAbout() {
                           placeholder={t("aboutPage.address2Placeholder")}
                           value={billingFormValues.address2}
                           onChange={handleBillingInputChange}
-                          icon={<FaHome size={12} />}
+                          icon={<BiHomeAlt2 size={12} />}
                           disabled
                         />
                         <InputField
@@ -970,7 +1039,7 @@ export default function CnAbout() {
                           placeholder={t("aboutPage.buildingPlaceholder")}
                           value={billingFormValues.building}
                           onChange={handleBillingInputChange}
-                          icon={<FaHome size={12} />}
+                          icon={<BiHomeAlt2 size={12} />}
                           disabled
                         />
                       </div>
@@ -983,7 +1052,9 @@ export default function CnAbout() {
                       />
                     </div> */}
                   </Form>
-                  <h1 className={styles.contractHeading}>{t("aboutPage.plan.paymentInfo")}</h1>
+                  <h1 className={styles.contractHeading}>
+                    {t("aboutPage.plan.paymentInfo")}
+                  </h1>
                   <Form
                     className={styles.customerForm}
                     onSubmit={handlePaymentSubmit}
@@ -992,7 +1063,9 @@ export default function CnAbout() {
                   >
                     <div className={`${styles.formGrid}`}>
                       {/* Payment Method Section */}
-                      <div className={styles.label}>{t("aboutPage.paymentMethodLabel")}</div>
+                      <div className={styles.label}>
+                        {t("aboutPage.paymentMethodLabel")}
+                      </div>
                       <RadioField
                         name="paymentMethod"
                         options={[
@@ -1032,21 +1105,21 @@ export default function CnAbout() {
               <AccordionItem key={idx} heading={item.head} label="">
                 <div className={styles.accordionContent}>
                   <ImageLabel
-                    icon={<FaRegAddressCard />}
+                    icon={<BiHomeAlt2 />}
                     label={t("aboutPage.keyName")}
                     className={styles.accordionLabel}
                   />
                   <p>{item.head}</p>
 
                   <ImageLabel
-                    icon={<FaRegAddressCard />}
+                    icon={<BiCalendar />}
                     label={t("aboutPage.dateOfReceived")}
                     className={styles.accordionLabel}
                   />
                   <p>{item.dateOfRecieved}</p>
 
                   <ImageLabel
-                    icon={<FaRegAddressCard />}
+                    icon={<BiCalendar />}
                     label={t("aboutPage.dateOfReturn")}
                     className={styles.accordionLabel}
                   />
@@ -1060,7 +1133,7 @@ export default function CnAbout() {
                   <p>{item.nameStaff}</p>
 
                   <ImageLabel
-                    icon={<FaRegAddressCard />}
+                    icon={<IoPricetagsOutline />}
                     label={t("aboutPage.receiptOfCustody")}
                     className={styles.accordionLabel}
                   />

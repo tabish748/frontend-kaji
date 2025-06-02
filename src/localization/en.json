@@ -1,5 +1,23 @@
 {
   "profile": "PROFILE",
+
+  "top": "TOP",
+  "about": "About",
+  "schedule": "Schedule",
+  "invoice": "Invoice",
+  "quotation": "Quotation",
+  "announcement": "Announcement",
+  "request": "Request",
+  "changePassword": "Change Password",
+
+  "user": {
+    "affiliatedCorporation": "Affiliated Corporation",
+    "phone": "Phone",
+    "email": "E-mail",
+    "address": "Address",
+    "trainStation": "Train Station"
+  },
+
   "clientDashboard": {
     "schedule": "SCHEDULE",
     "staff": "Staff",
@@ -117,6 +135,7 @@
       "endDatePlaceholder": "End date",
       "display": "Display"
     },
+    "report": "Report",
     "alert": {
       "selectOneFilter": "Please select at least one filter."
     },
@@ -164,6 +183,7 @@
       "previous": "Announcements for previous months"
     },
     "form": {
+      "contract": "Contract",
       "date": "Date",
       "startDatePlaceholder": "Start date",
       "endDatePlaceholder": "End date",
@@ -179,13 +199,6 @@
   "rememberMe": "Remember Me",
   "mainMenu": "Main menu",
   "home": "Home",
-  "top": "TOP",
-  "about": "About",
-  "schedule": "Schedule",
-  "invoice": "Invoice",
-  "quotation": "Quotation",
-  "announcement": "Announcement",
-  "request": "Request",
   "changePasswordPage": {
     "current": "Current Password",
     "new": "New Password",
@@ -197,6 +210,7 @@
   },
   "changePaymentMethodPage": {
     "heading": "PAYMENT METHOD CHANGE REQUEST",
+    "layoutSubHeading": "Kindly select the contract for which you wish to request a change. (If you have only one contract, selection is not necessary.)",
     "subHeading": "Please confirm your registered information and provide the necessary changes",
     "contractInfo": "Customer Information",
     "prev": "Previous Information",
@@ -252,8 +266,16 @@
     "default": "Field"
   },
   "requestPage": {
-    "title": "Request",
-    "action": "Action",
-    "detail": "Detail"
-  }
+    "title": "Requests",
+    "action": "Request",
+    "detail": "Description",
+    "types": {
+      "addressChange": "Address Change Request",
+      "planChange": "Plan Change Request",
+      "planAddition": "Plan Addition Request",
+      "paymentMethodChange": "Payment Method Change Request",
+      "serviceStatus": "Service Suspension / Reactivation Request"
+    }
+  },
+  "pleaseSelect": "Please Select"
 }

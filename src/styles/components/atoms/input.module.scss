@@ -1,5 +1,5 @@
 @import "../../base/_colors.scss";
-
+@import "../../base/_mixins.scss";
 .inputWrapper {
   position: relative;
   // margin-bottom: 12px;
@@ -189,5 +189,21 @@
     font-weight: 600;
     margin-left: 8px;
     cursor: pointer;
+  }
+}
+
+.dateRangeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+
+  @include respond-to("small") {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  span {
+    text-align: center;
   }
 }

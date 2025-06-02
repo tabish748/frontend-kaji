@@ -1048,6 +1048,12 @@ th.month-border {
   border: 1px solid $border;
   border-radius: $border-radius;
   text-transform: uppercase;
+
+  @include respond-to("small") {
+    font-size: 17px;
+  padding: .75rem 0;
+
+  }
 }
 
 .cn-seperator-heading.primary {

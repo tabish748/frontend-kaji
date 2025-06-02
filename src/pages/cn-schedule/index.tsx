@@ -5,7 +5,7 @@ import Accordion, { AccordionItem } from "@/components/molecules/accordion";
 import { useLanguage } from "@/localization/LocalContext";
 import React, { useState } from "react";
 import Style from "../../styles/pages/cnSchedule.module.scss";
-import { BiHomeAlt2 } from "react-icons/bi";
+import { BiCalendar, BiHomeAlt2 } from "react-icons/bi";
 import { FaRegAddressCard } from "react-icons/fa";
 import { GiAlarmClock } from "react-icons/gi";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -16,6 +16,7 @@ import RadioField from "@/components/radio-field/radio-field";
 import InputDateField from "@/components/input-date/input-date";
 import CustomSelectField from "@/components/custom-select/custom-select";
 import InputField from "@/components/input-field/input-field";
+import { BsPaperclip } from "react-icons/bs";
 
 export default function CnSchedule() {
   const { t } = useLanguage();
@@ -131,7 +132,7 @@ export default function CnSchedule() {
             isRange={true}
             startPlaceholder={t("schedulePage.form.startDatePlaceholder")}
             endPlaceholder={t("schedulePage.form.endDatePlaceholder")}
-            icon={<FaRegAddressCard />}
+            icon={<BiCalendar />}
           />
         </div>
 
@@ -173,8 +174,8 @@ export default function CnSchedule() {
                     />
                     <p>{plan.time}</p>
                     <ImageLabel
-                      icon={<IoDocumentTextOutline />}
-                      label={`${t("clientDashboard.request")}:`}
+                      icon={<BsPaperclip />}
+                      label={`${t("schedulePage.report")}:`}
                       className={Style.accordionLabel}
                     />
                     <div className={`${Style.buttonContainer} d-flex gap-1`}>

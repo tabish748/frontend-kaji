@@ -53,7 +53,7 @@ export default function CnInvoice() {
     );
 
     if (!hasValue) {
-      alert("Please select at least one filter.");
+      alert(t("invoicePage.alert.selectOneFilter"));
       return;
     }
 
@@ -61,8 +61,25 @@ export default function CnInvoice() {
     console.log("Form values:", formValues);
   };
 
+  const handleDateChange = (value: string | string[] | { target: { value: string } }) => {
+    let dateValue = "";
+    
+    if (Array.isArray(value)) {
+      dateValue = value.join(" - ");
+    } else if (typeof value === "object" && "target" in value) {
+      dateValue = value.target.value;
+    } else if (typeof value === "string") {
+      dateValue = value;
+    }
+
+    setFormValues((prev) => ({
+      ...prev,
+      date: dateValue,
+    }));
+  };
+
   return (
-    <ClientSection heading={t("clientDashboard.schedule")}>
+    <ClientSection heading={t("invoicePage.invoice")}>
       <div className={Style.tabsWrapper}>
         <Button
           className={tab === "upcoming" ? Style.activeTab : Style.tab}
@@ -79,7 +96,7 @@ export default function CnInvoice() {
       </div>
       <Form className={Style.formGrid} onSubmit={handleFormSubmit}>
         <CustomSelectField
-          label="Contract"
+          label={t("invoicePage.form.contract")}
           name="contract"
           value={formValues.contract}
           onChange={(e) =>
@@ -94,18 +111,20 @@ export default function CnInvoice() {
 
         <div className={Style.fieldGroup}>
           <InputDateField
-            label="Date"
+            label={t("invoicePage.form.date")}
             name="date"
-            value="2025-04-14 to 2025-04-19"
+            value={formValues.date}
+            onChange={handleDateChange}
             isRange={true}
-            startPlaceholder="Start date"
-            endPlaceholder="End date"
+            startPlaceholder={t("invoicePage.form.startDatePlaceholder")}
+            endPlaceholder={t("invoicePage.form.endDatePlaceholder")}
             icon={<FaRegAddressCard />}
+            showFormat={true}
           />
         </div>
 
         <div className={Style.formButton}>
-          <Button htmlType="submit" type="primary" text="Display" />
+          <Button htmlType="submit" type="primary" text={t("invoicePage.form.display")} />
         </div>
       </Form>
       {tab === "upcoming" && (
@@ -128,10 +147,12 @@ export default function CnInvoice() {
                       label={plan.staff}
                       className={Style.accordionLabel}
                     />
-                      <div className={`${Style.buttonContainer}`}>
-                      <Button 
+                    <div className={`${Style.buttonContainer}`}>
+                      <Button
                         text={t("buttons.pafDownload")}
-                        onClick={() => window.open('/api/download-invoice', '_blank')}
+                        onClick={() =>
+                          window.open("/api/download-invoice", "_blank")
+                        }
                       />
                     </div>
                   </div>
@@ -141,7 +162,7 @@ export default function CnInvoice() {
         </Accordion>
       )}
       {tab === "past" && (
-        <div className={Style.tabContent}>{t("Tab 2 content goes here.")}</div>
+        <div className={Style.tabContent}>{t("invoicePage.tab2Content")}</div>
       )}
     </ClientSection>
   );

@@ -23,6 +23,7 @@ export default function CnAnnouncement() {
   // Form state to track form values
   const [formValues, setFormValues] = React.useState({
     date: "",
+    contract: ""
   });
 
   // Tab state from query param
@@ -75,6 +76,19 @@ export default function CnAnnouncement() {
         />
       </div>
       <Form className={Style.formGrid} onSubmit={handleFormSubmit}>
+        <CustomSelectField
+          label={t("announcementPage.form.contract")}
+          name="contract"
+          value={formValues.contract}
+          onChange={(e) =>
+            setFormValues((prev) => ({ ...prev, contract: e.target.value }))
+          }
+          options={[
+            { label: "Basic", value: "basic" },
+            { label: "Premium", value: "premium" },
+            { label: "Enterprise", value: "enterprise" },
+          ]}
+        />
         <div className={Style.fieldGroup}>
           <InputDateField
             label={t("announcementPage.form.date")}

@@ -3,37 +3,34 @@ import React from "react";
 import styles from "../../styles/pages/cnRequest.module.scss";
 import Button from "@/components/button/button";
 import { useLanguage } from "@/localization/LocalContext";
+import Link from "next/link";
 
 const requestData = [
   {
-    request: "Address Change Request",
-    detail: "説明",
-    action: "Request",
+    requestKey: "addressChange",
+    route: "/cn-request/update-address",
   },
   {
-    request: "Plan Change Request",
-    detail: "説明",
-    action: "Request",
+    requestKey: "planChange",
+    route: "/cn-request/update-plan",
   },
   {
-    request: "Plan Addition Request",
-    detail: "説明",
-    action: "Request",
+    requestKey: "planAddition",
+    route: "/cn-request/add-plan",
   },
   {
-    request: "Payment Method Change Request",
-    detail: "説明",
-    action: "Request",
+    requestKey: "paymentMethodChange",
+    route: "/cn-request/update-paymentMethod",
   },
   {
-    request: "Service Suspension / Reactivation Request",
-    detail: "説明",
-    action: "Request",
+    requestKey: "serviceStatus",
+    route: "/cn-request/reactivate-request",
   },
 ];
 
 export default function CnRequest() {
   const { t } = useLanguage();
+
   return (
     <ClientSection heading={t("requestPage.title")}>
       <div className={styles.gridTable}>
@@ -43,13 +40,15 @@ export default function CnRequest() {
         {requestData.map((row, idx) => (
           <div key={idx} className={styles.row}>
             <div className={styles.cell} data-label="Request">
-              {row.request}
+              {t(`requestPage.types.${row.requestKey}`)}
             </div>
             <div className={styles.cell} data-label="Detail">
-              {row.detail}
+              {t("requestPage.detail")}
             </div>
             <div className={styles.cell} data-label="Action">
-              <Button text={row.action} type="primary" size="small" />
+              <Link href={row.route}>
+                <Button text={t("requestPage.action")} type="primary" />
+              </Link>
             </div>
           </div>
         ))}

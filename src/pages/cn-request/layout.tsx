@@ -48,14 +48,13 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <h1 className={styles.topHeading}> {t("REQUEST")} </h1>
+      <h1 className={styles.topHeading}> {t("request")} </h1>
 
       <div className="d-flex flex-column gap-2">
         <ClientSection heading={t("changePaymentMethodPage.contractInfo")}>
           {/* Contract Info Section */}
           <h3 className={styles.subHeading}>
-            Kindly select the contract for which you wish to request a change.
-            (If you have only one contract, selection is not necessary.)
+            {t("changePaymentMethodPage.layoutSubHeading")}
           </h3>
           {/* Contract Tabs */}
           <div className={styles.tabContainer}>

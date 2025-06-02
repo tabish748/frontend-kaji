@@ -130,7 +130,7 @@
 .formButton {
   align-items: flex-end;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 
   @include respond-to(x-large) {
     justify-content: flex-start;
