@@ -256,21 +256,21 @@ const GenericForm: React.FC<GenericFormProps> = ({
               <InputField
                 {...field}
                 errorText={errors[field.name || ""] || undefined}
-                onChange={(e) => handleInputChange(e, field)}
+                onChange={(e: any) => handleInputChange(e, field)}
               />
             )}
             {(field.type === "date") && (
               <InputDateField
                 {...field}
                 errorText={errors[field.name || ""] || undefined}
-                onChange={(e) => handleInputChange(e, field)}
+                onChange={(e: any) => handleInputChange(e, field)}
               />
             )}
             {field.type === "customSelect" && (
               <CustomSelectField
                 {...field}
                 errorText={errors[field.name || ""] || undefined}
-                onChange={(e) => handleInputChange(e, field)}
+                onChange={(e: any) => handleInputChange(e, field)}
               />
             )}
 
@@ -278,7 +278,7 @@ const GenericForm: React.FC<GenericFormProps> = ({
               <SelectField
                 {...field}
                 errorText={errors[field.name || ""] || undefined}
-                onChange={(e) => handleInputChange(e, field)}
+                onChange={(e: any) => handleInputChange(e, field)}
               />
             )}
 
