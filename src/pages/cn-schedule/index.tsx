@@ -4,7 +4,7 @@ import ImageLabel from "@/components/image-lable/image-lable";
 import Accordion, { AccordionItem } from "@/components/molecules/accordion";
 import { useLanguage } from "@/localization/LocalContext";
 import React, { useState } from "react";
-import Style from "../../styles/pages/cnSchedule.module.scss";
+import Style from "../../styles/pages/cnschedule.module.scss";
 import { BiCalendar, BiHomeAlt2 } from "react-icons/bi";
 import { FaRegAddressCard } from "react-icons/fa";
 import { GiAlarmClock } from "react-icons/gi";
