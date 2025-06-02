@@ -398,31 +398,7 @@ const SearchFilters: React.FC<any> = ({
       onReset={handleFormReset}
       submitButtonLabel={t("search")}
     >
-      <div className="d-flex gap-half align-items-center mt-11">
-        <InputDateField
-          name="taxOfficeShippingStartDate"
-          value={taxOfficeShippingStartDate}
-          label={t("taxOfficeShipping")}
-          placeholder={t("円")}
-          onChange={handleInputChange(setTaxOfficeShippingStartDate)}
-          className={InquiryStyle.customerAssetsAmount}
-        />
-        <span className="mt-2">~</span>
-        <InputDateField
-          name="taxOfficeShippingEndDate"
-          value={taxOfficeShippingEndDate}
-          onChange={handleInputChange(setTaxOfficeShippingEndDate)}
-          placeholder={t("円")}
-          className={`${ProjectStyle.dateSection}`}
-        />
-        <CustomSelectField
-          options={situationValidOptions} // Ensure this is defined somewhere or passed as a prop
-          value={valid}
-          name="valid"
-          onChange={handleInputChange(setValid)}
-          className={`${Style.insuranceDropdownSelect} mt-2 w-100`}
-        />
-      </div>
+   
 
       <div style={{marginTop: '-8px'}}>
       <SelectField
