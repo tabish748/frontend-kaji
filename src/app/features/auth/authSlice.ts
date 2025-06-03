@@ -1,5 +1,6 @@
 // features/auth/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import ApiHandler from "@/app/api-handler";
 
 interface User {
   id: number;
@@ -59,17 +60,17 @@ interface Office {
 const initialState: AuthState = {
   isAuthenticated: false,
   user: {
-    username: "Sonya Taylor",
-    affiliate: "提携法人",
+    username: "",
+    affiliate: "",
     id: 1,
     team_id: 101,
     office_departments_id: 202,
-    first_name: "John",
-    last_name: "Doe",
+    first_name: "",
+    last_name: "",
     first_name_kana: "ジョン",
     last_name_kana: "ドウ",
-    email: "john.doe@example.com",
-    mobile: "080-1234-5678",
+    email: "",
+    mobile: "",
     email_verified_at: "2025-01-01T00:00:00Z",
     is_sales: 1,
     is_teamleader: 0,
@@ -92,7 +93,7 @@ const initialState: AuthState = {
   userCity: null,
   userTeam: null,
   userRole: {
-    name: "client",
+    name: "",
   },
 };
 
@@ -103,31 +104,26 @@ type PayloadType = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  async ({
-    username,
-    password,
-    office_id,
-  }: {
-    username: string;
-    password: string;
-    office_id: string;
-  }) => {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
-    const response = await fetch(`${baseUrl}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies
-      body: JSON.stringify({ username, password, office_id }),
-    });
-    if (!response.ok) {
-      const data = await response.json();
-
-      throw new Error(data.message || "Failed to login");
+  async ({ email, password }: { email: string; password: string }) => {
+    try {
+      const response = await ApiHandler.request(
+        '/api/customer/login',
+        'POST',
+        { email, password },
+        undefined,
+        undefined,
+        false // Don't require token for login
+      );
+      
+      // Store token in localStorage if it's in the response
+      if (response.data?.authorization?.token) {
+        localStorage.setItem('token', response.data.authorization.token);
+      }
+      
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message || 'Login failed');
     }
-    return await response.json();
   }
 );
 
@@ -158,7 +154,7 @@ const authSlice = createSlice({
           state,
           action: PayloadAction<{
             data: {
-              user: User;
+              customer: User;
               authorization: Authorization;
               user_department?: Department;
               user_office?: Office;
@@ -198,7 +194,7 @@ const authSlice = createSlice({
             : null;
 
           state.isAuthenticated = true;
-          state.user = action.payload.data.user;
+          state.user = action.payload.data.customer;
           state.authorization = action.payload.data.authorization;
           state.loading = false;
           state.message = action.payload.message;
@@ -207,7 +203,7 @@ const authSlice = createSlice({
           state.userOffice = userOfficeObj;
           state.userCity = userCityObj;
           state.userRole = userRole;
-          state.userTeam = action.payload.data?.user?.team_id;
+          state.userTeam = action.payload.data?.customer?.team_id;
           const userName = state.user.first_name + " " + state.user.last_name;
           const userId = state.user.id;
           localStorage.setItem("loggedInUserName", userName);
@@ -215,7 +211,7 @@ const authSlice = createSlice({
           localStorage.setItem("loggedInUserRoleId", state.userRole.id);
           localStorage.setItem(
             "employeeIdSozoku",
-            String(action?.payload?.data?.user?.id)
+            String(action?.payload?.data?.customer?.id)
           );
         }
       )

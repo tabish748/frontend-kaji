@@ -14,7 +14,7 @@ export default function Custom404() {
                 fullWidth={true}
                 htmlType="submit"
                 className={styles.hoePageBtn}
-                href="/employees"
+                href="/cn-login"
             />
         </div>
     );

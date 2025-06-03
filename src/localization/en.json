@@ -277,5 +277,22 @@
       "serviceStatus": "Service Suspension / Reactivation Request"
     }
   },
-  "pleaseSelect": "Please Select"
+  "pleaseSelect": "Please Select",
+  "cnLoginPage": {
+    "welcomeBack": "Welcome back!",
+    "pleaseSignIn": "Please sign in to continue.",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign In"
+  },
+  "cnForgotPasswordPage": {
+    "title": "Forgot Password!",
+    "pleaseEnterEmail": "Please Enter Your Email",
+    "emailPlaceholder": "Enter your email",
+    "submit": "Submit",
+    "forgetIt": "Forget it,",
+    "sendMeBack": "Send me back",
+    "toTheSignInScreen": "to the sign in screen."
+  }
 }

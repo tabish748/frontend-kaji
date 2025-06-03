@@ -5,7 +5,7 @@
 
 // export const FINANCE_EMPLOYEE = "finance_employee"
 
-export const PUBLIC_ROUTES = ["/login", "/sign-up", "/404", "/unauthenticated"];
+export const PUBLIC_ROUTES = ["/cn-login","/cn-forgotpassword", "/sign-up", "/404", "/unauthenticated"];
 
 export const CLIENT_ROUTES = [
   "/",

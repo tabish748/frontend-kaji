@@ -262,6 +262,24 @@
     "title": "パスワード変更"
   },
 
+  "cnLoginPage": {
+    "welcomeBack": "Welcome back!",
+    "pleaseSignIn": "続行するにはサインインしてください。",
+    "emailPlaceholder": "Emailを入力してください",
+    "passwordPlaceholder": "Passwordを入力してください",
+    "forgotPassword": "パスワードを忘れた場合はこちら",
+    "signIn": "サインイン"
+  },
+  "cnForgotPasswordPage": {
+    "title": "Forgot Password!",
+    "pleaseEnterEmail": "続行するにはEmailを入力してください。",
+    "emailPlaceholder": "Emailを入力してください",
+    "submit": "Submit",
+    "forgetIt": "こちら",
+    "sendMeBack": "Send me back",
+    "toTheSignInScreen": "to the sign in screen."
+  },
+
   "buttons": {
     "rescheduling": "日程変更申請",
     "cancel": "キャンセル申請",
