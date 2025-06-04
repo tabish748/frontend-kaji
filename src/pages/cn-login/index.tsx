@@ -12,12 +12,18 @@ import { login } from "@/app/features/auth/authSlice";
 import { useRouter } from "next/router";
 import type { AppDispatch, RootState } from "@/app/store";
 import ApiHandler from "@/app/api-handler";
+import Toast from "@/components/toast/toast";
 
 export default function Login() {
   const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{
+    msg: string[];
+    type: string;
+  }>();
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -27,19 +33,12 @@ export default function Login() {
     (state: RootState) => state.auth
   );
 
-  useEffect(() => {
-    // Test API connectivity on component mount
-    const pingAPI = async () => {
-      try {
-        await ApiHandler.request('/ping', 'GET', undefined, undefined, undefined, false);
-        console.log('API connection successful');
-      } catch (error) {
-        console.error('API connection failed:', error);
-        setErrors({ email: 'Unable to connect to server' });
-      }
-    };
-    pingAPI();
-  }, []);
+  const userRole = localStorage.getItem("loggedInUser")
+    ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole
+    : null;
+  if (userRole) {
+    router.push("/");
+  }
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -56,33 +55,62 @@ export default function Login() {
       [name]: value,
     }));
     // Clear errors when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: null,
-      }));
-    }
+    // if (errors[name]) {
+    //   setErrors((prev) => ({
+    //     ...prev,
+    //     [name]: null,
+    //   }));
+    // }
   };
 
   const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("input_type", formValues.email);
+    formData.append("password", formValues.password);
     try {
-      await dispatch(login(formValues)).unwrap();
+      await dispatch(login(formData)).unwrap();
+      setToastMessage({
+        msg: ["Login successful"],
+        type: "success",
+      });
+      setShowToast(true);
+      router.push("/");
     } catch (error: any) {
-      // Handle different types of errors
+      console.log("Login error:", error);
       if (error.errors) {
-        // API returned field-specific errors
-        setErrors(error.errors);
+        // Handle the specific error format
+        if (error.errors["email/password"]) {
+          console.log("Setting toast message:", error.errors["email/password"]);
+          setToastMessage({
+            msg: error.errors["email/password"],
+            type: "success",
+          });
+          setShowToast(true);
+        }
       } else {
-        // General error
-        setErrors({
-          email: error.message || "Login failed",
+        // Handle general error
+        console.log(
+          "Setting general error message:",
+          error.message || "Login failed"
+        );
+        setToastMessage({
+          msg: [error.message || "Login failed"],
+          type: "success",
         });
+        setShowToast(true);
       }
     }
   };
 
   return (
     <div className={styles.loginContainer}>
+      {showToast && toastMessage && (
+        <Toast
+          message={toastMessage.msg}
+          type={toastMessage.type || "success"}
+        />
+      )}
+
       <div className={styles.formContainer}>
         <Image
           src="/assets/svg/logo-mobile.svg"
@@ -134,7 +162,9 @@ export default function Login() {
               isLoading={loading}
             />
             <div className={styles.forgotPassword}>
-              <a href="/cn-forgotpassword">{t("cnLoginPage.forgotPassword")}</a>
+              <a href="/cn-forgot-password">
+                {t("cnLoginPage.forgotPassword")}
+              </a>
             </div>
           </div>
         </Form>

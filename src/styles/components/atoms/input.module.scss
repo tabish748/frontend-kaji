@@ -172,6 +172,7 @@
   color: $mud-gray;
   pointer-events: none;
   z-index: 1;
+  transition: all 0.2s;
   background-color: $white;
   border: 1px solid $gray-light;
   border-top-left-radius: 10px;

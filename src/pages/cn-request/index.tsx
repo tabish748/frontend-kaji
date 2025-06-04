@@ -20,7 +20,7 @@ const requestData = [
   },
   {
     requestKey: "paymentMethodChange",
-    route: "/cn-request/update-paymentMethod",
+    route: "/cn-request/update-payment-method",
   },
   {
     requestKey: "serviceStatus",

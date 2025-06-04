@@ -275,9 +275,9 @@
     "pleaseEnterEmail": "続行するにはEmailを入力してください。",
     "emailPlaceholder": "Emailを入力してください",
     "submit": "Submit",
-    "forgetIt": "こちら",
-    "sendMeBack": "Send me back",
-    "toTheSignInScreen": "to the sign in screen."
+    "forgetIt": "",
+    "sendMeBack": "戻る場合はこちら",
+    "toTheSignInScreen": "サインインに"
   },
 
   "buttons": {

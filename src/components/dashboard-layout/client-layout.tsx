@@ -14,8 +14,8 @@ import { FaPhoneAlt, FaRegAddressCard, FaTaxi } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { CiFlag1 } from "react-icons/ci";
 import { LANG } from "@/libs/constants";
-import { RootState } from "@/app/store";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "@/app/features/auth/authSlice";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -60,6 +60,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
   footer = true,
   children,
 }) => {
+  const dispatch = useDispatch();
   const { t, currentLanguage, setLanguage } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
@@ -76,7 +77,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
     { name: t("quotation"), path: "/cn-quotation" },
     { name: t("announcement"), path: "/cn-announcement" },
     { name: t("request"), path: "/cn-request" },
-    { name: t("changePassword"), path: "/cn-changepassword" },
+    { name: t("changePassword"), path: "/cn-change-password" },
   ];
 
   useEffect(() => {
@@ -120,7 +121,9 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
     jp: "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/jp.svg",
   };
 
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = localStorage.getItem("loggedInUser")
+    ? JSON.parse(localStorage.getItem("loggedInUser")!)
+    : null;
 
   return (
     <div className={styles.clientLayout}>
@@ -248,10 +251,14 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
               height={40}
               alt="Profile"
               className={styles.profileImage}
+              onClick={() => {
+                dispatch(logout());
+                router.push("/cn-login");
+              }}
             />
             <div>
-              <p className={styles.userName}>{user?.username}</p>
-              <p className={styles.userNameJp}>{user?.affiliate}</p>
+              <p className={styles.userName}>{user?.name}</p>
+              <p className={styles.userNameJp}>{user?.name_kana}</p>
             </div>
           </div>
         </div>

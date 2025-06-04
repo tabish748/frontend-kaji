@@ -4,27 +4,39 @@ import ApiHandler from "@/app/api-handler";
 
 interface User {
   id: number;
-  team_id: number;
-  office_departments_id: number;
-  first_name: string;
-  last_name: string;
-  first_name_kana: string;
-  last_name_kana: string;
-  username: string;
-  email: string | null;
-  mobile: string | null;
-  email_verified_at: string;
-  is_sales: number;
-  is_teamleader: number;
-  is_judicial: number;
-  status: number;
-  created_by: number;
-  updated_by: number;
-  deleted_at: string | null;
+  name: string;
+  name_kana: string | null;
+  email: string;
+  represents: string | null;
+  address: string;
+  age: number;
+  apartment_name: string;
   created_at: string;
+  created_by: number;
+  deleted_at: string | null;
+  discovered_chev: string | null;
+  dob: string;
+  email1: string | null;
+  email2: string | null;
+  email_verified_at: string;
+  gender: number;
+  languages: string | null;
+  nearest_station: string;
+  newsletter_emails: number;
+  phone1: string;
+  phone2: string | null;
+  phone3: string | null;
+  phone_type1: string;
+  phone_type2: string | null;
+  phone_type3: string | null;
+  post_code: string;
+  prefecture_id: number;
+  primary_contact: string;
+  route_name: string;
+  station_company: string;
+  status: number;
   updated_at: string;
-  csrfToken: string;
-  affiliate: string;
+  updated_by: number;
 }
 
 interface Authorization {
@@ -40,11 +52,7 @@ interface AuthState {
   error: string | null;
   message: string | null;
   success: boolean | null;
-  userDepartment: Department | null;
-  userOffice: Office | null;
-  userCity: Office | null;
-  userTeam?: number | null;
-  userRole?: any;
+  userRole: { name: string; id?: number };
 }
 
 interface Department {
@@ -59,41 +67,14 @@ interface Office {
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  user: {
-    username: "",
-    affiliate: "",
-    id: 1,
-    team_id: 101,
-    office_departments_id: 202,
-    first_name: "",
-    last_name: "",
-    first_name_kana: "ジョン",
-    last_name_kana: "ドウ",
-    email: "",
-    mobile: "",
-    email_verified_at: "2025-01-01T00:00:00Z",
-    is_sales: 1,
-    is_teamleader: 0,
-    is_judicial: 0,
-    status: 1,
-    created_by: 1,
-    updated_by: 1,
-    deleted_at: null,
-    created_at: "2025-01-01T00:00:00Z",
-    updated_at: "2025-06-01T12:00:00Z",
-    csrfToken: "fake_csrf_token_123",
-  },
+  user: null,
   authorization: null,
   loading: false,
   error: null,
   message: "",
   success: null,
-  userDepartment: null,
-  userOffice: null,
-  userCity: null,
-  userTeam: null,
   userRole: {
-    name: "",
+    name: ""
   },
 };
 
@@ -104,25 +85,44 @@ type PayloadType = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }) => {
+  async (fomrdata: FormData) => {
     try {
       const response = await ApiHandler.request(
-        '/api/customer/login',
-        'POST',
-        { email, password },
+        "/api/customer/login",
+        "POST",
+        fomrdata,
         undefined,
         undefined,
         false // Don't require token for login
       );
-      
+
       // Store token in localStorage if it's in the response
       if (response.data?.authorization?.token) {
-        localStorage.setItem('token', response.data.authorization.token);
+        localStorage.setItem("token", response.data.authorization.token);
       }
-      
+
       return response;
     } catch (error: any) {
-      throw new Error(error.message || 'Login failed');
+      throw new Error(error.message || "Login failed");
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (formData: FormData) => {
+    try {
+      const response = await ApiHandler.request(
+        "/api/forgot-password/customer",
+        "POST",
+        formData,
+        undefined,
+        undefined,
+        false // Don't require token for forgot password
+      );
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message || "Password reset request failed");
     }
   }
 );
@@ -139,7 +139,9 @@ const authSlice = createSlice({
       state.user = null;
       state.authorization = null;
       state.message = null;
-      // Reset any other state if needed
+
+      localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("token"); 
     },
   },
   extraReducers: (builder) => {
@@ -156,63 +158,35 @@ const authSlice = createSlice({
             data: {
               customer: User;
               authorization: Authorization;
-              user_department?: Department;
-              user_office?: Office;
-              user_city?: Office;
               role?: any;
             };
             message: string;
             success: boolean;
           }>
         ) => {
-          let userDepartmentObj: Department | null = action.payload.data
-            .user_department
-            ? {
-                id: action.payload.data.user_department.id,
-                name: action.payload.data.user_department.name,
-              }
-            : null;
-
-          let userOfficeObj: Office | null = action.payload.data.user_office
-            ? {
-                id: action.payload.data.user_office.id,
-                name: action.payload.data.user_office.name,
-              }
-            : null;
-          let userCityObj: Office | null = action.payload.data.user_city
-            ? {
-                id: action.payload.data.user_city.id,
-                name: action.payload.data.user_city.name,
-              }
-            : null;
-
-          let userRole: Office | null = action.payload.data.user_city
-            ? {
-                id: action.payload.data.role.id,
-                name: action.payload.data.role.name,
-              }
-            : null;
-
           state.isAuthenticated = true;
           state.user = action.payload.data.customer;
           state.authorization = action.payload.data.authorization;
           state.loading = false;
           state.message = action.payload.message;
-          state.success = true;
-          state.userDepartment = userDepartmentObj;
-          state.userOffice = userOfficeObj;
-          state.userCity = userCityObj;
-          state.userRole = userRole;
-          state.userTeam = action.payload.data?.customer?.team_id;
-          const userName = state.user.first_name + " " + state.user.last_name;
+          state.success = action.payload.success;
+          state.userRole = action.payload.data.role || { name: "" };
+
+          // Store relevant user info in localStorage
+          const userName = state.user.name;
           const userId = state.user.id;
           localStorage.setItem("loggedInUserName", userName);
           localStorage.setItem("loggedInUserId", String(userId));
-          localStorage.setItem("loggedInUserRoleId", state.userRole.id);
-          localStorage.setItem(
-            "employeeIdSozoku",
-            String(action?.payload?.data?.customer?.id)
-          );
+          if (state.user) {
+            localStorage.setItem("loggedInUser", JSON.stringify(state.user));
+          }
+
+          if (state.userRole?.id) {
+            localStorage.setItem("loggedInUserRoleId", String(state.userRole.id));
+          }
+          if (state.authorization?.token) {
+            localStorage.setItem("token", state.authorization.token);
+          }
         }
       )
       .addCase(login.rejected, (state, action) => {
@@ -223,7 +197,7 @@ const authSlice = createSlice({
         state.authorization = null;
         state.loading = false;
         state.success = false;
-        // state.error = payload.message;
+        state.userRole = { name: "" };
         if (action.error.message) {
           state.message = action.error.message;
         } else {

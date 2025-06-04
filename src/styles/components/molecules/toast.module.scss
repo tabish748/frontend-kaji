@@ -1,5 +1,16 @@
 @import '../../base/colors.scss';
 
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+}
+
 .toast {
     position: fixed;
     top: 50px;
@@ -15,9 +26,14 @@
     max-width: 800px;
     width: 100%;
     text-align: center;
+    opacity: 1;
     // display: flex;
     // justify-content: space-between;
     // flex-direction: row-reverse;
+
+    &.fadeOut {
+        animation: fadeOut 0.5s ease forwards;
+    }
 
     &.success {
         background-color: #EAF5F2 !important;
@@ -42,5 +58,14 @@
     top: 9px;
     right: 10px;
     font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #666;
+    
+    &:hover {
+        color: #333;
+    }
 }
 

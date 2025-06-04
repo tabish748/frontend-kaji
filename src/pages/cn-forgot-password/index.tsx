@@ -8,12 +8,22 @@ import styles from "@/styles/pages/cnforgotpassword.module.scss";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ApiHandler from "@/app/api-handler";
+import { useDispatch } from "react-redux";
+import { forgotPassword } from "@/app/features/auth/authSlice";
+import Toast from "@/components/toast/toast";
+import type { AppDispatch } from "@/app/store";
 
 export default function ForgotPassword() {
   const { t } = useLanguage();
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{
+    msg: string[];
+    type: string;
+  }>();
   const [formValues, setFormValues] = useState({
     email: "",
   });
@@ -22,6 +32,8 @@ export default function ForgotPassword() {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    // Reset toast when user starts typing
+    setShowToast(false);
     setFormValues((prev) => ({
       ...prev,
       [name]: value,
@@ -38,24 +50,45 @@ export default function ForgotPassword() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await ApiHandler.request(
-        '/api/customer/forgot-password',
-        'POST',
-        formValues,
-        undefined,
-        undefined,
-        false
-      );
-      // Show success message or redirect
-      router.push("/cn-login");
+      // Reset toast state at the start of submission
+      setShowToast(false);
+      setToastMessage(undefined);
+      
+      const formData = new FormData();
+      formData.append("email", formValues.email);
+      await dispatch(forgotPassword(formData)).unwrap();
+      
+      // Show success message before redirect
+      setToastMessage({
+        msg: ["Password reset link sent successfully"],
+        type: "success",
+      });
+      setShowToast(true);
+      
+      // Redirect after a short delay to show the success message
+      setTimeout(() => {
+        router.push("/cn-login");
+      }, 2000);
     } catch (error: any) {
-      if (error.errors) {
-        setErrors(error.errors);
-      } else {
-        setErrors({
-          email: error.message || "Failed to process request",
-        });
+      console.log("Forgot password error:", error);
+      let errorMessage = "Failed to process request";
+      
+      // Handle error object with message property
+      if (typeof error === 'object' && error !== null) {
+        if (error.message) {
+          errorMessage = error.message;
+        }
       }
+      
+      // Reset toast state before showing error
+      setShowToast(false);
+      setTimeout(() => {
+        setToastMessage({
+          msg: [errorMessage],
+          type: "fail"
+        });
+        setShowToast(true);
+      }, 100);
     } finally {
       setLoading(false);
     }
@@ -63,6 +96,13 @@ export default function ForgotPassword() {
 
   return (
     <div className={styles.forgotPasswordContainer}>
+      {showToast && toastMessage && (
+        <Toast
+          message={toastMessage.msg.join(", ")}
+          type={toastMessage.type || "success"}
+        />
+      )}
+      
       <div className={styles.formContainer}>
         <Image
           src="/assets/svg/logo-mobile.svg"

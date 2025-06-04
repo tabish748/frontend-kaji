@@ -13,7 +13,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const { t } = useLanguage();
-  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const userRole = localStorage.getItem("loggedInUser") ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole : null;
   const currentPath = router.pathname;
 
   useEffect(() => {
@@ -118,6 +118,12 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
         router.push("/unauthenticated");
         return;
       }
+    }
+
+    // Handle invalid or undefined roles
+    if (userRole !== USER_TYPE.client && userRole !== USER_TYPE.admin && !PUBLIC_ROUTES.includes(currentPath)) {
+      router.push("/404");
+      return;
     }
 
     setIsLoading(false);

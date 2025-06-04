@@ -2,18 +2,24 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 class ApiHandler {
   static async request(endpoint: string, method: string = 'GET', body?: any, query?: any, customHeaders?: any, requireToken: boolean = true) {
-
+    const currentLang = localStorage.getItem('preferredLanguage') || 'en';
+    
     const headers = {
-      'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Accept-Language': currentLang,
       ...customHeaders
     };
+
+    // Only set Content-Type for non-FormData requests
+    if (!(body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (requireToken) {
       const token = localStorage.getItem('token');
 
       if (!token) {
-        window.location.replace('/login');
+        window.location.replace('/cn-login');
         throw new Error('No authentication token found');
       }
 
@@ -31,7 +37,7 @@ class ApiHandler {
     };
 
     if (body) {
-      config.body = JSON.stringify(body);
+      config.body = body instanceof FormData ? body : JSON.stringify(body);
     }
 
     const response = await fetch(`${baseUrl}${endpoint}`, config);
