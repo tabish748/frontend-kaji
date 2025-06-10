@@ -6,7 +6,7 @@ import AuthMiddleware from "../auth-middleware/auth-middleware";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
 import { useRouter } from "next/router";
-import { PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES } from "@/libs/constants";
+import { PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES, USER_TYPE } from "@/libs/constants";
 
 interface LayoutSelectorProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
 
   useEffect(() => {
     const loggedInUserRole = localStorage.getItem("loggedInUserRoleId");
-    setRole(userRole || "client");
+    setRole(userRole || USER_TYPE.client);
   }, [userRole]);
 
   // Redirect to /unauthenticated if route is not allowed
@@ -53,7 +53,7 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
 
   return (
     <AuthMiddleware>
-      {role === "client" && isLoggedIn && isClientRoute ? (
+      {role === USER_TYPE.client && isLoggedIn && isClientRoute ? (
         <ClientLayout header={!shouldHideHeader}>{children}</ClientLayout>
       ) : role === "admin" && isLoggedIn && isAdminRoute ? (
         <DashboardLayout>{children}</DashboardLayout>

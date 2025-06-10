@@ -82,6 +82,10 @@
       position: relative;
       cursor: pointer;
 
+      &:disabled {
+        cursor: not-allowed;
+      }
+
       &:checked {
         background-color: $primary;
         border-color: $primary;
@@ -99,6 +103,11 @@
           color: white;
           font-size: 16px;
         }
+      }
+
+      &:checked:disabled {
+        background-color: $primary !important;
+        border-color: $primary;
       }
 
       &:hover:not(:disabled) {

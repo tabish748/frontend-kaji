@@ -5,7 +5,7 @@
 
 // export const FINANCE_EMPLOYEE = "finance_employee"
 
-export const PUBLIC_ROUTES = ["/cn-login","/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
+export const PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form" ,"/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
 
 export const CLIENT_ROUTES = [
   "/",
@@ -17,6 +17,7 @@ export const CLIENT_ROUTES = [
   "/cn-request",
   "/cn-request/update-payment-method",
   "/cn-request/plan-change-request",
+  "/cn-request/plan-add-request",
   "/cn-request/reactivate-request",
   "/cn-request/update-address",
   "/cn-change-password",
@@ -37,6 +38,6 @@ export const ADMIN_ROUTES = [
 export const LANG = ["EN", "JP"];
 
 export const USER_TYPE = {
-  client: "client",
+  client: "customer",
   admin: "admin",
 };

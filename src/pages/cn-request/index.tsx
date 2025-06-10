@@ -16,7 +16,7 @@ const requestData = [
   },
   {
     requestKey: "planAddition",
-    route: "/cn-request/add-plan",
+    route: "/cn-request/plan-add-request",
   },
   {
     requestKey: "paymentMethodChange",

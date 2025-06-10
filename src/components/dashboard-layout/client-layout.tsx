@@ -50,12 +50,14 @@ const userInfoItems = [
 ];
 
 interface ClientLayoutProps {
+  nav?: boolean;
   header?: boolean;
   footer?: boolean;
   children: ReactNode;
 }
 
 const ClientLayout: React.FC<ClientLayoutProps> = ({
+  nav = true,
   header = true,
   footer = true,
   children,
@@ -128,29 +130,31 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
   return (
     <div className={styles.clientLayout}>
       {/* Sidebar for mobile only */}
-      <nav
-        ref={sidebarRef}
-        className={
-          sidebarOpen
-            ? `${styles.clientSidebar} ${styles.open}`
-            : styles.clientSidebar
-        }
-        aria-label={t("mainMenu")}
-      >
-        <ul>
-          {navLinks.map((link) => (
-            <li key={link.path}>
-              <Link
-                href={link.path}
-                className={router.pathname === link.path ? styles.active : ""}
-                onClick={() => setSidebarOpen(false)}
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {nav && (
+        <nav
+          ref={sidebarRef}
+          className={
+            sidebarOpen
+              ? `${styles.clientSidebar} ${styles.open}`
+              : styles.clientSidebar
+          }
+          aria-label={t("mainMenu")}
+        >
+          <ul>
+            {navLinks.map((link) => (
+              <li key={link.path}>
+                <Link
+                  href={link.path}
+                  className={router.pathname === link.path ? styles.active : ""}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       <div
         className={
           sidebarOpen
@@ -160,112 +164,114 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
         onClick={() => setSidebarOpen(false)}
         aria-hidden="true"
       />
-      <header className={styles.clientHeader}>
-        <div className="d-flex">
-          <Image
-            className={styles.logo}
-            src="/assets/images/client-dashboard-logo.svg"
-            width={40}
-            height={40}
-            alt="Logo"
-          />
-          <Image
-            className={`${styles.logoMobile}`}
-            src="/assets/svg/logo-mobile.svg"
-            width={40}
-            height={40}
-            alt="Logo"
-          />
-          {/* Hamburger for mobile */}
-          <button
-            ref={hamburgerButtonRef}
-            className={styles.clientHamburger}
-            onClick={() => setSidebarOpen((open) => !open)}
-            aria-label={t("mainMenu")}
-          >
+      {false && (
+        <header className={styles.clientHeader}>
+          <div className="d-flex">
             <Image
-              src="/assets/svg/hamburger1.svg"
-              alt={t("mainMenu")}
-              width={30}
-              height={30}
-            />
-          </button>
-        </div>
-
-        <div className={styles.headerControls}>
-          <div className={styles.langWrapper}>
-            <div className={styles.langDropdownWrapper} ref={langDropdownRef}>
-              <div
-                className={styles.langSelect}
-                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              >
-                <div className={styles.selectedLang}>
-                  <Image
-                    src={flags[(currentLanguage as Language) || "en"]}
-                    width={20}
-                    height={15}
-                    alt={currentLanguage === "en" ? "English" : "Japanese"}
-                    className={styles.flagIcon}
-                  />
-                  <span>{(currentLanguage || "en").toUpperCase()}</span>
-                </div>
-              </div>
-              {isLangDropdownOpen && (
-                <div className={styles.langDropdown}>
-                  {LANG.map((lang) => {
-                    const langLower = lang.toLowerCase() as Language; // convert to lowercase and assert type
-                    return (
-                      <button
-                        key={lang}
-                        onClick={() => handleLanguageChange(langLower)}
-                        className={styles.langOption}
-                      >
-                        <Image
-                          src={flags[langLower]}
-                          width={20}
-                          height={15}
-                          alt={langLower === "en" ? "English" : "Japanese"}
-                          className={styles.flagIcon}
-                        />
-                        <span>{lang}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className={styles.notificationWrapper}>
-            <Image
-              src="/assets/svg/notification-icon.svg"
-              width={24}
-              height={24}
-              alt={t("notifications")}
-            />
-            <span className={styles.notificationBadge}>3</span>
-          </div>
-          <div className={styles.profileSection}>
-            <Image
-              src="/assets/images/test.jpg"
+              className={styles.logo}
+              src="/assets/images/client-dashboard-logo.svg"
               width={40}
               height={40}
-              alt="Profile"
-              className={styles.profileImage}
-              onClick={() => {
-                dispatch(logout());
-                router.push("/cn-login");
-              }}
+              alt="Logo"
             />
-            <div>
-              <p className={styles.userName}>{user?.name}</p>
-              <p className={styles.userNameJp}>{user?.name_kana}</p>
+            <Image
+              className={`${styles.logoMobile}`}
+              src="/assets/svg/logo-mobile.svg"
+              width={40}
+              height={40}
+              alt="Logo"
+            />
+            {/* Hamburger for mobile */}
+            <button
+              ref={hamburgerButtonRef}
+              className={styles.clientHamburger}
+              onClick={() => setSidebarOpen((open) => !open)}
+              aria-label={t("mainMenu")}
+            >
+              <Image
+                src="/assets/svg/hamburger1.svg"
+                alt={t("mainMenu")}
+                width={30}
+                height={30}
+              />
+            </button>
+          </div>
+
+          <div className={styles.headerControls}>
+            <div className={styles.langWrapper}>
+              <div className={styles.langDropdownWrapper} ref={langDropdownRef}>
+                <div
+                  className={styles.langSelect}
+                  onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                >
+                  <div className={styles.selectedLang}>
+                    <Image
+                      src={flags[(currentLanguage as Language) || "en"]}
+                      width={20}
+                      height={15}
+                      alt={currentLanguage === "en" ? "English" : "Japanese"}
+                      className={styles.flagIcon}
+                    />
+                    <span>{(currentLanguage || "en").toUpperCase()}</span>
+                  </div>
+                </div>
+                {isLangDropdownOpen && (
+                  <div className={styles.langDropdown}>
+                    {LANG.map((lang) => {
+                      const langLower = lang.toLowerCase() as Language; // convert to lowercase and assert type
+                      return (
+                        <button
+                          key={lang}
+                          onClick={() => handleLanguageChange(langLower)}
+                          className={styles.langOption}
+                        >
+                          <Image
+                            src={flags[langLower]}
+                            width={20}
+                            height={15}
+                            alt={langLower === "en" ? "English" : "Japanese"}
+                            className={styles.flagIcon}
+                          />
+                          <span>{lang}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className={styles.notificationWrapper}>
+              <Image
+                src="/assets/svg/notification-icon.svg"
+                width={24}
+                height={24}
+                alt={t("notifications")}
+              />
+              <span className={styles.notificationBadge}>3</span>
+            </div>
+            <div className={styles.profileSection}>
+              <Image
+                src="/assets/images/test.jpg"
+                width={40}
+                height={40}
+                alt="Profile"
+                className={styles.profileImage}
+                onClick={() => {
+                  dispatch(logout());
+                  router.push("/cn-login");
+                }}
+              />
+              <div>
+                <p className={styles.userName}>{user?.name}</p>
+                <p className={styles.userNameJp}>{user?.name_kana}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* customer top view */}
-      </header>
-      {header && (
+          {/* customer top view */}
+        </header>
+      )}
+      {nav && (
         <>
           <h1 className={styles.topHeading}> {t("profile")} </h1>
           <div className={styles.topProfileCardWrapper}>

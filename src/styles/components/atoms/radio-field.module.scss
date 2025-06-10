@@ -27,7 +27,6 @@
       content: "";
       width: 0.5rem;
       height: 0.5rem;
-      background: $primary;
       border-radius: 50%;
       position: absolute;
       top: 50%;
@@ -42,7 +41,7 @@
   }
 
   input[type="radio"]:checked + span {
-    border-color: $primary;
+    border: solid 4px $primary;
   }
 
   input[type="radio"]:disabled + span {

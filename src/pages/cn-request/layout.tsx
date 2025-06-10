@@ -2,6 +2,8 @@ import ClientSection from "@/components/client-section/client-section";
 import React, { ReactNode, useState } from "react";
 import styles from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { USER_TYPE } from "@/libs/constants";
 
 interface PaymentFormValues {
   paymentMethod: string;
@@ -16,6 +18,11 @@ interface Contract {
 
 export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
+  const isClient = userRole === USER_TYPE.client;
+
   // Contracts data including previous & updated payment methods for each contract
   const initialContracts: Contract[] = [
     {
@@ -39,7 +46,23 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
   ];
 
   const [contracts, setContracts] = useState<Contract[]>(initialContracts);
-  const [activeContractId, setActiveContractId] = useState<number>(1);
+
+  // Get initial active contract from URL params, default to 1 if not present
+  const contractIdFromUrl = searchParams?.get("contractid");
+  const initialActiveContractId = contractIdFromUrl
+    ? parseInt(contractIdFromUrl)
+    : 1;
+  const [activeContractId, setActiveContractId] = useState<number>(
+    initialActiveContractId
+  );
+
+  // Handle contract change - update both state and URL
+  const handleContractChange = (contractId: number) => {
+    setActiveContractId(contractId);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("contractid", contractId.toString());
+    router.push(`?${params.toString()}`);
+  };
 
   // Get currently active contract object
   const activeContract = contracts.find(
@@ -51,26 +74,28 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
       <h1 className={styles.topHeading}> {t("request")} </h1>
 
       <div className="d-flex flex-column gap-2">
-        <ClientSection heading={t("changePaymentMethodPage.contractInfo")}>
-          {/* Contract Info Section */}
-          <h3 className={styles.subHeading}>
-            {t("changePaymentMethodPage.layoutSubHeading")}
-          </h3>
-          {/* Contract Tabs */}
-          <div className={styles.tabContainer}>
-            {contracts.map((contract) => (
-              <button
-                key={contract.id}
-                className={`${styles.tabButtonContract} ${
-                  activeContractId === contract.id ? styles.active : ""
-                }`}
-                onClick={() => setActiveContractId(contract.id)}
-              >
-                {contract.name}
-              </button>
-            ))}
-          </div>
-        </ClientSection>
+        {isClient && (
+          <ClientSection heading={t("changePaymentMethodPage.contractInfo")}>
+            {/* Contract Info Section */}
+            <h3 className={styles.subHeading}>
+              {t("changePaymentMethodPage.layoutSubHeading")}
+            </h3>
+            {/* Contract Tabs */}
+            <div className={styles.tabContainer}>
+              {contracts.map((contract) => (
+                <button
+                  key={contract.id}
+                  className={`${styles.tabButtonContract} ${
+                    activeContractId === contract.id ? styles.active : ""
+                  }`}
+                  onClick={() => handleContractChange(contract.id)}
+                >
+                  {contract.name}
+                </button>
+              ))}
+            </div>
+          </ClientSection>
+        )}
         <main>{children}</main>
       </div>
     </>

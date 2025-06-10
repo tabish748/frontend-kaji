@@ -37,6 +37,16 @@ $spacing-unit: 8px;
     margin-left: $spacing-unit * $i !important;
   }
 
+  .mx-#{$i} {
+    margin-left: $spacing-unit * $i !important;
+    margin-right: $spacing-unit * $i !important;
+  }
+
+  .my-#{$i} {
+    margin-top: $spacing-unit * $i !important;
+    margin-bottom: $spacing-unit * $i !important;
+  }
+
   .p-#{$i} {
     padding: $spacing-unit * $i !important;
   }
@@ -1051,8 +1061,7 @@ th.month-border {
 
   @include respond-to("small") {
     font-size: 17px;
-  padding: .75rem 0;
-
+    padding: 0.75rem 0;
   }
 }
 
@@ -1064,6 +1073,17 @@ th.month-border {
 .cn-seperator-heading.danger {
   background-color: $danger-light;
   color: $danger;
+}
+
+.cn-labelWarn {
+  padding: 5px;
+  border-radius: 20px;
+  background-color: $danger-light;
+  color: $danger;
+  font-size: 10px;
+  margin: 2px 0;
+  margin-left: 20px;
+  font-weight: 700;
 }
 
 .text-normal {
