@@ -9,7 +9,7 @@
   gap: 0.5rem;
   cursor: pointer;
   font-size: 0.875rem;
-  color: var(--text-primary);
+  color: $mud-gray;
 
   input[type="radio"] {
     display: none;
@@ -18,7 +18,7 @@
   span {
     width: 1rem;
     height: 1rem;
-    border: 2px solid var(--border-color);
+    border: 2px solid $gray-400;
     border-radius: 50%;
     display: inline-block;
     position: relative;
@@ -27,7 +27,7 @@
       content: "";
       width: 0.5rem;
       height: 0.5rem;
-      background: var(--primary);
+      background: $primary;
       border-radius: 50%;
       position: absolute;
       top: 50%;
@@ -41,6 +41,10 @@
     display: block;
   }
 
+  input[type="radio"]:checked + span {
+    border-color: $primary;
+  }
+
   input[type="radio"]:disabled + span {
     opacity: 0.5;
     cursor: not-allowed;
@@ -49,8 +53,8 @@
 
 .radioGrid {
   display: grid;
+  align-items: center;
   gap: 1rem;
-  margin-top: 0.5rem;
 }
 
 .errorText {

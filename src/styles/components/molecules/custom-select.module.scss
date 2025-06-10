@@ -30,13 +30,13 @@
   }
 
   .placeholderWrapper {
+    align-items: center;
     position: relative;
     border: 1px solid $gray-light;
     transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     box-sizing: border-box;
     margin: 0;
     margin-top: 2px;
-    padding: 10px 8px;
     color: #455560;
     font-size: 16px;
     line-height: 1.5714285714285714;

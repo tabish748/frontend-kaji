@@ -12,7 +12,7 @@ const requestData = [
   },
   {
     requestKey: "planChange",
-    route: "/cn-request/update-plan",
+    route: "/cn-request/plan-change-request",
   },
   {
     requestKey: "planAddition",
