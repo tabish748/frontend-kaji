@@ -175,10 +175,8 @@ const authSlice = createSlice({
           // Store relevant user info in localStorage
           const userName = state.user.name;
           const userId = state.user.id;
-          localStorage.setItem("loggedInUserName", userName);
-          localStorage.setItem("loggedInUserId", String(userId));
           if (state.user) {
-            localStorage.setItem("loggedInUser", JSON.stringify(state.user));
+            localStorage.setItem("loggedInUser", JSON.stringify({...state.user, userRole: "client"}));
           }
 
           if (state.userRole?.id) {

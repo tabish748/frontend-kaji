@@ -2,110 +2,104 @@
 @import "../../../styles/base/_variables.scss";
 @import "../../../styles/base/_colors.scss";
 
-.clientRadioLabel {
-  font-size: 16px;
-  cursor: pointer;
+.clientRadioLabel,
+.adminRadioLabel {
   display: flex;
   align-items: center;
-  position: relative;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-primary);
 
   input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
+    display: none;
   }
 
-  input[type="radio"] + span {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-right: 12px;
-    border: 2px solid $border;
+  span {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--border-color);
     border-radius: 50%;
+    display: inline-block;
     position: relative;
-    background-color: $white;
+
+    &:after {
+      content: "";
+      width: 0.5rem;
+      height: 0.5rem;
+      background: var(--primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
   }
 
-  input[type="radio"]:checked + span {
-    border: 4px solid;
-    border-color: $primary;
-  }
-
-  input[type="radio"]:checked:disabled + span {
-    border: 4px solid $primary;
-    background-color: $border;
-    cursor: not-allowed;
+  input[type="radio"]:checked + span:after {
+    display: block;
   }
 
   input[type="radio"]:disabled + span {
-    cursor: not-allowed;
-    background-color: #f5f5f5;
-    border-color: $border;
-  }
-
-  input[type="radio"]:disabled + span + * {
-    cursor: not-allowed;
-  }
-
-  input[type="radio"]:disabled ~ * {
-    cursor: not-allowed;
-  }
-
-  input[type="radio"]:disabled {
-    cursor: not-allowed;
-  }
-}
-
-.adminRadioLabel {
-  font-size: 12px;
-  cursor: pointer;
-  margin-top: 6px;
-
-  input[type="radio"]:disabled + span {
-    cursor: not-allowed;
-    background-color: #f5f5f5;
-    border-color: $border;
-  }
-
-  input[type="radio"]:disabled + span + * {
-    cursor: not-allowed;
-  }
-
-  input[type="radio"]:disabled ~ * {
-    cursor: not-allowed;
-  }
-
-  input[type="radio"]:disabled {
-    cursor: not-allowed;
-  }
-
-  input[type="radio"]:checked:disabled + span {
-    border: 4px solid $primary;
-    background-color: #f5f5f5;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
 .radioGrid {
   display: grid;
-  gap: 12px;
-  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-@for $lg from 1 through 6 {
-  @for $md from 1 through 6 {
-    @for $sm from 1 through 6 {
-      .responsiveCols_#{$lg}_#{$md}_#{$sm} {
-        grid-template-columns: repeat(#{$lg}, 1fr);
+.errorText {
+  color: var(--error);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
 
-        @include respond-to("large") {
-          grid-template-columns: repeat(#{$md}, 1fr);
-        }
-
-        @include respond-to("small") {
-          grid-template-columns: repeat(#{$sm}, 1fr);
-        }
-      }
-    }
+// Responsive grid classes
+.responsiveCols_1_1_1 { grid-template-columns: repeat(1, 1fr); }
+.responsiveCols_2_2_1 { 
+  grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.responsiveCols_3_2_1 {
+  grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.responsiveCols_4_2_1 {
+  grid-template-columns: repeat(4, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.responsiveCols_5_3_2 {
+  grid-template-columns: repeat(5, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.responsiveCols_6_3_2 {
+  grid-template-columns: repeat(6, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

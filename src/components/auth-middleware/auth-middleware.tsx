@@ -122,7 +122,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
 
     // Handle invalid or undefined roles
     if (userRole !== USER_TYPE.client && userRole !== USER_TYPE.admin && !PUBLIC_ROUTES.includes(currentPath)) {
-      router.push("/404");
+      router.push("/cn-login");
       return;
     }
 

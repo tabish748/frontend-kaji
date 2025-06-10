@@ -294,5 +294,12 @@
     "forgetIt": "Forget it,",
     "sendMeBack": "Send me back",
     "toTheSignInScreen": "to the sign in screen."
+  },
+  "planChangeRequest": {
+    "heading": "PLAN CHANGE REQUEST",
+    "subHeading": "Please confirm your current plan details and specify the changes you would like to make",
+    "submit": "Submit Request",
+    "prev": "Previous Information",
+    "update": "Updated Information"
   }
 }

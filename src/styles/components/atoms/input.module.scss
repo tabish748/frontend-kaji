@@ -130,7 +130,9 @@
     font-size: 16px;
   }
 
-  .hasError .iconWrapper {
+  // Add new error handling for icon wrapper
+  .error ~ .iconWrapper,
+  div:has(> input.error) > .iconWrapper {
     border-color: $danger;
   }
 }

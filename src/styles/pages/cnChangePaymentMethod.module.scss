@@ -72,11 +72,6 @@
   }
 }
 
-.fieldGroup {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-}
 .subHeading {
   font-size: 20px;
   color: $mud-gray;
@@ -104,4 +99,27 @@
     margin: 15px 15px;
     font-size: 18px;
   }
+}
+
+.fieldGroup {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: center;
+
+  @include respond-to("medium") {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.timeConnector {
+  text-align: center;
+  font-weight: 500;
 }

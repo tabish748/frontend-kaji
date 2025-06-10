@@ -73,19 +73,69 @@ export const Form: React.FC<FormProps> = ({
     value: any,
     validations: any[],
     placeholder: string,
-    label?: string // Add label param
+    label?: string
   ) => {
+    console.log('validateField called for:', name, 'with value:', value);
+
     for (let validation of validations) {
       if (validation.type === "required") {
+        // Special handling for checkbox arrays
+        if (Array.isArray(value)) {
+          if (!value.length) {
+            console.log('Checkbox validation failed for:', name);
+            return Validators.required(
+              { value: "" },
+              label || placeholder || name
+            );
+          }
+          continue;
+        }
+
+        // Special handling for date inputs
+        if (typeof value === 'string' && (name.toLowerCase().includes('date') || name === 'contractPeriod')) {
+          // Check if it's a date range input (contains 'to')
+          if (value.includes(' to ')) {
+            const dates = value.split(' to ');
+            // For date range, both dates must be present
+            if (dates.length !== 2 || !dates[0].trim() || !dates[1].trim()) {
+              console.log('Date range validation failed for:', name);
+              return Validators.required(
+                { value: "" },
+                label || placeholder || name
+              );
+            }
+          } else {
+            // For single date, check if the value is empty or invalid
+            if (!value || !value.trim() || !value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+              console.log('Single date validation failed for:', name);
+              return Validators.required(
+                { value: "" },
+                label || placeholder || name
+              );
+            }
+          }
+          continue;
+        }
+
+        // Handle empty string or undefined/null values
+        if (value === undefined || value === null || value === '') {
+          console.log('Required validation failed for:', name);
+          return Validators.required(
+            { value },
+            label || placeholder || name
+          );
+        }
+        
         if (!validation.params) {
           validation.params = {};
         }
-        // Prefer label, then placeholder, then name
         validation.params.placeholder = label || placeholder || name;
       }
+      
       if (Validators[validation.type]) {
         const error = Validators[validation.type]({ value }, label || placeholder || name);
         if (error) {
+          console.log('Validation failed for:', name, 'with error:', error);
           return error;
         }
       }
@@ -101,7 +151,7 @@ export const Form: React.FC<FormProps> = ({
     const traverseAndValidate = (elements: React.ReactNode) => {
       React.Children.forEach(elements, (child) => {
         if (React.isValidElement(child)) {
-          const { name, value, validations, placeholder, label } = child.props;
+          const { name, value, validations, placeholder, label, selectedValues, type, isRange } = child.props;
 
           if (
             child.type === InputField ||
@@ -114,22 +164,28 @@ export const Form: React.FC<FormProps> = ({
           ) {
             if (validations) {
               let checkValue = value;
+              
+              // Special handling for CheckboxField
               if (child.type === CheckboxField) {
-                checkValue = Array.isArray(value)
-                  ? value.length > 0
-                    ? value.join(",")
-                    : ""
-                  : value;
+                checkValue = selectedValues || [];
               }
-              // Pass label to validator
+
+              // Special handling for date fields
+              if ((child.type === InputDateField || child.type === CustomDateField)) {
+                checkValue = value || '';
+                console.log('Date field validation:', name, checkValue, isRange);
+              }
+
               const error = validateField(
                 name,
                 checkValue,
                 validations,
                 placeholder,
-                label // Pass label here
+                label
               );
+
               if (error) {
+                console.log('Validation error for field:', name, 'error:', error);
                 newErrors[name] = error;
                 formValid = false;
                 if (!firstInvalidField) {
@@ -145,19 +201,19 @@ export const Form: React.FC<FormProps> = ({
     };
 
     traverseAndValidate(children);
+    console.log('Final validation result:', { formValid, errors: newErrors });
+    
     if (setErrors) {
       setErrors(newErrors);
     }
 
-    // Scroll to the first invalid field
     if (firstInvalidField && fieldRefs.current[firstInvalidField]) {
       const elementPosition =
         (fieldRefs.current[firstInvalidField]?.getBoundingClientRect()
           .top as any) + window.pageYOffset;
 
-      // Scroll to the calculated position minus 100px for the desired offset
       window.scrollTo({
-        top: elementPosition - 100, // Scroll to the element with an extra offset
+        top: elementPosition - 100,
         behavior: "smooth",
       });
       fieldRefs.current[firstInvalidField]?.focus();
@@ -166,84 +222,92 @@ export const Form: React.FC<FormProps> = ({
     return formValid;
   };
 
-  const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: string, value: any) => {
+    console.log("Form handleInputChange - name:", name);
+    console.log("Form handleInputChange - value:", value);
+    
     setTouched((prevTouched) => ({ ...prevTouched, [name]: true }));
     const newErrors = { ...errors };
+    
+    const validateInput = (props: any) => {
+      const { validations, placeholder, label } = props;
+      if (validations) {
+        const error = validateField(name, value, validations, placeholder, label);
+        newErrors[name] = error;
+      }
+    };
+
     React.Children.forEach(children, (child) => {
-      if (
-        React.isValidElement(child) &&
-        (child.type === InputField ||
+      if (React.isValidElement(child)) {
+        if (child.type === CheckboxField && child.props.name === name) {
+          validateInput(child.props);
+        } else if (
+          (child.type === InputField ||
           child.type === TextAreaField ||
           child.type === CustomSelectField ||
           child.type === SelectField ||
           child.type === InputDateField ||
           child.type === CustomDateField) &&
-        child.props.name === name
-      ) {
-        const { validations, placeholder } = child.props;
-        if (validations) {
-          const error = validateField(name, value, validations, placeholder);
-          newErrors[name] = error;
+          child.props.name === name
+        ) {
+          validateInput(child.props);
+        } else if (child.props && child.props.children) {
+          traverseAndHandleInputChange(child.props.children, name, value, newErrors);
         }
-      } else if (
-        React.isValidElement(child) &&
-        child.props &&
-        (child.props as any).children
-      ) {
-        traverseAndHandleInputChange(
-          (child.props as any).children,
-          name,
-          value,
-          newErrors
-        );
       }
     });
+    
     if (setErrors) setErrors(newErrors);
   };
 
   const traverseAndHandleInputChange = (
     elements: React.ReactNode,
     name: string,
-    value: string,
+    value: any,
     newErrors: Record<string, string | null>
   ) => {
+    const validateInput = (props: any) => {
+      const { validations, placeholder, label } = props;
+      if (validations) {
+        const error = validateField(name, value, validations, placeholder, label);
+        newErrors[name] = error;
+      }
+    };
+
     React.Children.forEach(elements, (child) => {
-      if (
-        React.isValidElement(child) &&
-        (child.type === InputField ||
+      if (React.isValidElement(child)) {
+        if (child.type === CheckboxField && child.props.name === name) {
+          validateInput(child.props);
+        } else if (
+          (child.type === InputField ||
           child.type === TextAreaField ||
           child.type === CustomSelectField ||
           child.type === SelectField ||
           child.type === InputDateField ||
           child.type === CustomDateField) &&
-        child.props.name === name
-      ) {
-        const { validations, placeholder }: any = child.props;
-        if (validations) {
-          const error = validateField(name, value, validations, placeholder);
-          newErrors[name] = error;
+          child.props.name === name
+        ) {
+          validateInput(child.props);
+        } else if (child.props && child.props.children) {
+          traverseAndHandleInputChange(child.props.children, name, value, newErrors);
         }
-      } else if (
-        React.isValidElement(child) &&
-        child.props &&
-        (child.props as any).children
-      ) {
-        traverseAndHandleInputChange(
-          (child.props as any).children,
-          name,
-          value,
-          newErrors
-        );
       }
     });
   };
 
-  const traverseAndCloneChildren = (
-    elements: React.ReactNode
-  ): React.ReactNode => {
+  const traverseAndCloneChildren = (elements: React.ReactNode): React.ReactNode => {
     return React.Children.map(elements, (child) => {
       if (React.isValidElement(child)) {
-        if (
+        if (child.type === CheckboxField) {
+          return React.cloneElement(child as any, {
+            errorText: (errors && errors[child.props.name]) || undefined,
+            onChange: (values: string[]) => {
+              if (child.props.onChange) child.props.onChange(values);
+              handleInputChange(child.props.name, values);
+            },
+            ref: (el: any) => (fieldRefs.current[child.props.name] = el),
+          });
+        } else if (
           child.type === InputField ||
           child.type === TextAreaField ||
           child.type === CustomSelectField ||
@@ -254,6 +318,7 @@ export const Form: React.FC<FormProps> = ({
           return React.cloneElement(child as any, {
             errorText: (errors && errors[child.props.name]) || undefined,
             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              console.log('Form onChange for field:', child.props.name, 'value:', e.target.value); // Debug log
               if (child.props.onChange) child.props.onChange(e);
               handleInputChange(child.props.name, e.target.value);
             },
@@ -273,7 +338,12 @@ export const Form: React.FC<FormProps> = ({
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (setErrors && !validateForm()) return; // Skip submit if validation fails
+    console.log('Form submission started'); // Debug log
+    
+    if (!validateForm()) {
+      console.log('Form validation failed'); // Debug log
+      return;
+    }
 
     if (showConfirmation) {
       setShowConfirmBox(true);

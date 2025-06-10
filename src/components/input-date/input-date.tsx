@@ -81,6 +81,7 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
 
     // Combine parts back into a date string
     const formattedDate = parts.join('-');
+    let finalValue = inputDate; // Default to original input
 
     // Parse dates using date-fns if valid date format
     if (formattedDate && formattedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
@@ -89,17 +90,26 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
       const maxDateValue = maxDate ? parseISO(maxDate) : null;
 
       if (minDateValue && isBefore(dateValue, minDateValue)) {
-        e.target.value = minDate || '';
+        finalValue = minDate || '';
       } else if (maxDateValue && isAfter(dateValue, maxDateValue)) {
-        e.target.value = maxDate || '';
+        finalValue = maxDate || '';
       } else {
-        e.target.value = formattedDate;
+        finalValue = formattedDate;
       }
     }
 
     // Call the original onChange handler if provided
     if (onChange) {
-      onChange(e);
+      // Create a new event-like object with the correct value
+      const syntheticEvent = {
+        target: {
+          name: name || '',
+          value: finalValue
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+      
+      console.log('InputDateField onChange - name:', name, 'value:', finalValue); // Debug log
+      onChange(syntheticEvent);
     }
   };
 
@@ -173,7 +183,7 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
 
   return (
     <div className={styles.inputWrapper} ref={ref}>
-      <label htmlFor={name}>
+      <label htmlFor={name} className={`${label ? '' : 'd-none'}`}>
         {label && <>{label}</>}
         {renderTags()}
       </label>

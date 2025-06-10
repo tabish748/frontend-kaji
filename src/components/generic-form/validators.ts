@@ -1,6 +1,5 @@
-
 type ValidationInput = {
-  value: string;
+  value: any;  // We'll do runtime type checking instead
 };
 
 type Params = string | number | null | undefined;
@@ -16,15 +15,17 @@ const error = en.error;
 
 export const Validators: Record<string, ValidationFunction> = {
   isEmail: (input: ValidationInput): string | null => {
+    if (typeof input.value !== 'string') return null;
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (input.value) {
       if (!input.value.match(emailPattern)) {
         return error.invalidEmail;
       }
-      return null;
-    } else return null;
+    }
+    return null;
   },
   minLength: (input: ValidationInput, params?: Params) => {
+    if (typeof input.value !== 'string') return null;
     const numParams = Number(params);
     if (input.value && !isNaN(numParams) && input.value.length < numParams) {
       return error.minLength.replace("{min}", String(numParams));
@@ -32,6 +33,7 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   maxLength: (input: ValidationInput, params?: Params): string | null => {
+    if (typeof input.value !== 'string') return null;
     const numParams = Number(params);
     if (!isNaN(numParams) && input.value.length > numParams) {
       return error.maxLength.replace("{max}", String(numParams));
@@ -39,8 +41,30 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   required: (input: ValidationInput, param?: Params): string | null => {
-    const newInput = String(input.value || "").trim();
-    if (!newInput) {
+    // Handle array values (checkboxes)
+    if (Array.isArray(input.value)) {
+      if (input.value.length === 0) {
+        return error.required.replace(
+          "{field}",
+          String(param || error.default)
+        );
+      }
+      return null;
+    }
+    
+    // Handle string values
+    if (typeof input.value === 'string') {
+      if (!input.value.trim()) {
+        return error.required.replace(
+          "{field}",
+          String(param || error.default)
+        );
+      }
+      return null;
+    }
+
+    // Handle other types (including null/undefined)
+    if (input.value === null || input.value === undefined || input.value === '') {
       return error.required.replace(
         "{field}",
         String(param || error.default)
@@ -49,6 +73,7 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   isNumber: (input: ValidationInput): string | null => {
+    if (typeof input.value !== 'string') return null;
     const pattern = /^[\d-]+$/;
     if (!pattern.test(input.value)) {
       return error.notNumber;
@@ -56,6 +81,7 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   strongPassword: (input: ValidationInput): string | null => {
+    if (typeof input.value !== 'string') return null;
     const passwordPattern =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{6,}$/;
     if (!input.value.match(passwordPattern)) {
@@ -64,6 +90,7 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   noSpaceAllowed: (input: ValidationInput): string | null => {
+    if (typeof input.value !== 'string') return null;
     if (input.value.includes(" ")) {
       return error.noSpace;
     }
@@ -81,6 +108,7 @@ export const Validators: Record<string, ValidationFunction> = {
   // return null;
   // },
   minDate: (input: ValidationInput, params?: Params): string | null => {
+    if (typeof input.value !== 'string') return null;
     if (!params) {
       return null;
     }
@@ -92,6 +120,7 @@ export const Validators: Record<string, ValidationFunction> = {
     return null;
   },
   onlyAlphanumeric: (input: ValidationInput): string | null => {
+    if (typeof input.value !== 'string') return null;
     const alphanumericPattern = /^[A-Za-z0-9-]+$/;
     if (input.value.trim() !== "") {
       if (!input.value.match(alphanumericPattern)) {

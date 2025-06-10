@@ -50,10 +50,6 @@ export default function ForgotPassword() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      // Reset toast state at the start of submission
-      setShowToast(false);
-      setToastMessage(undefined);
-      
       const formData = new FormData();
       formData.append("email", formValues.email);
       await dispatch(forgotPassword(formData)).unwrap();
@@ -80,15 +76,11 @@ export default function ForgotPassword() {
         }
       }
       
-      // Reset toast state before showing error
-      setShowToast(false);
-      setTimeout(() => {
-        setToastMessage({
-          msg: [errorMessage],
-          type: "fail"
-        });
-        setShowToast(true);
-      }, 100);
+      setToastMessage({
+        msg: [errorMessage],
+        type: "fail"
+      });
+      setShowToast(true);
     } finally {
       setLoading(false);
     }
@@ -98,8 +90,9 @@ export default function ForgotPassword() {
     <div className={styles.forgotPasswordContainer}>
       {showToast && toastMessage && (
         <Toast
-          message={toastMessage.msg.join(", ")}
+          message={toastMessage.msg}
           type={toastMessage.type || "success"}
+          duration={3000}
         />
       )}
       

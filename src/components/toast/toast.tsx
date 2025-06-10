@@ -6,49 +6,42 @@ type ToastProps = {
   message: string | string[];
   type: string;
   onClose?: () => void;
-  duration?: number; // Optional duration in milliseconds
+  duration?: number;
 };
 
-const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 30000 }) => {
-  const [isVisible, setIsVisible] = useState(true);
+const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 3000 }) => {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // If no onClose provided, auto-close after duration
-    if (!onClose) {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-      }, duration);
+    // Reset and show toast whenever message changes
+    setIsVisible(false);
+    
+    // Small delay to ensure clean re-render
+    const showTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
 
-      return () => clearTimeout(timer);
-    }
-  }, [onClose, duration]);
+    // Auto-hide timer
+    const hideTimer = setTimeout(() => {
+      setIsVisible(false);
+      if (onClose) {
+        onClose();
+      }
+    }, duration + 100); // Add 100ms to account for the show delay
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [message, duration, onClose]);
 
   if (!isVisible) return null;
 
   return (
     <div className={`${styles.toast} ${styles[type]}`}>
-      {onClose && (
-        <button onClick={onClose} className={styles.closeButton}>
-          &times;
-        </button>
-      )}
-
-      {
-        Array.isArray(message) ? (
-          message.map((item, index) => (
-            <div className="d-flex mt-1" key={index}>
-              <Image
-                src={type === "success" ? "/assets/svg/success.svg" : "/assets/svg/close.svg"}
-                alt={type === "success" ? "success" : "error"}
-                width={15}
-                height={20}
-                className={type === "success" ? styles.alertIconMargin : styles.dangerIconMargin}
-              />
-              <p style={{ color: "#455560" }}>{item}</p>
-            </div>
-          ))
-        ) : (
-          <div className="d-flex mt-1">
+      {Array.isArray(message) ? (
+        message.map((item, index) => (
+          <div className="d-flex mt-1" key={index}>
             <Image
               src={type === "success" ? "/assets/svg/success.svg" : "/assets/svg/close.svg"}
               alt={type === "success" ? "success" : "error"}
@@ -56,10 +49,21 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 30000 
               height={20}
               className={type === "success" ? styles.alertIconMargin : styles.dangerIconMargin}
             />
-            <p style={{ color: "#455560" }}>{message}</p>
+            <p style={{ color: "#455560" }}>{item}</p>
           </div>
-        )
-      }
+        ))
+      ) : (
+        <div className="d-flex mt-1">
+          <Image
+            src={type === "success" ? "/assets/svg/success.svg" : "/assets/svg/close.svg"}
+            alt={type === "success" ? "success" : "error"}
+            width={15}
+            height={20}
+            className={type === "success" ? styles.alertIconMargin : styles.dangerIconMargin}
+          />
+          <p style={{ color: "#455560" }}>{message}</p>
+        </div>
+      )}
     </div>
   );
 };

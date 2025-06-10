@@ -20,6 +20,7 @@ export default function Login() {
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [showToast, setShowToast] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     msg: string[];
     type: string;
@@ -36,15 +37,21 @@ export default function Login() {
   const userRole = localStorage.getItem("loggedInUser")
     ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole
     : null;
-  if (userRole) {
-    router.push("/");
-  }
 
+  // Redirect if user is already logged in
   useEffect(() => {
-    if (isAuthenticated) {
+    const isLoggedIn = localStorage.getItem("loggedInUser");
+    if (isLoggedIn) {
       router.push("/");
     }
-  }, [isAuthenticated, router]);
+  }, [router]);
+
+  // Handle navigation after successful authentication
+  useEffect(() => {
+    if (isAuthenticated && isNavigating) {
+      router.push("/");
+    }
+  }, [isAuthenticated, isNavigating, router]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -74,31 +81,21 @@ export default function Login() {
         type: "success",
       });
       setShowToast(true);
-      router.push("/");
+      setIsNavigating(true);
     } catch (error: any) {
       console.log("Login error:", error);
-      if (error.errors) {
-        // Handle the specific error format
-        if (error.errors["email/password"]) {
-          console.log("Setting toast message:", error.errors["email/password"]);
-          setToastMessage({
-            msg: error.errors["email/password"],
-            type: "success",
-          });
-          setShowToast(true);
-        }
+      if (error.errors && error.errors["email/password"]) {
+        setToastMessage({
+          msg: error.errors["email/password"],
+          type: "fail",
+        });
       } else {
-        // Handle general error
-        console.log(
-          "Setting general error message:",
-          error.message || "Login failed"
-        );
         setToastMessage({
           msg: [error.message || "Login failed"],
-          type: "success",
+          type: "fail",
         });
-        setShowToast(true);
       }
+      setShowToast(true);
     }
   };
 
@@ -108,6 +105,7 @@ export default function Login() {
         <Toast
           message={toastMessage.msg}
           type={toastMessage.type || "success"}
+          duration={3000}
         />
       )}
 

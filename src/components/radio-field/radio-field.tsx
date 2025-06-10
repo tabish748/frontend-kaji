@@ -36,7 +36,7 @@ const RadioField: React.FC<RadioFieldProps> = ({
   columnsMd = 2, // default to 2 columns for medium screens
   columnsSm = 1, // default to 2 columns for small screens
 }) => {
-  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
   const isClient = userRole === "client";
 
   const responsiveClass =

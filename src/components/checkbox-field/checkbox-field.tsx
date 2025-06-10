@@ -18,13 +18,13 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   label,
   name,
   options,
-  selectedValues,
+  selectedValues = [], // Add default empty array
   onChange,
   className,
-  disabled = false, // Default to false if not provided
-  errorText, // Destructure errorText
+  disabled = false,
+  errorText,
   tag,
-  validations, // <-- Add this line to destructure validations
+  validations,
 }) => {
   const renderTags = () => {
     if (Array.isArray(tag)) {
@@ -60,11 +60,11 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    if (e.target.checked) {
-      onChange([...selectedValues, newValue]);
-    } else {
-      onChange(selectedValues.filter((value) => value !== newValue));
-    }
+    const newSelectedValues = e.target.checked
+      ? [...selectedValues, newValue]
+      : selectedValues.filter((value) => value !== newValue);
+    
+    onChange(newSelectedValues);
   };
 
   return (
@@ -72,6 +72,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
       className={`${styles.inputWrapper} ${className || ""} ${
         errorText ? styles.hasError : ""
       }`}
+      data-testid={`checkbox-field-${name}`}
     >
       <label className={`${label ? '': "d-none"} `}>
         {label}
@@ -87,15 +88,16 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
               name={name}
               value={option.value}
               checked={selectedValues.includes(String(option?.value))}
-              onChange={(e) => handleCheckboxChange(e)}
+              onChange={handleCheckboxChange}
               disabled={disabled}
               className={errorText ? styles.error : ""}
+              aria-invalid={!!errorText}
             />
             <label htmlFor={`${name}_${option.value}`}>{option.label}</label>
           </div>
         ))}
       </div>
-      {errorText && <div className={styles.errorText}>{errorText}</div>}
+      {errorText && <div className={styles.errorText} role="alert">{errorText}</div>}
     </div>
   );
 };
