@@ -164,7 +164,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
         onClick={() => setSidebarOpen(false)}
         aria-hidden="true"
       />
-      {false && (
+      {nav && (
         <header className={styles.clientHeader}>
           <div className="d-flex">
             <Image

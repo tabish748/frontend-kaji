@@ -5,9 +5,16 @@
 
 // export const FINANCE_EMPLOYEE = "finance_employee"
 
-export const PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form" ,"/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
+// Customer public routes (accessible without authentication) - uses customer theme
+export const CUSTOMER_PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form" ,"/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
 
-export const CLIENT_ROUTES = [
+// Admin public routes (accessible without authentication) - uses admin theme  
+export const ADMIN_PUBLIC_ROUTES = ["/ad-login", "/admin-forgot-password", "/admin-reset-password", "/admin-contact-form", "/404", "/unauthenticated"];
+
+// All public routes combined (for backward compatibility if needed)
+export const ALL_PUBLIC_ROUTES = [...CUSTOMER_PUBLIC_ROUTES, ...ADMIN_PUBLIC_ROUTES];
+
+export const CUSTOMER_ROUTES = [
   "/",
   "/cn-schedule",
   "/cn-about",
@@ -23,7 +30,11 @@ export const CLIENT_ROUTES = [
   "/cn-change-password",
 ];
 
+// Backward compatibility
+export const CLIENT_ROUTES = CUSTOMER_ROUTES;
+
 export const ADMIN_ROUTES = [
+  "/",
   "/settings",
   "/projectLegal",
   "/projectConfirmed",
@@ -38,6 +49,6 @@ export const ADMIN_ROUTES = [
 export const LANG = ["EN", "JP"];
 
 export const USER_TYPE = {
-  client: "customer",
-  admin: "admin",
+  customer: "end-user",
+  admin: "client-cont",
 };

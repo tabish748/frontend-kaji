@@ -21,7 +21,7 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
-  const isClient = userRole === USER_TYPE.client;
+  const isClient = userRole === USER_TYPE.customer;
 
   // Contracts data including previous & updated payment methods for each contract
   const initialContracts: Contract[] = [

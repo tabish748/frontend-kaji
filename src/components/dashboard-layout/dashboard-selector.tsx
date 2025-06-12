@@ -6,7 +6,8 @@ import AuthMiddleware from "../auth-middleware/auth-middleware";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
 import { useRouter } from "next/router";
-import { PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES, USER_TYPE } from "@/libs/constants";
+import { CUSTOMER_PUBLIC_ROUTES, ADMIN_PUBLIC_ROUTES, CUSTOMER_ROUTES, ADMIN_ROUTES, USER_TYPE } from "@/libs/constants";
+import { useTheme } from "@/hooks/useTheme";
 
 interface LayoutSelectorProps {
   children: React.ReactNode;
@@ -14,28 +15,31 @@ interface LayoutSelectorProps {
 
 const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   const [role, setRole] = useState<string | null>(null);
-  const userRole = useSelector((state: RootState) => state.auth.userRole?.name);
+  const userRole = localStorage.getItem("loggedInUser") ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole : null;
   const isLoggedIn = true;
   const router = useRouter();
   const currentPath = router.pathname;
+  
+  // Use the theme hook to automatically apply dashboard themes
+  useTheme();
 
-  const isClientRoute = CLIENT_ROUTES.includes(currentPath);
-  const isAdminRoute = [...CLIENT_ROUTES, ...ADMIN_ROUTES].includes(
+  const isCustomerRoute = CUSTOMER_ROUTES.includes(currentPath);
+  const isAdminRoute = [...CUSTOMER_ROUTES, ...ADMIN_ROUTES].includes(
     currentPath
   );
-  const isPublicRoute = PUBLIC_ROUTES.includes(currentPath);
+  const isPublicRoute = [...CUSTOMER_PUBLIC_ROUTES, ...ADMIN_PUBLIC_ROUTES].includes(currentPath);
 
   useEffect(() => {
     const loggedInUserRole = localStorage.getItem("loggedInUserRoleId");
-    setRole(userRole || USER_TYPE.client);
+    setRole(userRole);
   }, [userRole]);
 
   // Redirect to /unauthenticated if route is not allowed
   useEffect(() => {
-    if (!isPublicRoute && !isClientRoute && !isAdminRoute) {
+    if (!isPublicRoute && !isCustomerRoute && !isAdminRoute) {
       router.replace("/unauthenticated");
     }
-  }, [currentPath, isPublicRoute, isClientRoute, isAdminRoute, router]);
+  }, [currentPath, isPublicRoute, isCustomerRoute, isAdminRoute, router]);
 
   // Public pages: no layout
   if (isPublicRoute) {
@@ -47,15 +51,15 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
     return <>{children}</>;
   }
 
-  const shouldHideHeader = CLIENT_ROUTES.some((route) =>
+  const shouldHideHeader = CUSTOMER_ROUTES.some((route) =>
     currentPath.startsWith(route + "/")
   );
 
   return (
     <AuthMiddleware>
-      {role === USER_TYPE.client && isLoggedIn && isClientRoute ? (
+      {role === USER_TYPE.customer && isLoggedIn && isCustomerRoute ? (
         <ClientLayout header={!shouldHideHeader}>{children}</ClientLayout>
-      ) : role === "admin" && isLoggedIn && isAdminRoute ? (
+      ) : role === USER_TYPE.admin && isLoggedIn && isAdminRoute ? (
         <DashboardLayout>{children}</DashboardLayout>
       ) : (
         <>{children}</>

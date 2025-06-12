@@ -5,7 +5,6 @@ import { LanguageProvider } from "../localization/LocalContext";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import { store, RootState } from "../app/store";
-import DashboardLayout from "@/components/dashboard-layout/dashboard-layout";
 import { useRouter } from "next/router";
 import GlobalLoader from "@/components/global-loader/global-loader";
 import LayoutSelector from "@/components/dashboard-layout/dashboard-selector";

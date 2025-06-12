@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useLanguage } from "@/localization/LocalContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES, USER_TYPE } from "@/libs/constants";
+import {  CUSTOMER_PUBLIC_ROUTES, CLIENT_ROUTES, ADMIN_ROUTES, USER_TYPE, ADMIN_PUBLIC_ROUTES } from "@/libs/constants";
 
 interface AuthMiddlewareProps {
   children: ReactNode;
@@ -23,7 +23,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     const loggedInUserRole = localStorage.getItem("loggedInUserRoleId");
 
     // Handle public routes
-    if (PUBLIC_ROUTES.includes(currentPath)) {
+    if (CUSTOMER_PUBLIC_ROUTES.includes(currentPath) || ADMIN_PUBLIC_ROUTES.includes(currentPath)) {
       setIsLoading(false);
       return;
     }
@@ -101,7 +101,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     // }
 
     // Handle client routes
-    if (userRole === USER_TYPE.client) {
+    if (userRole === USER_TYPE.customer) {
       // Check if current path is in client routes
       const isClientRoute = CLIENT_ROUTES.some(route => currentPath.startsWith(route));
       if (!isClientRoute) {
@@ -113,7 +113,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     // Handle admin routes
     if (userRole === USER_TYPE.admin) {
       // Admin can access both client and admin routes
-      const isAdminRoute = [...CLIENT_ROUTES, ...ADMIN_ROUTES].some(route => currentPath.startsWith(route));
+      const isAdminRoute = [...ADMIN_ROUTES].some(route => currentPath.startsWith(route));
       if (!isAdminRoute) {
         router.push("/unauthenticated");
         return;
@@ -121,7 +121,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
     }
 
     // Handle invalid or undefined roles
-    if (userRole !== USER_TYPE.client && userRole !== USER_TYPE.admin && !PUBLIC_ROUTES.includes(currentPath)) {
+    if (userRole !== USER_TYPE.customer && userRole !== USER_TYPE.admin && !CUSTOMER_PUBLIC_ROUTES.includes(currentPath) && !ADMIN_PUBLIC_ROUTES.includes(currentPath)) {
       router.push("/cn-login");
       return;
     }

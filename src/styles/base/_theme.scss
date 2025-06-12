@@ -1,0 +1,32 @@
+/* theme.scss - CSS Custom Properties for dynamic role-based theming */
+
+// CSS Custom Properties for dynamic role-based theming
+:root {
+  // Default/Customer theme (teal/cyan colors)
+  --primary: #38cab3;
+  --primary-light: #{lighten(#38cab3, 50%)};
+  --primary-dark: #{darken(#38cab3, 10%)};
+  --secondary: #c2d1d9;
+  --secondary-light: #{lighten(#c2d1d9, 10%)};
+  --secondary-dark: #{darken(#c2d1d9, 10%)};
+}
+
+// Customer Dashboard & Public Routes Theme (teal colors)
+[data-dashboard="customer"] {
+  --primary: #38cab3;
+  --primary-light: #{lighten(#38cab3, 50%)};
+  --primary-dark: #{darken(#38cab3, 10%)};
+  --secondary: #c2d1d9;
+  --secondary-light: #{lighten(#c2d1d9, 10%)};
+  --secondary-dark: #{darken(#c2d1d9, 10%)};
+}
+
+// Admin Dashboard & Public Routes Theme (blue colors)
+[data-dashboard="admin"] {
+  --primary: #017FFA;
+  --primary-light: #{lighten(#017FFA, 50%)};
+  --primary-dark: #{darken(#017FFA, 10%)};
+  --secondary: #6c757d;
+  --secondary-light: #{lighten(#6c757d, 10%)};
+  --secondary-dark: #{darken(#6c757d, 10%)};
+} 

@@ -2,7 +2,16 @@ import styles from "../../styles/components/organisms/dashboard-layout.module.sc
 import Image from "next/image";
 import { useLanguage } from "../../localization/LocalContext";
 import Link from "next/link";
-import { ReactNode, FC, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactPortal, useCallback } from "react";
+import {
+  ReactNode,
+  FC,
+  JSXElementConstructor,
+  Key,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactPortal,
+  useCallback,
+} from "react";
 import Button from "../button/button";
 import { useState, useEffect } from "react";
 import RightArrowIcon from "../../../public/assets/svg/right-arrow.svg";
@@ -11,21 +20,21 @@ import { formatDate, extractDay } from "../../libs/utils";
 import { useRouter } from "next/router";
 import { logout } from "../../app/features/auth/authSlice";
 import { useDispatch } from "react-redux";
-import {
-  FullSearchIcon,
-  CustomerManagementIcon,
-  InquiryManagementIcon,
-  InterviewManagementIcon,
-  BusinessManagementIcon,
-  InsuranceManagementIcon,
-  UserIcon,
-  AnalysisIcon,
-  SettingIcon,
-  ArrowIcon,
-} from "@/libs/svgIcons";
+
 import { Url } from "next/dist/shared/lib/router/router";
 import path from "path";
 import SessionModal from "../session-modal/session-modal";
+import {
+  IoSearch,
+  IoAdd,
+  IoChevronForward,
+  IoChevronDown,
+  IoDocumentTextOutline,
+  IoSettingsOutline,
+} from "react-icons/io5";
+import { MdKeyboardCommandKey } from "react-icons/md";
+import { HiOutlineUsers } from "react-icons/hi";
+import { LuUserRoundCheck } from "react-icons/lu";
 
 // type
 interface DashboardLayoutProps {
@@ -36,6 +45,8 @@ interface DashboardLayoutProps {
 interface DropdownItem {
   name: string;
   path: string;
+  icon?: string;
+  subItems?: DropdownItem[];
 }
 
 interface SidebarItem {
@@ -69,11 +80,34 @@ const SidebarButton = ({ text, src, onClick }: any) => {
     </div>
   );
 };
+
+const DropdownIcon = ({
+  type,
+  size = "14",
+}: {
+  type: string;
+  size?: string;
+}) => {
+  const iconSize = parseInt(size);
+
+  if (type === "search") {
+    return <IoSearch size={iconSize} className={styles.dropdownIcon} />;
+  } else if (type === "plus") {
+    return <IoAdd size={iconSize} className={styles.dropdownIcon} />;
+  } else if (type === "arrow") {
+    return (
+      <IoChevronForward size={iconSize} className={styles.subDropdownArrow} />
+    );
+  }
+  return null;
+};
+
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
   const { t } = useLanguage();
   const router = useRouter();
   const dispatch = useDispatch();
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeSubDropdown, setActiveSubDropdown] = useState(null);
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [isDesktopSidebarVisible, setIsDesktopSidebarVisible] = useState(true);
@@ -91,13 +125,16 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
   useEffect(() => {
     const route = router.pathname;
 
-    if (route.startsWith('/dashboard') || route.startsWith('/legalDashboard') || route.startsWith('/insuranceDashboard')) {
+    if (
+      route.startsWith("/dashboard") ||
+      route.startsWith("/legalDashboard") ||
+      route.startsWith("/insuranceDashboard")
+    ) {
       setIsDesktopSidebarVisible(false);
     } else {
       setIsDesktopSidebarVisible(true);
     }
   }, [router.pathname]);
-
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -108,9 +145,21 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
 
-  const toggleSidebar = (event: React.MouseEvent) => {
-    event.stopPropagation(); // Stop event propagation
-    setSidebarVisible(!isSidebarVisible);
+  const toggleSubDropdown = (subDropdownId: any) => {
+    setActiveSubDropdown(
+      activeSubDropdown === subDropdownId ? null : subDropdownId
+    );
+  };
+
+  const unifiedToggleSidebar = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    // Check if we're on mobile by checking window width
+    if (window.innerWidth <= 576) {
+      // mobile breakpoint
+      setSidebarVisible(!isSidebarVisible);
+    } else {
+      setIsDesktopSidebarVisible(!isDesktopSidebarVisible);
+    }
   };
 
   useEffect(() => {
@@ -154,13 +203,6 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     if (name) setUserName(name);
   }, []);
 
-  const desktopToggleSidebar = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    setIsDesktopSidebarVisible(!isDesktopSidebarVisible);
-  };
-
-
-
   useEffect(() => {
     const deptId = localStorage.getItem("userDepartment");
     if (deptId === "1") {
@@ -170,198 +212,118 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     }
   }, []);
 
-
   const getSidebarItems = () => {
-    let businessManagementDropdownItems = [];
-    let insuranceDropdownItems = [];
-    if (departmentId === "1" || departmentId === "2" ) {
-
-      insuranceDropdownItems.push(
-        { name: `${t("search/list")}`, path: "/insurance" }
-      );
-      insuranceDropdownItems.push(
-        { name: `${t("新規登録")}`, path: "/insurance/create" }
-      );
-    }
-    if (departmentId === "1") {
-
-      businessManagementDropdownItems.push(
-        { name: `${t("search/list")}`, path: "/projectConfirmed/listing2?project_category=1&limit=50&active_tab=2" }
-      );
-    } else if (departmentId === "2") {
-
-      businessManagementDropdownItems.push(
-        { name: `${t("search/list")}`, path: "/projectLegal/listing/1" }
-      );
-    }
-    if (departmentId === "3") {
-      businessManagementDropdownItems.push(
-        {
-          name: `${t("search/list")}`,
-          path: "/insurance",
-        },
-        {
-          name: `${t("signUp")}`,
-          path: "/insurance/create",
-        },
-
-      )
-        ;
-    }
-    let items = [
+    const items = [
       {
-        title: "fullSearch",
-        id: "fullSearch",
+        title: t("adDashboardSidebar.dashboard"),
+        id: "dashboard",
         isDropdown: false,
-        name: `${t("fullSearch")}`,
-        path: "/fullSearch",
+        dropdownItems: [],
+        path: "/dashboard",
       },
-
       {
-        title: "customerManagement",
-        id: "customerManagement",
-        isDropdown: true,
-        dropdownItems: [{ name: `${t("search/list")}`, path: "/customer" }],
-      },
-      null,
-      null,
-      {
-        title: "inquiryManagement",
-        id: "inquiryManagement",
+        title: t("adDashboardSidebar.customerOperation"),
+        id: "customerOperation",
         isDropdown: true,
         dropdownItems: [
-          { name: `${t("search/list")}`, path: "/inquiry" },
-          { name: `${t("signUp")}`, path: "/inquiry/create" },
+          {
+            name: t("adDashboardSidebar.inquiries"),
+            path: "#",
+            subItems: [
+              {
+                name: t("adDashboardSidebar.searchList"),
+                path: "/inquiry",
+                icon: "search",
+              },
+              {
+                name: t("adDashboardSidebar.addNew"),
+                path: "/inquiry/create",
+                icon: "plus",
+              },
+            ],
+          },
+          {
+            name: t("adDashboardSidebar.clients"),
+            path: "#",
+            subItems: [
+              {
+                name: t("adDashboardSidebar.searchList"),
+                path: "/customer",
+                icon: "search",
+              },
+              {
+                name: t("adDashboardSidebar.addNew"),
+                path: "/customer/create",
+                icon: "plus",
+              },
+            ],
+          },
+          {
+            name: t("adDashboardSidebar.partner"),
+            path: "#",
+            subItems: [
+              {
+                name: t("adDashboardSidebar.searchList"),
+                path: "/partner",
+                icon: "search",
+              },
+              {
+                name: t("adDashboardSidebar.addNew"),
+                path: "/partner/create",
+                icon: "plus",
+              },
+            ],
+          },
+          {
+            name: t("adDashboardSidebar.assignments"),
+            path: "#",
+            subItems: [
+              {
+                name: t("adDashboardSidebar.searchList"),
+                path: "/assignments",
+                icon: "search",
+              },
+              {
+                name: t("adDashboardSidebar.addNew"),
+                path: "/assignments/create",
+                icon: "plus",
+              },
+            ],
+          },
         ],
       },
       {
-        title: "interviewManagement",
-        id: "interviewManagement",
-        isDropdown: true,
-        dropdownItems: [
-          { name: `${t("search/list")}`, path: "/interview" },
-          { name: `${t("signUp")}`, path: "/interview/create" },
-        ],
-      },
-      {
-        title: departmentId == "3" ? "設計書管理" : "案件管理",
-        id: "businessManagement",
-        isDropdown: true,
-        dropdownItems: businessManagementDropdownItems
-      },
-      (departmentId === '1'  || departmentId === '2' )? {
-        title: "設計書管理",
-        id: "insuranceListing",
-        isDropdown: true,
-        dropdownItems: insuranceDropdownItems,
-      } : null,
-      {
-        title: "employeeManagement",
-        id: "employeeManagement",
-        isDropdown: true,
-        dropdownItems: [
-          { name: `${t("search/list")}`, path: "/employees" },
-          { name: `${t("signUp")}`, path: "/employees/create" },
-        ],
-      },
-      {
-        title: "tabulation/analysis",
-        id: "tabulationAnalysis",
+        title: t("adDashboardSidebar.talentOperation"),
+        id: "talentOperation",
         isDropdown: false,
-        path: departmentId === '1'
-          ? `/dashboard/inquiry`
-          : departmentId === '3'
-            ? `/insuranceDashboard/1`
-            : '/legalDashboard/1a',
-        forActivePaths: ["/dashboard/inquiry", "/dashboard", "/dashboard/2", "/dashboard/3", "/dashboard/4", "/dashboard/5", "/dashboard/6", "/insuranceDashboard/1", "/insuranceDashboard/2", "/insuranceDashboard/3", "/legalDashboard/1", "/legalDashboard/1a", "/legalDashboard/2", "/legalDashboard/3", "/legalDashboard/4", "/legalDashboard/5", "/legalDashboard/6", "/legalDashboard/7"]
-
-
-        // path: {departmentId == '1' ? `/dashboard/inquiry` : '/legalDashboard/1' },
+        dropdownItems: [],
+        path: "/talent-operation",
+      },
+      {
+        title: t("adDashboardSidebar.backOfficeOperation"),
+        id: "backOfficeOperation",
+        isDropdown: false,
+        dropdownItems: [],
+        path: "/back-office-operation",
+      },
+      {
+        title: t("adDashboardSidebar.settings"),
+        id: "settings",
+        isDropdown: false,
+        dropdownItems: [],
+        path: "/settings",
       },
     ];
 
-
-    if (departmentId === '3') {
-      items = items.filter(item => item?.title === "tabulation/analysis" || item?.id === "businessManagement");
-    }
-
-    return items.filter(item => item !== null);
-
+    return items;
   };
   const sidebarItems = getSidebarItems();
 
-  // const sidebarItems: SidebarItem[] = [
-  //   {
-  //     title: "home",
-  //     id: "home",
-  //     isDropdown: false,
-  //     dropdownItems: [],
-  //     // path: "",
-  //   },
-  //   {
-  //     title: "customerManagement",
-  //     id: "customerManagement",
-  //     isDropdown: true,
-  //     dropdownItems: [
-  //       { name: `${t("search/list")}`, path: "/customer" },
-  //       // { name: `${t("signUp")}`, path: "/customer/create" },
-  //     ],
-  //   },
-  //   {
-  //     title: "inquiryManagement",
-  //     id: "inquiryManagement",
-  //     isDropdown: true,
-  //     dropdownItems: [
-  //       { name: `${t("search/list")}`, path: "/inquiry" },
-  //       { name: `${t("signUp")}`, path: "/inquiry/create" },
-  //     ],
-  //   },
-  //   {
-  //     title: "interviewManagement",
-  //     id: "interviewManagement",
-  //     isDropdown: true,
-  //     dropdownItems: [
-  //       { name: `${t("search/list")}`, path: "/interview" },
-  //       { name: `${t("signUp")}`, path: "/interview/create" },
-  //     ],
-  //   },
-  //   {
-  //     title: "businessManagement",
-  //     id: "businessManagement",
-  //     isDropdown: true,
-  //     dropdownItems: [
-  //       { name: `${t("search/list")}`,   path: departmentId === '1' ? "/projectConfirmed/listing2" : departmentId === '2' ? "/projectLegal/listing/3" : "/insurance",},
-  //       { name: `${t("signUp")}`, path: "/insurance/create" },
-  //     ],
-  //   },
-
-  //   {
-  //     title: "employeeManagement",
-  //     id: "employeeManagement",
-  //     isDropdown: true,
-  //     dropdownItems: [
-  //       { name: `${t("search/list")}`, path: "/employees" },
-  //       { name: `${t("signUp")}`, path: "/employees/create" },
-  //     ],
-  //   },
-  //   {
-  //     title: "tabulation/analysis",
-  //     id: "tabulationAnalysis",
-  //     isDropdown: false,
-  //     dropdownItems: [],
-  //     // path: "",
-  //   },
-  //   // Add additional items if needed
-  // ];
-  // const isRouteActive = (route: string, currentPath: string) => {
-  //   return currentPath.startsWith(route);
-  // };
   const isRouteActive = (
     currentPath: string,
     paths?: string[],
     mainPath?: string
   ) => {
-
     if (paths && paths.length > 0) {
       return paths.some((path) => currentPath == path);
     }
@@ -378,8 +340,6 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     }
   }, []);
 
-
-
   const [showModal, setShowModal] = useState(false);
 
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -391,7 +351,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
 
     inactivityTimeoutRef.current = setTimeout(() => {
       setShowModal(true);
-    },  6 * 60 * 60 * 1000);  
+    }, 6 * 60 * 60 * 1000);
   }, []);
 
   useEffect(() => {
@@ -403,12 +363,12 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
       }
     };
 
-    window.addEventListener('mousemove', handleActivity);
-    window.addEventListener('keydown', handleActivity);
+    window.addEventListener("mousemove", handleActivity);
+    window.addEventListener("keydown", handleActivity);
 
     return () => {
-      window.removeEventListener('mousemove', handleActivity);
-      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener("mousemove", handleActivity);
+      window.removeEventListener("keydown", handleActivity);
       if (inactivityTimeoutRef.current) {
         clearTimeout(inactivityTimeoutRef.current);
       }
@@ -422,10 +382,19 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
 
   return (
     <div className={styles.dashboardLayout}>
+      {/* Mobile backdrop */}
+      {isSidebarVisible && (
+        <div
+          className={styles.backdrop}
+          onClick={() => setSidebarVisible(false)}
+        />
+      )}
+
       <aside
         ref={sidebarRef}
-        className={`${styles.sidebar} ${isDesktopSidebarVisible ? "" : styles.collapsed
-          }`}
+        className={`${styles.sidebar} ${
+          isDesktopSidebarVisible ? "" : styles.collapsed
+        } ${isSidebarVisible ? styles.show : ""}`}
       >
         <nav className={styles.nav}>
           <p className={`mb-2 ${styles.menuBtnParent} ${styles.heading}`}>
@@ -435,165 +404,278 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
             {sidebarItems?.map((item: any) => (
               <li
                 key={item.id}
-                className={`${styles.sidebarItem} ${item.isDropdown ? styles.dropdown : ""
-                  }  ${isRouteActive(router.pathname, item.forActivePaths, item.path)
+                data-id={item.id}
+                className={`${styles.sidebarItem} ${
+                  item.isDropdown ? styles.dropdown : ""
+                }  ${
+                  isRouteActive(router.pathname, item.forActivePaths, item.path)
                     ? styles.active
                     : ""
-                  }`}
+                } ${activeDropdown === item.id ? styles.dropdownActive : ""}`}
               >
                 <div
                   className={styles.sidebarItemIconTextWrapper}
                   onClick={() => {
                     if (!item.isDropdown && item.path) {
                       router.push(item.path);
+                      setSidebarVisible(false);
                     } else if (item.isDropdown) {
                       toggleDropdown(item.id);
                     }
                   }}
                 >
+                  {item.id == "dashboard" && (
+                    <MdKeyboardCommandKey
+                      className={styles.menuIcon}
+                      focusable="false"
+                    />
+                  )}
+                  {item.id == "customerOperation" && (
+                    <HiOutlineUsers
+                      className={styles.menuIcon}
+                      focusable="false"
+                    />
+                  )}
+                  {item.id == "talentOperation" && (
+                    <LuUserRoundCheck
+                      className={styles.menuIcon}
+                      focusable="false"
+                    />
+                  )}
+                  {item.id == "backOfficeOperation" && (
+                    <IoDocumentTextOutline
+                      className={styles.menuIcon}
+                      focusable="false"
+                    />
+                  )}
+                  {item.id == "settings" && (
+                    <IoSettingsOutline 
+                      className={styles.menuIcon}
+                      focusable="false"
+                    />
+                  )}
+                  {!item.isDropdown && item.path ? (
+                    <Link href={item.path}>{item.title}</Link>
+                  ) : (
+                    <a>{item.title}</a>
+                  )}
 
-                  {item.id == "fullSearch" && (
-                    <FullSearchIcon className={styles.menuIcon} focusable="false" />
-                  )}
-                  {item.id == "customerManagement" && (
-                    <CustomerManagementIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {item.id == "inquiryManagement" && (
-                    <InquiryManagementIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {item.id == "interviewManagement" && (
-                    <InterviewManagementIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {item.id == "businessManagement" && (
-                    <BusinessManagementIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {item.id == "insuranceListing" && (
-                    <InsuranceManagementIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {item.id == "employeeManagement" && (
-                    <UserIcon className={styles.menuIcon} focusable="false" />
-                  )}
-                  {item.id == "tabulationAnalysis" && (
-                    <AnalysisIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                  )}
-                  {
-                    !item.isDropdown && item.path ? <Link href={item.path}>{t(item.title)}</Link> : <a>{t(item.title)}</a>
-                  }
-
-                  {item.isDropdown && (
-                    <ArrowIcon
-                      className={`${styles.menuArrowIcon} ${activeDropdown === item.id ? styles.arrowRotated : ""
+                  {item.isDropdown &&
+                    item.dropdownItems &&
+                    item.dropdownItems.length > 0 && (
+                      <IoChevronDown
+                        size={14}
+                        className={`${styles.menuArrowIcon} ${
+                          activeDropdown === item.id ? styles.arrowRotated : ""
                         }`}
-                    />
-                  )}
+                      />
+                    )}
                 </div>
                 {item.isDropdown && (
                   <ul
-                    className={`${styles.dropdownMenu} ${activeDropdown === item.id ? styles.open : ""
-                      }`}
+                    className={`${styles.dropdownMenu} ${
+                      activeDropdown === item.id ? styles.open : ""
+                    }`}
                   >
-                    {item.dropdownItems.map((dropdownItem: { path: any; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, index: Key | null | undefined) => (
-                      <li
-                        key={index}
-                        className={
-                          isRouteActive(
-                            router.pathname,
-                            [dropdownItem.path]
-                          )
-                            ? styles.activeDropdownItem
-                            : ""
-                        }
-                      // onClick={() => router.push(dropdownItem.path)}
-                      >
-                        <Link href={dropdownItem.path}>{dropdownItem.name}</Link>
-                      </li>
-                    ))}
+                    {item.dropdownItems.map(
+                      (
+                        dropdownItem: {
+                          path: any;
+                          name:
+                            | string
+                            | number
+                            | boolean
+                            | ReactElement<
+                                any,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | ReactPortal
+                            | PromiseLikeOfReactNode
+                            | null
+                            | undefined;
+                          icon?: string;
+                          subItems?: any[];
+                        },
+                        index: Key | null | undefined
+                      ) => (
+                        <li
+                          key={index}
+                          className={`
+                          ${
+                            isRouteActive(router.pathname, [dropdownItem.path])
+                              ? styles.activeDropdownItem
+                              : ""
+                          } ${
+                            activeSubDropdown === `${item.id}-${index}`
+                              ? styles.subDropdownActive
+                              : ""
+                          }`}
+                        >
+                          {dropdownItem.subItems ? (
+                            <div
+                              className={`${styles.subDropdownContainer} ${
+                                activeSubDropdown === `${item.id}-${index}`
+                                  ? styles.open
+                                  : ""
+                              }`}
+                            >
+                              <div
+                                className={styles.dropdownItemContent}
+                                onClick={() =>
+                                  dropdownItem.subItems &&
+                                  toggleSubDropdown(`${item.id}-${index}`)
+                                }
+                              >
+                                {dropdownItem.icon && (
+                                  <DropdownIcon
+                                    type={dropdownItem.icon}
+                                    size="14"
+                                  />
+                                )}
+                                <span>{dropdownItem.name}</span>
+                                {dropdownItem.subItems &&
+                                  dropdownItem.subItems.length > 0 && (
+                                    <DropdownIcon type="arrow" size="14" />
+                                  )}
+                              </div>
+                              <ul
+                                className={`${styles.subDropdownMenu} ${
+                                  activeSubDropdown === `${item.id}-${index}`
+                                    ? styles.open
+                                    : ""
+                                }`}
+                              >
+                                {dropdownItem.subItems.map(
+                                  (subItem: any, subIndex: number) => (
+                                    <li
+                                      key={subIndex}
+                                      className={
+                                        isRouteActive(router.pathname, [
+                                          subItem.path,
+                                        ])
+                                          ? styles.activeDropdownItem
+                                          : ""
+                                      }
+                                    >
+                                      <Link
+                                        href={subItem.path}
+                                        onClick={() => setSidebarVisible(false)}
+                                      >
+                                        <div
+                                          className={styles.dropdownItemContent}
+                                        >
+                                          {subItem.icon && (
+                                            <DropdownIcon
+                                              type={subItem.icon}
+                                              size="14"
+                                            />
+                                          )}
+                                          <span>{subItem.name}</span>
+                                        </div>
+                                      </Link>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          ) : dropdownItem.path !== "#" ? (
+                            <Link
+                              href={dropdownItem.path}
+                              onClick={() => setSidebarVisible(false)}
+                            >
+                              <div className={styles.dropdownItemContent}>
+                                {dropdownItem.icon && (
+                                  <DropdownIcon
+                                    type={dropdownItem.icon}
+                                    size="14"
+                                  />
+                                )}
+                                <span>{dropdownItem.name}</span>
+                              </div>
+                            </Link>
+                          ) : (
+                            <div className={styles.dropdownItemContent}>
+                              {dropdownItem.icon && (
+                                <DropdownIcon
+                                  type={dropdownItem.icon}
+                                  size="14"
+                                />
+                              )}
+                              <span>{dropdownItem.name}</span>
+                            </div>
+                          )}
+                        </li>
+                      )
+                    )}
                   </ul>
                 )}
               </li>
             ))}
-
-            {(isAuthenticated) && (
-              <>
-                <p
-                  className={`mb-2 mt-2 ${styles.menuBtnParent} ${styles.heading}`}
-                >
-                  {t("setting")}
-                </p>
-                <li
-                  className={`${styles.sidebarItem} ${router.pathname.includes("/settings") ? styles.active : ""
-                    }`}
-                >
-                  <div className={styles.sidebarItemIconTextWrapper}>
-                    <SettingIcon
-                      className={styles.menuIcon}
-                      focusable="false"
-                    />
-                    <Link href="/settings">{t("settings")}</Link>
-                  </div>
-                </li>
-              </>
-            )}
-
-
           </ul>
         </nav>
       </aside>
       <div className={styles.main}>
         <header className={styles.header}>
-          <div className="d-flex">
+          <div className="d-flex justify-content-center align-items-center">
             <div
               className={`d-flex gap-1 ${styles.menuBtnParent} ${styles.sideBarLogoParent}`}
               style={{ marginTop: "4px" }}
             >
-
+              {/* Desktop Logo */}
               <Image
-                className={styles.logo}
-                src="/assets/images/dashboard-logo.svg"
-                width={40}
+                className={`${styles.logo} ${styles.desktopLogo}`}
+                src="/assets/images/client-dashboard-logo.svg"
+                width={140}
                 height={40}
                 alt="Logo"
               />
-              <h5 className={styles.dashboardSidebarTitle}>
-                VENTURE - <br /> SUPPORT
-              </h5>
+              {/* Mobile Logo */}
+              <Image
+                className={`${styles.logo} ${styles.mobileLogo}`}
+                src="/assets/svg/logo-mobile.svg"
+                width={35}
+                height={35}
+                alt="Logo"
+              />
+
+              {/* Mobile Hamburger - next to logo */}
+              <div
+                ref={hamburgerRef}
+                className={`${styles.mobileHamburger} ${
+                  isSidebarVisible ? styles.rotated : ""
+                }`}
+                onClick={unifiedToggleSidebar}
+              >
+                <Image
+                  src="/assets/svg/hamburger1.svg"
+                  alt="hamburger"
+                  width={22}
+                  height={30}
+                />
+              </div>
             </div>
-            <div onClick={desktopToggleSidebar}>
+            {/* Desktop Hamburger */}
+            <div
+              onClick={unifiedToggleSidebar}
+              className={styles.desktopHamburger}
+            >
               <Image
                 src="/assets/svg/hamburger1.svg"
                 alt="hamburger"
                 width={22}
                 height={30}
-                className={styles.hamburgerIcon}
+                className={`${styles.hamburgerIcon} ${
+                  !isDesktopSidebarVisible ? styles.rotated : ""
+                }`}
               />
             </div>
           </div>
           <div
             ref={hamburgerRef}
             className={styles.hamburger}
-            onClick={toggleSidebar}
-          >
-            ☰
-          </div>
-
+            onClick={unifiedToggleSidebar}
+          ></div>
           <div className={styles.headerInfo}>
             <span className={`${styles.currentDate} blue-border`}>
               <Image
@@ -637,8 +719,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
         </header>
         <div className={styles.content}>{children}</div>
       </div>
-          {showModal && <SessionModal onClose={closeModal} />}
-
+      {showModal && <SessionModal onClose={closeModal} />}
     </div>
   );
 };

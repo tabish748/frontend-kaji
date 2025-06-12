@@ -280,6 +280,50 @@
     "toTheSignInScreen": "サインインに"
   },
 
+  "planChangeRequest": {
+    "heading": "PLAN CHANGE REQUEST",
+    "subHeading": "Please confirm your current plan details and specify the changes you would like to make",
+    "submit": "Submit Request",
+    "prev": "Previous Information",
+    "update": "Updated Information"
+  },
+
+  "cncontactform": {
+    "contactForm": "CONTACT FORM",
+    "lastnamePlaceholder": "Last Name",
+    "preferredService": "Preferred Service",
+    "firstPreferredServiceDate": "First Preferred Service Date",
+    "service": "Service",
+    "services": {
+      "housekeeping": "Housekeeping",
+      "babysitting": "Babysitting",
+      "housecleaningPro": "Housecleaning-pro",
+      "fulltime": "Fulltime",
+      "others": "Others"
+    },
+    "otherRequests": "Other Requests",
+    "others": "Others",
+    "advertisingEmail": "Advertising email",
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "howDidYouHear": "How did you hear about Chez Vous?",
+    "howDidYouHearPlaceholder": "How did you hear about Chez Vous?"
+  },
+  "adDashboardSidebar": {
+    "menu": "MENU",
+    "dashboard": "ダッシュボード",
+    "customerOperation": "クライアント業務",
+    "inquiries": "INQUIRIES",
+    "clients": "CLIENTS",
+    "partner": "PARTNER",
+    "assignments": "ASSIGNMENTS",
+    "talentOperation": "人材管理業務",
+    "backOfficeOperation": "BACK OFFICE OPERATION",
+    "settings": "SETTINGS",
+    "searchList": "Search List",
+    "addNew": "Add New"
+  },
+
   "buttons": {
     "rescheduling": "日程変更申請",
     "cancel": "キャンセル申請",

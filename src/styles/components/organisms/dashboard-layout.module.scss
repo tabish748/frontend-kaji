@@ -11,12 +11,27 @@
     flex-direction: column;
   }
 }
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+
+  @include respond-to('small') {
+    display: block;
+  }
+}
  
 .sidebar {
-  width: 220px;
+  min-width: 250px;
   background-color: $white;
   padding: 73px 0px 20px 0px;
-  transition: transform 0.15s ease-out, width 0.15s ease-out;
+  transition: transform 0.4s ease, width 0.4s ease;
   transform: translateX(0);
   position: fixed;
   top: 0;
@@ -50,7 +65,7 @@
   }
 
   @include respond-to('small') {
-    background-color: $tertiary;
+    background-color: $white;
     position: fixed;
     z-index: 1000;
     height: 100vh;
@@ -87,12 +102,16 @@
   .sideBarLogoParent {
     height: fit-content;
     align-items: flex-start !important;
+    
+    @include respond-to('small') {
+      align-items: center !important;
+      gap: 0.5rem;
+    }
   }
 
   &.collapsed~.main .header .hamburgerIcon {
     transform: rotate(180deg);
-    transition: transform 0.1s ease;
-
+    transition: transform 0.4s ease;
   }
 
   &.collapsed {
@@ -187,7 +206,7 @@
 // .sidebar.collapsed~.main .header,
 .sidebar.collapsed~.main .content {
   margin-left: 62px !important;
-  transition: margin-left 0.15s ease-out;
+  transition: margin-left 0.4s ease;
 }
 
 .sidebar.collapsed~.main .header .dashboardSidebarTitle {
@@ -195,12 +214,11 @@
 }
 
 .sidebar.collapsed~.main .header .hamburgerIcon {
-  margin-left: 2.5rem;
 }
 
 .sidebar.collapsed:hover~.main .content {
   margin-left: 220px !important;
-  transition: margin-left 0.15s ease-out;
+  transition: margin-left 0.4s ease;
 }
 
 
@@ -246,7 +264,7 @@
   padding: 1rem;
   border-bottom: 1px solid #dedede;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 4px -1px;
-  @include responsive-font(16px, 24px); // example usage
+  @include responsive-font(16px, 24px);
 
   @include respond-to('small') {
     margin-left: 0;
@@ -271,7 +289,7 @@
   padding-bottom: 0px;
   border-radius: 2px;
   width: -webkit-fill--available;
-  margin-left: 200px;
+  margin-left: 230px;
 
   @include respond-to('small') {
     margin-left: 0;
@@ -367,7 +385,7 @@
   text-align: center;
   position: absolute;
   bottom: 23px;
-  margin-left: 200px;
+  margin-left: 230px;
   width: -webkit-fill-available;
 
   p {
@@ -399,15 +417,70 @@
 
 .hamburgerIcon {
   cursor: pointer;
-  margin-left: 6rem;
-  margin-top: 7px;
-  transition: transform 0.1s ease;
+  margin-left: .5rem;
+  // margin-top: 7px;
+  transition: transform 0.4s ease;
+  position: relative;
+  z-index: 1002;
+  
+  @include respond-to('small') {
+    display: none;
+  }
+  
+  &.rotated {
+    transform: rotate(180deg);
+  }
 }
 
 .dashboardSidebarTitle {
   color: $mud-gray;
   font-size: 14px;
   font-weight: bold;
+  
+  @include respond-to('small') {
+    display: none;
+  }
+}
+
+.desktopLogo {
+  @include respond-to('small') {
+    display: none;
+  }
+}
+
+.mobileLogo {
+  display: none;
+  
+  @include respond-to('small') {
+    display: block;
+  }
+}
+
+.mobileHamburger {
+  display: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1002;
+  transition: margin-left 0.4s ease;
+  
+  @include respond-to('small') {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  img {
+    transition: transform 0.4s ease;
+    transform: rotate(180deg);
+  }
+  
+  &.rotated {
+    margin-left: 6rem;
+    
+    img {
+      transform: rotate(0deg);
+    }
+  }
 }
 
 .sidebarList {
@@ -424,7 +497,7 @@
         svg {
           transition: .4s;
           color: $primary !important;
-          fill: $primary;
+          // fill: $primary;
         }
       }
     }
@@ -433,14 +506,21 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      padding: 0 20px;
+      padding: 0 30px 0 20px;
+      position: relative;
       // gap: 0 8px;
     }
   }
 
-  a {
+  a:nth-child(2) {
     font-size: 13px !important;
-    font-weight: bold;
+    font-weight: 600;
+  }
+
+  
+  a:nth-child(3) {
+    font-size: 13px !important;
+    font-weight: 300;
   }
 }
 
@@ -452,43 +532,98 @@
 
 
 .dropdownIcon {
-  margin-right: 5px;
+  margin-right: 8px;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.dropdownItemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
 }
 
 .dropdownMenu {
   display: none;
   list-style: none;
-  transition: all 0.3s ease;
-
-  li{
-    &:hover {
-      color: $primary;
-    }
-  }
+  transition: all 0.4s ease;
 }
 
 .sidebarItem .dropdownMenu {
   display: block;
 
   li {
-    padding: 10px 10px 10px 43px;
+    padding: 0 0 0 22px;
     margin: 6px 0;
     cursor: pointer;
+    font-size: 12px;
+    font-weight: 300;
+    position: relative;
+    
+    .dropdownItemContent {
+      span {
+        margin-left: 24px;
+      }
+      
+      .dropdownIcon + span {
+        margin-left: 0;
+      }
+    }
+  }
+  
+  // Separate hover selectors for better control
+  > li:hover > .dropdownItemContent {
+    color: $primary;
+    
+    span {
+      color: $primary;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
+  
+  // Specific selector for sub-dropdown container items
+  > li:hover > .subDropdownContainer > .dropdownItemContent {
+    color: $primary;
+    
+    span {
+      color: $primary;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
   }
 }
 
 .menuArrowIcon {
-  margin-left: auto;
+  position: absolute;
+  right: 10px;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .menuArrowIcon {
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 
 .arrowRotated {
   transform: rotate(180deg);
   /* Rotates the arrow icon 180 degrees */
-  transition: transform 0.3s;
+  transition: transform 0.4s ease;
   /* Smooth transition for the rotation */
   color: $primary;
   
@@ -519,6 +654,22 @@
   svg {
     fill: $primary;
   }
+  
+  .dropdownItemContent {
+    color: $primary;
+    
+    span {
+      color: $primary !important;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
 }
 
 .arrowWrapper {
@@ -546,6 +697,208 @@
 
 .arrowDown {
   transform: rotate(180deg);
+}
+
+.desktopHamburger {
+  @include respond-to('small') {
+    display: none;
+  }
+}
+
+.subDropdownContainer {
+  cursor: pointer;
+  
+  .dropdownItemContent {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    cursor: pointer;
+    position: relative;
+    padding-right: 30px;
+    
+    .subDropdownArrow {
+      position: absolute;
+      right: 10px;
+      transition: transform 0.4s ease;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  &.open .dropdownItemContent .subDropdownArrow {
+    transform: rotate(90deg);
+  }
+}
+
+.subDropdownMenu {
+  display: none;
+  list-style: none;
+  transition: all 0.4s ease;
+  overflow: hidden;
+  max-height: 0;
+  padding-left: 0;
+  
+  &.open {
+    display: block;
+    max-height: 200px;
+    margin-top: 4px;
+  }
+  
+  li {
+    padding: 8px 30px 8px 50px;
+    margin: 4px 0;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 200;
+    
+    &.activeDropdownItem {
+      .dropdownItemContent {
+        color: $primary;
+        
+        span {
+          color: $primary !important;
+        }
+        
+        .dropdownIcon {
+          color: $primary;
+        }
+      }
+    }
+  }
+  
+  // More specific hover selector for sub-dropdown items
+  > li:hover {
+    background-color: rgba(235, 241, 255, 0.5);
+    
+    // Only affect the directly hovered sub-item
+    > .dropdownItemContent,
+    > a > .dropdownItemContent {
+      color: $primary;
+      
+      span {
+        color: $primary;
+      }
+      
+      .dropdownIcon {
+        color: $primary;
+      }
+    }
+  }
+}
+
+// Target the main sidebar item when its dropdown is expanded
+.sidebarItem {
+  &:hover {
+    > .sidebarItemIconTextWrapper {
+      a, svg {
+        transition: .4s;
+        color: $primary !important;
+        // fill: $primary;
+      }
+    }
+  }
+  
+  // When dropdown is open/active, make the main item text blue  
+  &.dropdown {
+    // When this sidebar item has an open dropdown menu
+    &:has(.dropdownMenu.open) {
+      .sidebarItemIconTextWrapper {
+        a {
+          color: $primary !important;
+        }
+        
+        svg:not(.menuArrowIcon) {
+          // fill: $primary !important;
+        }
+      }
+    }
+  }
+  
+  // More reliable approach using class-based targeting
+  &.dropdownActive {
+    .sidebarItemIconTextWrapper {
+      a {
+        color: $primary !important;
+      }
+      
+      svg:not(.menuArrowIcon) {
+        // fill: $primary !important;
+      }
+    }
+  }
+  
+  // When dropdown has open menu, make parent text blue (fallback approach)
+  &:has(.dropdownMenu.open) {
+    .sidebarItemIconTextWrapper {
+      a {
+        color: $primary !important;
+      }
+      
+      svg:not(.menuArrowIcon) {
+        // fill: $primary !important;
+      }
+    }
+  }
+}
+
+// When dropdown arrow is rotated (dropdown is expanded), style the parent text
+.sidebarItemIconTextWrapper {
+  .menuArrowIcon.arrowRotated {
+    color: $primary;
+  }
+  
+  // When containing rotated arrow, make text blue
+  &:has(.arrowRotated) {
+    a {
+      color: $primary !important;
+    }
+    
+    svg:not(.menuArrowIcon) {
+      // fill: $primary !important;
+    }
+  }
+}
+
+// Fallback for browsers without :has support - when arrow is rotated, target parent
+.sidebarItem:has(.menuArrowIcon.arrowRotated) .sidebarItemIconTextWrapper a {
+  color: $primary !important;
+}
+
+// Additional targeting for sub-dropdown containers when open
+.subDropdownContainer.open {
+  > .dropdownItemContent {
+    span {
+      color: $primary !important;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
+}
+
+// Target dropdown items when their sub-dropdown is active
+.sidebarItem .dropdownMenu li.subDropdownActive {
+  > .subDropdownContainer > .dropdownItemContent {
+    span {
+      color: $primary !important;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
 }
 
 

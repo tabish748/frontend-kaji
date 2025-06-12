@@ -322,5 +322,19 @@
     "unsubscribe": "Unsubscribe",
     "howDidYouHear": "How did you hear about Chez Vous?",
     "howDidYouHearPlaceholder": "How did you hear about Chez Vous?"
+  },
+  "adDashboardSidebar": {
+    "menu": "MENU",
+    "dashboard": "DASHBOARD",
+    "customerOperation": "CUSTOMER OPERATION",
+    "inquiries": "INQUIRIES",
+    "clients": "CLIENTS",
+    "partner": "PARTNER",
+    "assignments": "ASSIGNMENTS",
+    "talentOperation": "TALENT OPERATION",
+    "backOfficeOperation": "BACK OFFICE OPERATION",
+    "settings": "SETTINGS",
+    "searchList": "Search List",
+    "addNew": "Add New"
   }
 }

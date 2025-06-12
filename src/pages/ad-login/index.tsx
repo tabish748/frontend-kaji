@@ -15,7 +15,7 @@ import ApiHandler from "@/app/api-handler";
 import Toast from "@/components/toast/toast";
 import { USER_TYPE } from "@/libs/constants";
 
-export default function Login() {
+export default function AdminLogin() {
   const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -76,7 +76,7 @@ export default function Login() {
     formData.append("input_type", formValues.email);
     formData.append("password", formValues.password);
     try {
-      await dispatch(login({ formData, loginType: USER_TYPE.customer })).unwrap();
+      await dispatch(login({ formData, loginType: USER_TYPE.admin })).unwrap();
       setToastMessage({
         msg: ["Login successful"],
         type: "success",
@@ -160,11 +160,11 @@ export default function Login() {
               className={styles.submitButton}
               isLoading={loading}
             />
-            <div className={styles.forgotPassword}>
+            {/* <div className={styles.forgotPassword}>
               <a href="/cn-forgot-password">
                 {t("cnLoginPage.forgotPassword")}
               </a>
-            </div>
+            </div> */}
           </div>
         </Form>
       </div>

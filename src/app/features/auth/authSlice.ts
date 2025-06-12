@@ -1,6 +1,7 @@
 // features/auth/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import ApiHandler from "@/app/api-handler";
+import { USER_TYPE } from "@/libs/constants";
 
 interface User {
   id: number;
@@ -85,12 +86,14 @@ type PayloadType = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (fomrdata: FormData) => {
+  async ({ formData, loginType = USER_TYPE.customer }: { formData: FormData; loginType?: string }) => {
     try {
+      const endpoint = loginType === USER_TYPE.admin ? "/api/contractor/login" : "/api/customer/login";
+      
       const response = await ApiHandler.request(
-        "/api/customer/login",
+        endpoint,
         "POST",
-        fomrdata,
+        formData,
         undefined,
         undefined,
         false // Don't require token for login
@@ -156,7 +159,7 @@ const authSlice = createSlice({
           state,
           action: PayloadAction<{
             data: {
-              customer: User;
+              user: User;
               authorization: Authorization;
               role?: any;
             };
@@ -165,18 +168,18 @@ const authSlice = createSlice({
           }>
         ) => {
           state.isAuthenticated = true;
-          state.user = action.payload.data.customer;
+          state.user = action.payload.data.user;
           state.authorization = action.payload.data.authorization;
           state.loading = false;
           state.message = action.payload.message;
           state.success = action.payload.success;
-          state.userRole = action.payload.data.role || { name: "" };
+          state.userRole = action.payload.data.role.label;
 
           // Store relevant user info in localStorage
           const userName = state.user.name;
           const userId = state.user.id;
           if (state.user) {
-            localStorage.setItem("loggedInUser", JSON.stringify({...state.user, userRole: "customer"}));
+            localStorage.setItem("loggedInUser", JSON.stringify({...state.user, userRole: state.userRole}));
           }
 
           if (state.userRole?.id) {

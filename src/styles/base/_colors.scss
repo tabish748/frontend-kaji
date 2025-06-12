@@ -1,21 +1,22 @@
 /* colors.scss */
 
+// Update SCSS variables to use CSS custom properties
+// These variables will reference the CSS custom properties defined in _theme.scss
+$primary: var(--primary);
+$primary-light: var(--primary-light);
+$primary-dark: var(--primary-dark);
+$secondary: var(--secondary);
+$secondary-light: var(--secondary-light);
+$secondary-dark: var(--secondary-dark);
+
 // Primary colors
 // $primary: #017FFA;
-$primary: #38cab3;
 $blue-light: #e0f2f1;
 $blue-lighter: #e0f2f1;
-$primary-light: lighten($primary, 50%);
-$primary-dark: darken($primary, 10%);
 
 $tertiary: #091a52;
 $tertiary-light: lighten($tertiary, 50%);
 $tertiary-dark: darken($tertiary, 10%);
-
-// Secondary colors
-$secondary: #c2d1d9;
-$secondary-light: lighten($secondary, 10%);
-$secondary-dark: darken($secondary, 10%);
 
 // Tertiary colors
 
