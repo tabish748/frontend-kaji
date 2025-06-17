@@ -219,7 +219,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
         id: "dashboard",
         isDropdown: false,
         dropdownItems: [],
-        path: "/dashboard",
+        path: "/",
       },
       {
         title: t("adDashboardSidebar.customerOperation"),
@@ -398,7 +398,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
       >
         <nav className={styles.nav}>
           <p className={`mb-2 ${styles.menuBtnParent} ${styles.heading}`}>
-            {t("mainMenu")}
+            {t("adDashboardSidebar.menu")}
           </p>
           <ul className={styles.sidebarList}>
             {sidebarItems?.map((item: any) => (
@@ -455,9 +455,9 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
                     />
                   )}
                   {!item.isDropdown && item.path ? (
-                    <Link href={item.path}>{item.title}</Link>
+                    <Link href={item.path}><span className={styles.menuLabel}>{item.title}</span></Link>
                   ) : (
-                    <a>{item.title}</a>
+                    <span className={styles.menuLabel}>{item.title}</span>
                   )}
 
                   {item.isDropdown &&

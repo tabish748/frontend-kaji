@@ -1,0 +1,115 @@
+.inquiry-tabs {
+  display: flex;
+  background: $background;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  gap: 4px;
+  
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+
+  .tab-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: fit-content;
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4a5568;
+
+    &:hover {
+      background: #f7fafc;
+      border-color: #cbd5e0;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &.active {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+      box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    }
+
+    // Remove icon and label specific styles since we're using simple text buttons
+    .tab-icon {
+      display: none;
+    }
+
+    .tab-label {
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      text-align: center;
+      line-height: 1.2;
+    }
+  }
+}
+
+.tab-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+
+  .content-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+
+    .content-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
+
+    .content-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .inquiry-tabs {
+    padding: 6px;
+    
+    .tab-item {
+      padding: 10px 16px;
+      font-size: 12px;
+      min-width: 100px;
+    }
+  }
+  
+  .tab-content {
+    padding: 16px;
+  }
+} 

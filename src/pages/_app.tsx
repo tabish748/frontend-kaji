@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import GlobalLoader from "@/components/global-loader/global-loader";
 import LayoutSelector from "@/components/dashboard-layout/dashboard-selector";
 import AuthMiddleware from "@/components/auth-middleware/auth-middleware";
+import { useTheme } from "@/hooks/useTheme";
 
 type NextPageWithLayout = AppProps["Component"] & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -21,6 +22,7 @@ interface AppContentProps {
 
 function AppContent({ Component, pageProps }: AppContentProps) {
   const router = useRouter();
+  useTheme();
   const [routeLoading, setRouteLoading] = useState(false);
   const apiLoading = useSelector((state: RootState) => state.loading.isLoading);
 

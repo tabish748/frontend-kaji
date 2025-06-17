@@ -1,0 +1,160 @@
+@import '../../base/_colors.scss';
+@import '../../base/_mixins.scss';
+
+// Section headers
+.sectionHeader {
+  font-size: 16px;
+}
+
+// Flex utilities
+.flexOne {
+  flex: 1;
+}
+
+.flexAgeField {
+  flex: 0 0 80px;
+}
+
+.dateTimeContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  width: 100%;
+  
+  .dateField {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .timeField {
+    flex: 0 0 120px;
+    max-width: 120px;
+  }
+}
+
+// Address label
+.addressLabel {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+// TextArea full height
+.fullHeightTextArea {
+  height: 100% !important;
+  min-height: 100px !important;
+  
+  textarea {
+    height: 100% !important;
+    min-height: 100px !important;
+  }
+}
+
+// Grid layouts
+.gridHeader {
+  display: grid;
+  margin-bottom: 8px;
+  font-size: 12px;
+  gap: 10px;
+  background-color: #6c757d;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.gridRow {
+  display: grid;
+  margin-bottom: 8px;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+}
+
+// Train station grid
+.trainStationGrid {
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+
+  @include respond-to("medium") {
+    grid-template-columns: 1fr 1fr;
+  }
+  @include respond-to("small") {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Inquiry records grid
+.inquiryRecordsGrid {
+  grid-template-columns: 1fr 1fr 2fr 2fr 1fr auto;
+
+  @include respond-to("medium") {
+    grid-template-columns: 1fr 1fr;
+  }
+  @include respond-to("small") {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Order records grid
+.orderRecordsGrid {
+  grid-template-columns: 1fr 1fr 1fr;
+
+  @include respond-to("medium") {
+    grid-template-columns: 1fr 1fr;
+  }
+  @include respond-to("small") {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Button styles
+.editButton {
+  background-color: $success;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  
+  &:hover {
+    background-color: $success-dark;
+  }
+}
+
+.deleteButton {
+  background-color: $danger;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  
+  &:hover {
+    background-color: $danger-dark;
+  }
+}
+
+.form-section {
+  @include respond-to("small") {
+    padding: 8px;
+  }
+}
+
+.row {
+  @include respond-to("small") {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.editButton, .deleteButton {
+  @include respond-to("small") {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+} 

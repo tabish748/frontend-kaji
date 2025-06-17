@@ -17,11 +17,16 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
   isOpen = false,
   onToggle,
 }) => {
+  console.log("AccordionItem render:", { heading, isOpen });
+
   return (
     <div className={styles.accordionItem}>
       <button
         className={styles.accordionLabel}
-        onClick={onToggle}
+        onClick={() => {
+          console.log("AccordionItem button clicked:", { heading, isOpen });
+          onToggle?.();
+        }}
         aria-expanded={isOpen}
         aria-controls={`panel-${label}`}
       >
@@ -62,6 +67,17 @@ const Accordion: React.FC<AccordionProps> = ({
 }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
+  console.log("Accordion render - current openIndex:", openIndex);
+
+  const handleToggle = (index: number) => {
+    console.log("Accordion toggle clicked - index:", index, "current openIndex:", openIndex);
+    setOpenIndex((currentIndex) => {
+      const newIndex = currentIndex === index ? null : index;
+      console.log("Setting new openIndex:", newIndex);
+      return newIndex;
+    });
+  };
+
   return (
     <div className={styles.accordionWrapper}>
       {React.Children.map(children, (child, index) => {
@@ -70,10 +86,11 @@ const Accordion: React.FC<AccordionProps> = ({
             child as React.ReactElement<AccordionItemProps>,
             {
               isOpen: openIndex === index,
-              onToggle: () =>
-                setOpenIndex((currentIndex) =>
-                  currentIndex === index ? null : index
-                ),
+              onToggle: () => {
+                console.log("Child accordion clicked:", index);
+                handleToggle(index);
+                (child as React.ReactElement<AccordionItemProps>).props.onToggle?.();
+              },
             }
           );
         }

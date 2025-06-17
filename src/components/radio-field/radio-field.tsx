@@ -1,8 +1,8 @@
 import React from "react";
 import Style from "../../styles/components/atoms/radio-field.module.scss";
-import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { USER_TYPE } from "@/libs/constants";
+import { useRouter } from "next/router";
+import { CUSTOMER_ROUTES } from "@/libs/constants";
+
 interface RadioOption {
   label: string;
   value: string | number;
@@ -37,8 +37,9 @@ const RadioField: React.FC<RadioFieldProps> = ({
   columnsMd = 2, // default to 2 columns for medium screens
   columnsSm = 1, // default to 2 columns for small screens
 }) => {
-  const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
-  const isClient = userRole === USER_TYPE.customer;
+  const router = useRouter();
+  const currentPath = router.pathname;
+  const isClient = CUSTOMER_ROUTES.includes(currentPath);
 
   const responsiveClass =
     Style[`responsiveCols_${columnsLg}_${columnsMd}_${columnsSm}`];

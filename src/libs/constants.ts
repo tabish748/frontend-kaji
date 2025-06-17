@@ -6,7 +6,7 @@
 // export const FINANCE_EMPLOYEE = "finance_employee"
 
 // Customer public routes (accessible without authentication) - uses customer theme
-export const CUSTOMER_PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form" ,"/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
+export const CUSTOMER_PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form", "/cn-info","/cn-info-child", "/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
 
 // Admin public routes (accessible without authentication) - uses admin theme  
 export const ADMIN_PUBLIC_ROUTES = ["/ad-login", "/admin-forgot-password", "/admin-reset-password", "/admin-contact-form", "/404", "/unauthenticated"];
@@ -35,6 +35,13 @@ export const CLIENT_ROUTES = CUSTOMER_ROUTES;
 
 export const ADMIN_ROUTES = [
   "/",
+  "/inquiry/create",
+  "/inquiry/create/basic-info-1",
+  "/inquiry/create/basic-info-2",
+  "/inquiry/create/contract",
+  "/inquiry/create/quotation",
+  "/inquiry/create/invoice",
+  "/inquiry/create/history",
   "/settings",
   "/projectLegal",
   "/projectConfirmed",

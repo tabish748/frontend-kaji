@@ -313,15 +313,15 @@
     "menu": "MENU",
     "dashboard": "ダッシュボード",
     "customerOperation": "クライアント業務",
-    "inquiries": "INQUIRIES",
-    "clients": "CLIENTS",
-    "partner": "PARTNER",
-    "assignments": "ASSIGNMENTS",
+    "inquiries": "問合せ管理",
+    "clients": "クライアント管理",
+    "partner": "提携法人・個人大口管理",
+    "assignments": "アサイン管理",
     "talentOperation": "人材管理業務",
-    "backOfficeOperation": "BACK OFFICE OPERATION",
-    "settings": "SETTINGS",
-    "searchList": "Search List",
-    "addNew": "Add New"
+    "backOfficeOperation": "バックオフィス業務",
+    "settings": "アドミン業務",
+    "searchList": "検索・一覧",
+    "addNew": "新規登録"
   },
 
   "buttons": {

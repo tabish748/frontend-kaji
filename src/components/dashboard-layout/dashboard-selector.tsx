@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
 import { useRouter } from "next/router";
 import { CUSTOMER_PUBLIC_ROUTES, ADMIN_PUBLIC_ROUTES, CUSTOMER_ROUTES, ADMIN_ROUTES, USER_TYPE } from "@/libs/constants";
-import { useTheme } from "@/hooks/useTheme";
 
 interface LayoutSelectorProps {
   children: React.ReactNode;
@@ -19,9 +18,6 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   const isLoggedIn = true;
   const router = useRouter();
   const currentPath = router.pathname;
-  
-  // Use the theme hook to automatically apply dashboard themes
-  useTheme();
 
   const isCustomerRoute = CUSTOMER_ROUTES.includes(currentPath);
   const isAdminRoute = [...CUSTOMER_ROUTES, ...ADMIN_ROUTES].includes(

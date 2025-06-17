@@ -1,39 +1,86 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
 import { CUSTOMER_PUBLIC_ROUTES, ADMIN_PUBLIC_ROUTES, CUSTOMER_ROUTES, ADMIN_ROUTES, USER_TYPE } from '@/libs/constants';
 
 type DashboardType = 'customer' | 'admin';
 
 export const useTheme = () => {
   const router = useRouter();
-  const userRole = localStorage.getItem("loggedInUser") ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole : null;
-  const isAuthenticated = useSelector((state: RootState) => state.auth?.isAuthenticated) || localStorage.getItem('token') !== null;
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  const getUserData = () => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const loggedInUser = localStorage.getItem("loggedInUser");
+      return loggedInUser ? JSON.parse(loggedInUser) : null;
+    } catch (error) {
+      console.error('Error parsing logged in user data:', error);
+      return null;
+    }
+  };
+
+  const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('token') !== null;
+  const userData = getUserData();
+  const userRole = userData?.userRole || null;
   const currentPath = router.pathname;
 
   const getDashboardType = (): DashboardType => {
-    // Check if it's a customer public route - apply customer theme
-    if (CUSTOMER_PUBLIC_ROUTES.includes(currentPath)) {
+    // For routes that exist in both arrays, prioritize based on context
+    if (currentPath === '/404' || currentPath === '/unauthenticated') {
+      // For ambiguous routes, check if user is authenticated and their role
+      if (isAuthenticated && userRole === USER_TYPE.admin) {
+        return 'admin';
+      }
+      // Default to customer for ambiguous routes
       return 'customer';
     }
 
-    // Check if it's an admin public route - apply admin theme
+    // Special handling for root route "/" - depends on user role
+    if (currentPath === '/') {
+      if (isAuthenticated && userRole) {
+        const themeByRole = userRole === USER_TYPE.admin ? 'admin' : 'customer';
+        return themeByRole;
+      }
+      // Default to customer for unauthenticated users on root
+      return 'customer';
+    }
+
+    // Check admin public routes first (these should always use admin theme)
     if (ADMIN_PUBLIC_ROUTES.includes(currentPath)) {
       return 'admin';
     }
 
-    // Check if user is authenticated and get their role
-    if (isAuthenticated) {
-      // Admin routes
-      if (ADMIN_ROUTES.some(route => currentPath.startsWith(route)) || userRole === USER_TYPE.admin) {
-        return 'admin';
+    // Check customer public routes (these should always use customer theme)
+    if (CUSTOMER_PUBLIC_ROUTES.includes(currentPath)) {
+      return 'customer';
+    }
+
+    // Check admin routes (these should always use admin theme)
+    const isAdminRoute = ADMIN_ROUTES.some(route => {
+      if (route === '/') {
+        return false; // Root route handled above
       }
-      
-      // Customer routes (including default authenticated users)
-      if (CUSTOMER_ROUTES.some(route => currentPath.startsWith(route)) || userRole === USER_TYPE.customer) {
-        return 'customer';
+      return currentPath.startsWith(route);
+    });
+    if (isAdminRoute) {
+      return 'admin';
+    }
+    
+    // Check customer routes (these should always use customer theme)
+    const isCustomerRoute = CUSTOMER_ROUTES.some(route => {
+      if (route === '/') {
+        return false; // Root route handled above
       }
+      return currentPath.startsWith(route);
+    });
+    if (isCustomerRoute) {
+      return 'customer';
+    }
+
+    // If no route match, fall back to user role
+    if (isAuthenticated && userRole) {
+      const themeByRole = userRole === USER_TYPE.admin ? 'admin' : 'customer';
+      return themeByRole;
     }
 
     // Default to customer theme for unknown routes
@@ -41,39 +88,27 @@ export const useTheme = () => {
   };
 
   const applyTheme = (dashboardType: DashboardType) => {
-    // Apply the theme to the document root
-    document.documentElement.setAttribute('data-dashboard', dashboardType);
-    
-    // Store in localStorage for persistence across page reloads
-    localStorage.setItem('currentDashboardTheme', dashboardType);
+    // Only apply theme if running in the browser
+    if (typeof window !== 'undefined') {
+      // Apply the theme to the document root
+      document.documentElement.setAttribute('data-dashboard', dashboardType);
+      
+      // Store in localStorage for persistence across page reloads
+      localStorage.setItem('currentDashboardTheme', dashboardType);
+    }
   };
 
+  // Single useEffect to handle both initialization and route changes
   useEffect(() => {
+    if (!router.isReady) return; // Wait for router to be ready
+    
     const dashboardType = getDashboardType();
     applyTheme(dashboardType);
-  }, [currentPath, userRole, isAuthenticated]);
-
-  // Initialize theme on mount
-  useEffect(() => {
-    // Check if there's a logged-in user to determine initial theme
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    if (loggedInUser) {
-      try {
-        const userData = JSON.parse(loggedInUser);
-        const dashboardType = userData.userRole === USER_TYPE.admin ? 'admin' : 'customer';
-        applyTheme(dashboardType);
-      } catch (error) {
-        console.error('Error parsing logged in user data:', error);
-        // If on admin public route, use admin theme, otherwise customer theme
-        const dashboardType = ADMIN_PUBLIC_ROUTES.includes(window.location.pathname) ? 'admin' : 'customer';
-        applyTheme(dashboardType);
-      }
-    } else {
-      // No logged in user - determine theme based on current route
-      const dashboardType = getDashboardType();
-      applyTheme(dashboardType);
+    
+    if (!isInitialized) {
+      setIsInitialized(true);
     }
-  }, []);
+  }, [router.isReady, currentPath, userRole, isAuthenticated, isInitialized]);
 
   return {
     currentTheme: getDashboardType(),

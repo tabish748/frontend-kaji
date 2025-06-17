@@ -8,7 +8,8 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: 16px;
+  // font-weight: 600;
   color: $mud-gray;
 
   input[type="radio"] {
@@ -54,6 +55,7 @@
   display: grid;
   align-items: center;
   gap: 1rem;
+  padding: 9.3px 12px;
 }
 
 .errorText {
@@ -63,8 +65,10 @@
 }
 
 // Responsive grid classes
-.responsiveCols_1_1_1 { grid-template-columns: repeat(1, 1fr); }
-.responsiveCols_2_2_1 { 
+.responsiveCols_1_1_1 {
+  grid-template-columns: repeat(1, 1fr);
+}
+.responsiveCols_2_2_1 {
   grid-template-columns: repeat(2, 1fr);
   @media (max-width: 768px) {
     grid-template-columns: repeat(1, 1fr);

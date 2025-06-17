@@ -8,7 +8,7 @@
     font-size: 16px;
 
     padding-top: 3px;
-    font-weight: 600;
+    // font-weight: 600;
   }
 
   .tag {
@@ -30,6 +30,8 @@
   }
 
   .placeholderWrapper {
+    padding: 9.3px 28px 9.3px 12px;
+    ;
     align-items: center;
     position: relative;
     border: 1px solid $gray-light;
@@ -51,7 +53,7 @@
     &::after {
       content: "";
       position: absolute;
-      right: 20px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       width: 0;
