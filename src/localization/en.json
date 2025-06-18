@@ -250,7 +250,10 @@
     "rescheduling": "Rescheduling",
     "cancel": "Cancel",
     "pafDownload": "PDF Download",
-    "submit": "Submit"
+    "submit": "Submit",
+    "submitting": "Submitting",
+    "save": "Save",
+    "saving": "Saving"
   },
   "error": {
     "invalidEmail": "Invalid email address",
@@ -305,7 +308,7 @@
   "cncontactform": {
     "contactForm": "CONTACT FORM",
     "lastnamePlaceholder": "Last Name",
-    "preferredService": "Preferred Service",
+    "preferredService": "PREFERRED SERVICE",
     "firstPreferredServiceDate": "First Preferred Service Date",
     "service": "Service",
     "services": {
@@ -316,12 +319,13 @@
       "others": "Others"
     },
     "otherRequests": "Other Requests",
-    "others": "Others",
+    "others": "OTHERS",
     "advertisingEmail": "Advertising email",
     "subscribe": "Subscribe",
     "unsubscribe": "Unsubscribe",
     "howDidYouHear": "How did you hear about Chez Vous?",
-    "howDidYouHearPlaceholder": "How did you hear about Chez Vous?"
+    "howDidYouHearPlaceholder": "How did you hear about Chez Vous?",
+    "required": "Required"
   },
   "cnInfo": {
     "orderForm": "ORDER FORM",
@@ -348,6 +352,12 @@
     "noAllergies": "No (No Allergies)",
     "allergiesDetails": "Details of Allergies",
     "personality": "Personality",
+    "personality1": "Personality 1",
+    "personality2": "Personality 2", 
+    "personality3": "Personality 3",
+    "personality4": "Personality 4",
+    "personality5": "Personality 5",
+    "others": "Others",
     "favoriteActivities": "Favorite Activities",
     "roomsForSitting": "Rooms Available for Sitting",
     "firstAidKitLocation": "Location of First Aid Kit (including medications, thermometer, etc.)",
@@ -371,7 +381,9 @@
     "grade": "Grade",
     "class": "Class",
     "addSchool": "Add school information",
-    "addChild": "Add children"
+    "addChild": "Add children",
+    "personalityOtherPlaceholder": "Please specify other personality traits",
+    "addPrimaryDoctor": "Add Primary Doctor Information"
   },
   "adDashboardSidebar": {
     "menu": "MENU",
@@ -386,5 +398,30 @@
     "settings": "SETTINGS",
     "searchList": "Search List",
     "addNew": "Add New"
+  },
+  "cnTermsAndConditions": {
+    "title": "TERMS AND CONDITIONS",
+    "acceptLabel": "I accept the Terms and Conditions",
+    "submitButton": "Submit",
+    "acceptanceError": "Please accept the Terms and Conditions to continue",
+    "successMessage": "Terms and Conditions accepted successfully!",
+    "errorMessage": "An error occurred while processing your request",
+    "introText": "These Terms of Service (hereinafter referred to as \"these Terms\") define the terms and conditions for using the services (hereinafter referred to as \"the Service\") provided by ______ (hereinafter referred to as \"the Company\") on this website. Registered users (hereinafter referred to as \"Users\") are required to use the Service in compliance with these Terms.",
+    "section1": {
+      "title": "Chapter 1",
+      "content1": "These Terms shall apply to all relationships regarding the use of the Service between Users and the Company. The Company may establish various provisions (hereinafter referred to as \"Individual Provisions\") in addition to these Terms regarding the Service. These Individual Provisions shall constitute part of these Terms regardless of their designation.",
+      "content2": "In the event that the provisions of these Terms conflict with the provisions of the Individual Provisions mentioned in the previous article, the Individual Provisions shall take precedence unless otherwise specified in the Individual Provisions."
+    },
+    "section2": {
+      "title": "Chapter 2",
+      "content1": "Users shall not engage in the following acts when using the Service: acts that violate laws or public order and morals, acts related to criminal activities, acts that infringe on copyrights, trademark rights, and other intellectual property rights contained in the Service content, acts that destroy or interfere with the functions of servers or networks of the Company, other Users, or other third parties.",
+      "content2": "Acts of commercially utilizing information obtained through the Service, acts that may interfere with the operation of the Company's services, acts of unauthorized access or attempts thereof, acts of collecting or accumulating personal information about other Users, acts of using the Service for improper purposes."
+    },
+    "section3": {
+      "title": "Chapter 3",
+      "content1": "The Company may suspend the use of the Service or delete User registration without prior notice or demand if the User falls under any of the following: violation of any provision of these Terms, discovery of false information in registration details.",
+      "content2": "Non-performance of payment obligations such as fees, no response to communications from the Company for a certain period, no use of the Service for a certain period since the last use, or other cases where the Company deems the use of the Service inappropriate.",
+      "content3": "If any of the items in the preceding paragraph applies, the User shall naturally lose the benefit of time for all debts owed to the Company and must immediately repay all debts owed at that time in a lump sum. The Company shall not be liable for any damages incurred by Users due to actions taken by the Company based on this article."
+    }
   }
 }

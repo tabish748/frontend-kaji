@@ -98,6 +98,20 @@
     }
   }
 
+  // Responsive flex mixin
+  @mixin responsive-flex($gap: 1rem) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $gap;
+    flex-direction: row;
+    
+    @include respond-to('small') {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+
   @mixin responsive-font($min-font-size, $max-font-size) {
     font-size: $min-font-size;
     @media (min-width: #{v.$breakpoint-small}) and (max-width: #{v.$breakpoint-large}) {

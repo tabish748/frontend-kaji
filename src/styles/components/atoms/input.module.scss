@@ -219,3 +219,8 @@
     text-align: center;
   }
 }
+
+.responsiveFlex {
+  @include responsive-flex(1rem);
+  width: 100%;
+}

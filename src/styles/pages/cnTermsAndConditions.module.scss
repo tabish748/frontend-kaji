@@ -1,0 +1,94 @@
+@import "../../styles/base/_mixins.scss";
+@import "../../styles/base/_variables.scss";
+@import "../../styles/base/_colors.scss";
+
+.termsContainer {
+  padding: 4rem 3rem 0;
+  background-color: #f3f6f8;
+
+  border-radius: $border-radius;
+  margin-bottom: 2rem;
+  border: 1px solid $border;
+
+  box-shadow: $cn-box-shadow-default;
+
+  @include respond-to("small") {
+    padding: 2rem 1.25rem 0;
+  }
+}
+
+.termsContent {
+  border: 1px solid $border;
+  border-radius: $border-radius;
+  padding: 2rem;
+
+  @include respond-to("small") {
+    padding: 1.5rem;
+  }
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $gray-200;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gray-500;
+    border-radius: 3px;
+
+    &:hover {
+      background: $gray-600;
+    }
+  }
+}
+
+.termsText {
+  font-size: 20px;
+  line-height: 1.6;
+  color: $gray-700;
+
+  @include respond-to("small") {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.sectionHeading {
+  font-size: 20px;
+  font-weight: 600;
+  color: $gray-800;
+  margin: 1.5rem 0 1rem 0;
+  padding-left: 1rem;
+  border-left: 4px solid $primary;
+
+  @include respond-to("small") {
+    font-size: 15px;
+    margin: 1rem 0 0.75rem 0;
+  }
+}
+
+.sectionContent {
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+
+  @include respond-to("small") {
+    margin-bottom: 1rem;
+  }
+}
+
+// Print styles
+@media print {
+  .termsContainer {
+    padding: 1rem;
+  }
+
+  .termsContent {
+    max-height: none;
+    overflow: visible;
+    border: 1px solid $gray-300;
+  }
+}

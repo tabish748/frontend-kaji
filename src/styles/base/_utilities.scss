@@ -3,8 +3,6 @@
 @import "./colors";
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;600;700;900&display=swap");
 
-
-
 /* utilities.scss */
 html {
   scroll-behavior: smooth;
@@ -1085,9 +1083,36 @@ th.month-border {
   font-size: 10px;
   margin: 2px 0;
   margin-left: 20px;
+  margin-right: 30px;
   font-weight: 700;
 }
 
 .text-normal {
   font-weight: 500 !important;
+}
+
+.seperator-line {
+  border-bottom: 1px solid $border;
+  margin: 10px 0;
+
+  &.primary {
+    border-color: $primary;
+  }
+  &.danger {
+    border-color: $danger;
+  }
+}
+
+// Disabled and readonly input styling
+input[disabled],
+input[readonly],
+select[disabled],
+textarea[disabled],
+textarea[readonly] {
+  cursor: not-allowed !important;
+  opacity: 0.6;
+  
+  &:hover {
+    cursor: not-allowed !important;
+  }
 }

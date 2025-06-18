@@ -14,6 +14,7 @@ export interface CheckboxFieldProps {
   tag?: any;
   validations?: any; // <-- Add this line for validations
 }
+
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   label,
   name,
@@ -79,7 +80,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
         {renderTags()}
       </label>
 
-      <div className="d-flex" style={{ flexWrap: "wrap" }}>
+      <div className={styles.responsiveFlex}>
         {options?.map((option) => (
           <div key={option.value} className={styles.checkboxOption}>
             <input

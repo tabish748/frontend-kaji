@@ -58,6 +58,19 @@
   padding: 9.3px 12px;
 }
 
+.dynamicRadioGrid {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  padding: 9.3px 12px;
+  // Grid columns are now handled dynamically via inline styles
+}
+
+.responsiveFlex {
+  @include responsive-flex(1rem);
+  padding: 9.3px 12px;
+}
+
 .errorText {
   color: var(--error);
   font-size: 0.75rem;
@@ -74,10 +87,34 @@
     grid-template-columns: repeat(1, 1fr);
   }
 }
+.responsiveCols_2_1_1 {
+  grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
 .responsiveCols_3_2_1 {
   grid-template-columns: repeat(3, 1fr);
   @media (max-width: 992px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.responsiveCols_3_3_1 {
+  grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.responsiveCols_3_1_1 {
+  grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(1, 1fr);
   }
   @media (max-width: 768px) {
     grid-template-columns: repeat(1, 1fr);
@@ -92,10 +129,34 @@
     grid-template-columns: repeat(1, 1fr);
   }
 }
+.responsiveCols_4_3_2 {
+  grid-template-columns: repeat(4, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.responsiveCols_4_4_1 {
+  grid-template-columns: repeat(4, 1fr);
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
 .responsiveCols_5_3_2 {
   grid-template-columns: repeat(5, 1fr);
   @media (max-width: 992px) {
     grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.responsiveCols_5_4_2 {
+  grid-template-columns: repeat(5, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
   }
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -108,5 +169,20 @@
   }
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+.responsiveCols_6_4_2 {
+  grid-template-columns: repeat(6, 1fr);
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.responsiveCols_6_6_3 {
+  grid-template-columns: repeat(6, 1fr);
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

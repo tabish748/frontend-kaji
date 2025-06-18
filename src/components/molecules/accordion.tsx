@@ -17,8 +17,6 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
   isOpen = false,
   onToggle,
 }) => {
-  console.log("AccordionItem render:", { heading, isOpen });
-
   return (
     <div className={styles.accordionItem}>
       <button
@@ -57,6 +55,8 @@ interface AccordionProps {
   page?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  openIndex?: number | null;
+  onToggle?: (index: number) => void;
 }
 
 const Accordion: React.FC<AccordionProps> = ({
@@ -64,18 +64,26 @@ const Accordion: React.FC<AccordionProps> = ({
   page = 1,
   totalPages = 1,
   onPageChange,
+  openIndex: externalOpenIndex,
+  onToggle: externalOnToggle,
 }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [internalOpenIndex, setInternalOpenIndex] = useState<number | null>(null);
 
-  console.log("Accordion render - current openIndex:", openIndex);
+  const isControlled = externalOpenIndex !== undefined && externalOnToggle !== undefined;
+  const openIndex = isControlled ? externalOpenIndex : internalOpenIndex;
 
   const handleToggle = (index: number) => {
     console.log("Accordion toggle clicked - index:", index, "current openIndex:", openIndex);
-    setOpenIndex((currentIndex) => {
-      const newIndex = currentIndex === index ? null : index;
-      console.log("Setting new openIndex:", newIndex);
-      return newIndex;
-    });
+    
+    if (isControlled) {
+      externalOnToggle!(index);
+    } else {
+      setInternalOpenIndex((currentIndex) => {
+        const newIndex = currentIndex === index ? null : index;
+        console.log("Setting new openIndex:", newIndex);
+        return newIndex;
+      });
+    }
   };
 
   return (

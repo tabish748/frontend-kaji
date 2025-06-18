@@ -1,98 +1,119 @@
 import Button from "@/components/button/button";
 import CheckboxField from "@/components/checkbox-field/checkbox-field";
 import ClientSection from "@/components/client-section/client-section";
-import CustomSelectField from "@/components/custom-select/custom-select";
 import { Form } from "@/components/form/form";
-import InputDateField from "@/components/input-date/input-date";
 import InputField from "@/components/input-field/input-field";
 import RadioField from "@/components/radio-field/radio-field";
 import SelectField from "@/components/select-field/select-field";
 import Toast from "@/components/toast/toast";
 import { useLanguage } from "@/localization/LocalContext";
-import React, { ChangeEvent, useState } from "react";
-import { SlCalender } from "react-icons/sl";
-import { FaUser, FaPhone, FaRegAddressCard } from "react-icons/fa";
+import React, { ChangeEvent, useState, useEffect } from "react";
+import { FaPhone } from "react-icons/fa";
 import styles from "@/styles/pages/cnabout.module.scss";
-import Accordion, { AccordionItem } from "@/components/molecules/accordion";
-import ImageLabel from "@/components/image-lable/image-lable";
 import {
   MdOutlineAlternateEmail,
   MdOutlineHomeWork,
   MdOutlineTrain,
 } from "react-icons/md";
 import { BiCalendar, BiHomeAlt2 } from "react-icons/bi";
-import { BsFileEarmarkText, BsPaperclip } from "react-icons/bs";
-import { GiAlarmClock } from "react-icons/gi";
-import { IoPricetagsOutline } from "react-icons/io5";
 import ClientLayout from "@/components/dashboard-layout/client-layout";
 import styleHeader from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import styleNav from "@/styles/components/organisms/client-layout.module.scss";
 import Image from "next/image";
 import ApiHandler from "@/app/api-handler";
+import GlobalLoader from "@/components/global-loader/global-loader";
 
-// Define contract and plan structure
-interface Plan {
-  id: number;
-  name: string;
-  content: string;
+// Define interfaces for API response
+interface DropdownOption {
+  value: number;
+  label: string;
 }
 
-interface Contract {
-  id: number;
-  name: string;
-  plans: Plan[];
+interface DropdownData {
+  language: DropdownOption[];
+  gender: DropdownOption[];
+  phone_types: DropdownOption[];
+  services: DropdownOption[];
+  prefectures: DropdownOption[];
+  newsletter: DropdownOption[];
 }
 
 export default function CnAbout() {
   const { t } = useLanguage();
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
-  const [billingFormErrors, setBillingFormErrors] = React.useState<
-    Record<string, string | null>
-  >({});
-  const [paymentFormErrors, setPaymentFormErrors] = React.useState<
-    Record<string, string | null>
-  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{
     message: string | string[];
     type: string;
   } | null>(null);
   
+  // State for dynamic dropdown options
+  const [dropdownOptions, setDropdownOptions] = useState<DropdownData>({
+    language: [],
+    gender: [],
+    phone_types: [],
+    services: [],
+    prefectures: [],
+    newsletter: []
+  });
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
+  
   const [formValues, setFormValues] = useState({
     firstName: "",
     lastname: "",
     phone1: "",
     phone2: "",
-    phone3: "",
-    phoneType1: "mobile",
-    phoneType2: "landline",
+    phoneType1: "1", // Default to first phone type
+    phoneType2: "2", // Default to second phone type
     email1: "",
-    email2: "",
     postalCode: "",
     prefecture: "",
     address1: "",
-    address2: "",
     building: "",
     railwayCompany1: "",
     trainLine1: "",
     trainStation1: "",
-    railwayCompany2: "",
-    trainLine2: "",
-    trainStation2: "",
-    gender: "male",
-    birthYear: "",
-    birthMonth: "",
-    birthDay: "",
-    age: "",
-    language: "japanese",
-    advertising: "subscribe",
+    gender: "1", // Default to first gender option
+    language: "1", // Default to first language option
+    advertising: "1", // Default to first newsletter option
     firstServiceDate: "",
     selectedServices: [] as number[],
     otherRequests: "",
     newsletterEmails: "1",
     discoveredChev: "",
   });
+
+  // Fetch dropdown options on component mount
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        setIsLoadingOptions(true);
+        const response = await ApiHandler.request(
+          '/api/public-inquiry-form-dropdowns',
+          'GET',
+          null,
+          null,
+          null,
+          false // This is a public endpoint
+        );
+        
+        if (response.success && response.data) {
+          setDropdownOptions(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dropdown options:", error);
+        setToast({
+          message: "Failed to load form options. Please refresh the page.",
+          type: "error"
+        });
+      } finally {
+        setIsLoadingOptions(false);
+      }
+    };
+
+    fetchDropdownOptions();
+  }, []);
 
   // Generic change handler for inputs and selects
   const handleInputChange = (
@@ -107,23 +128,14 @@ export default function CnAbout() {
 
   // Handle service selection
   const handleServiceChange = (selectedValues: string[]) => {
-    const serviceNumbers = selectedValues.map(value => {
-      switch(value) {
-        case "housekeeping": return 1;
-        case "babysitting": return 2;
-        case "housecleaningPro": return 3;
-        case "fulltime": return 4;
-        case "others": return 5;
-        default: return 0;
-      }
-    });
+    const serviceNumbers = selectedValues.map(value => parseInt(value));
     setFormValues(prev => ({ ...prev, selectedServices: serviceNumbers }));
   };
 
   // Handle advertising radio change
   const handleAdvertisingChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setFormValues(prev => ({ ...prev, advertising: value, newsletterEmails: value === "subscribe" ? "1" : "0" }));
+    setFormValues(prev => ({ ...prev, advertising: value, newsletterEmails: value }));
   };
 
   const handleSubmit = async () => {
@@ -150,7 +162,7 @@ export default function CnAbout() {
           3: formValues.selectedServices.includes(3) ? 3 : "",
           4: formValues.selectedServices.includes(4) ? 4 : "",
           5: formValues.selectedServices.includes(5) ? 5 : "",
-          6: "",
+          6: formValues.selectedServices.includes(6) ? 6 : "",
         },
         station_company: formValues.railwayCompany1,
         route_name: formValues.trainLine1,
@@ -180,29 +192,19 @@ export default function CnAbout() {
         lastname: "",
         phone1: "",
         phone2: "",
-        phone3: "",
-        phoneType1: "mobile",
-        phoneType2: "landline",
+        phoneType1: "1",
+        phoneType2: "2",
         email1: "",
-        email2: "",
         postalCode: "",
         prefecture: "",
         address1: "",
-        address2: "",
         building: "",
         railwayCompany1: "",
         trainLine1: "",
         trainStation1: "",
-        railwayCompany2: "",
-        trainLine2: "",
-        trainStation2: "",
-        gender: "male",
-        birthYear: "",
-        birthMonth: "",
-        birthDay: "",
-        age: "",
-        language: "japanese",
-        advertising: "subscribe",
+        gender: "1",
+        language: "1",
+        advertising: "1",
         firstServiceDate: "",
         selectedServices: [],
         otherRequests: "",
@@ -230,6 +232,7 @@ export default function CnAbout() {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <>
@@ -269,7 +272,7 @@ export default function CnAbout() {
           <ClientSection heading={t("aboutPage.customerInfo")}>
             <div className={`${styles.formGrid} ${styles.customerForm}`}>
               {/* Name Section */}
-              <div className={styles.label}>{t("aboutPage.nameLabel")} <span className="cn-labelWarn"> Required </span> </div>
+              <div className={styles.label}>{t("aboutPage.nameLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
               <div className={styles.fieldGroup}>
                 <div className={styles.fieldRow}>
                   <InputField
@@ -294,35 +297,54 @@ export default function CnAbout() {
               </div>
 
               {/* Phone Section */}
-              <div className={styles.label}>{t("aboutPage.phoneLabel")}</div>
+              <div className={styles.label}>{t("aboutPage.phoneLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
               <div className={styles.fieldGroup}>
-                <InputField
-                  name="phone1"
-                  placeholder={t("aboutPage.phone1Placeholder")}
-                  value={formValues.phone1}
-                  onChange={handleInputChange}
-                  validations={[{ type: "required" }]}
-                  errorText={errors["phone1"] || undefined}
-                  icon={<FaPhone size={12} />}
-                />
-                <InputField
-                  name="phone2"
-                  placeholder={t("aboutPage.phone2Placeholder")}
-                  value={formValues.phone2}
-                  onChange={handleInputChange}
-                  icon={<FaPhone size={12} />}
-                />
-                <InputField
-                  name="phone3"
-                  placeholder={t("aboutPage.phone3Placeholder")}
-                  value={formValues.phone3}
-                  onChange={handleInputChange}
-                  icon={<FaPhone size={12} />}
-                />
+                <div className={styles.fieldRow}>
+                  <SelectField
+                    name="phoneType1"
+                    placeholder="Phone Type"
+                    options={dropdownOptions.phone_types.map(type => ({
+                      label: type.label,
+                      value: type.value.toString()
+                    }))}
+                    value={formValues.phoneType1}
+                    onChange={handleInputChange}
+                    icon={<FaPhone size={12} />}
+                  />
+                  <InputField
+                    name="phone1"
+                    placeholder={t("aboutPage.phone1Placeholder")}
+                    value={formValues.phone1}
+                    onChange={handleInputChange}
+                    validations={[{ type: "required" }]}
+                    errorText={errors["phone1"] || undefined}
+                    icon={<FaPhone size={12} />}
+                  />
+                </div>
+                <div className={styles.fieldRow}>
+                  <SelectField
+                    name="phoneType2"
+                    placeholder="Phone Type"
+                    options={dropdownOptions.phone_types.map(type => ({
+                      label: type.label,
+                      value: type.value.toString()
+                    }))}
+                    value={formValues.phoneType2}
+                    onChange={handleInputChange}
+                    icon={<FaPhone size={12} />}
+                  />
+                  <InputField
+                    name="phone2"
+                    placeholder={t("aboutPage.phone2Placeholder")}
+                    value={formValues.phone2}
+                    onChange={handleInputChange}
+                    icon={<FaPhone size={12} />}
+                  />
+                </div>
               </div>
 
               {/* Email Section */}
-              <div className={styles.label}>{t("aboutPage.emailLabel")}</div>
+              <div className={styles.label}>{t("aboutPage.emailLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
               <div className={styles.fieldGroup}>
                 <InputField
                   name="email1"
@@ -334,20 +356,10 @@ export default function CnAbout() {
                   errorText={errors["email1"] || undefined}
                   icon={<MdOutlineAlternateEmail size={12} />}
                 />
-                <InputField
-                  name="email2"
-                  placeholder={t("aboutPage.email2Placeholder")}
-                  type="email"
-                  value={formValues.email2}
-                  onChange={handleInputChange}
-                  validations={[{ type: "email" }]}
-                  errorText={errors["email2"] || undefined}
-                  icon={<MdOutlineAlternateEmail size={12} />}
-                />
               </div>
 
               {/* Address Section */}
-              <div className={styles.label}>{t("aboutPage.addressLabel")}</div>
+              <div className={styles.label}>{t("aboutPage.addressLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
               <div className={styles.fieldGroup}>
                 <div className={styles.fieldRow}>
                   <InputField
@@ -362,12 +374,10 @@ export default function CnAbout() {
                   <SelectField
                     name="prefecture"
                     placeholder={t("aboutPage.prefecturePlaceholder")}
-                    options={[
-                      { label: "Hokkaido", value: "1" },
-                      { label: "Aomori", value: "2" },
-                      { label: "Iwate", value: "3" },
-                      { label: "Miyagi", value: "4" },
-                    ]}
+                    options={dropdownOptions.prefectures.map(pref => ({
+                      label: pref.label,
+                      value: pref.value.toString()
+                    }))}
                     value={formValues.prefecture}
                     onChange={handleInputChange}
                     validations={[{ type: "required" }]}
@@ -385,24 +395,19 @@ export default function CnAbout() {
                   icon={<BiHomeAlt2 size={12} />}
                 />
                 <InputField
-                  name="address2"
-                  placeholder={t("aboutPage.address2Placeholder")}
-                  value={formValues.address2}
-                  onChange={handleInputChange}
-                  icon={<BiHomeAlt2 size={12} />}
-                />
-                <InputField
                   name="building"
                   placeholder={t("aboutPage.buildingPlaceholder")}
                   value={formValues.building}
                   onChange={handleInputChange}
                   icon={<BiHomeAlt2 size={12} />}
+                  validations={[{ type: "required" }]}
+                  errorText={errors["building"] || undefined}
                 />
               </div>
 
               {/* Train Station Section */}
               <div className={styles.label}>
-                {t("aboutPage.trainStationLabel")}
+                {t("aboutPage.trainStationLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span>
               </div>
               <div className={styles.fieldGroup}>
                 <div className={styles.stationGroup}>
@@ -411,6 +416,8 @@ export default function CnAbout() {
                     placeholder={t("aboutPage.railwayCompany1Placeholder")}
                     value={formValues.railwayCompany1}
                     onChange={handleInputChange}
+                    validations={[{ type: "required" }]}
+                    errorText={errors["railwayCompany1"] || undefined}
                     icon={<MdOutlineTrain size={12} />}
                   />
                   <InputField
@@ -418,6 +425,8 @@ export default function CnAbout() {
                     placeholder={t("aboutPage.trainLine1Placeholder")}
                     value={formValues.trainLine1}
                     onChange={handleInputChange}
+                    validations={[{ type: "required" }]}
+                    errorText={errors["trainLine1"] || undefined}
                     icon={<MdOutlineTrain size={12} />}
                   />
                   <InputField
@@ -425,9 +434,42 @@ export default function CnAbout() {
                     placeholder={t("aboutPage.trainStation1Placeholder")}
                     value={formValues.trainStation1}
                     onChange={handleInputChange}
+                    validations={[{ type: "required" }]}
+                    errorText={errors["trainStation1"] || undefined}
                     icon={<MdOutlineTrain size={12} />}
                   />
                 </div>
+              </div>
+
+              {/* Gender Section */}
+              <div className={styles.label}>{t("aboutPage.genderLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
+              <RadioField
+                name="gender"
+                options={dropdownOptions.gender.map(gender => ({
+                  label: gender.label,
+                  value: gender.value.toString()
+                }))}
+                selectedValue={formValues.gender}
+                onChange={handleInputChange}
+                className={styles.radioGroup}
+              />
+
+              {/* Language Section */}
+              <div className={styles.label}>{t("aboutPage.languageLabel")} <span className="cn-labelWarn"> {t("cncontactform.required")} </span> </div>
+              <div className={styles.fieldGroup}>
+                <SelectField
+                  name="language"
+                  placeholder={t("aboutPage.languagePlaceholder")}
+                  options={dropdownOptions.language.map(lang => ({
+                    label: lang.label,
+                    value: lang.value.toString()
+                  }))}
+                  value={formValues.language}
+                  onChange={handleInputChange}
+                  validations={[{ type: "required" }]}
+                  errorText={errors["language"] || undefined}
+                  icon={<BiHomeAlt2 size={12} />}
+                />
               </div>
             </div>
           </ClientSection>
@@ -455,39 +497,16 @@ export default function CnAbout() {
                 <div className={styles.weekdayCheckboxes}>
                   <CheckboxField
                     name="preferredServices"
-                    options={[
-                      {
-                        value: "housekeeping",
-                        label: t("cncontactform.services.housekeeping"),
-                      },
-                      {
-                        value: "babysitting",
-                        label: t("cncontactform.services.babysitting"),
-                      },
-                      {
-                        value: "housecleaningPro",
-                        label: t("cncontactform.services.housecleaningPro"),
-                      },
-                      {
-                        value: "fulltime",
-                        label: t("cncontactform.services.fulltime"),
-                      },
-                      {
-                        value: "others",
-                        label: t("cncontactform.services.others"),
-                      },
-                    ]}
-                    selectedValues={formValues.selectedServices.map(num => {
-                      switch(num) {
-                        case 1: return "housekeeping";
-                        case 2: return "babysitting";
-                        case 3: return "housecleaningPro";
-                        case 4: return "fulltime";
-                        case 5: return "others";
-                        default: return "";
-                      }
-                    }).filter(Boolean)}
+                    options={dropdownOptions.services.map(service => ({
+                      value: service.value.toString(),
+                      label: service.label
+                    }))}
+                    selectedValues={formValues.selectedServices.map(num => num.toString())}
                     onChange={handleServiceChange}
+                    columnsXl={4}
+                    columnsLg={3}
+                    columnsMd={3}
+                    columnsSm={1}
                   />
                 </div>
               </div>
@@ -517,16 +536,10 @@ export default function CnAbout() {
               </div>
               <RadioField
                 name="advertisingEmail"
-                options={[
-                  {
-                    label: t("cncontactform.subscribe"),
-                    value: "subscribe",
-                  },
-                  {
-                    label: t("cncontactform.unsubscribe"),
-                    value: "unsubscribe",
-                  },
-                ]}
+                options={dropdownOptions.newsletter.map(option => ({
+                  label: option.label,
+                  value: option.value.toString()
+                }))}
                 selectedValue={formValues.advertising}
                 onChange={handleAdvertisingChange}
                 className={styles.radioGroup}

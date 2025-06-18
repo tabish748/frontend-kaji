@@ -29,6 +29,7 @@
   font-size: 12px;
   padding: 0 15px;
   border-radius: $border-radius;
+  gap: 8px;
 
   &:disabled {
     background-color: #f6f7fb !important;
@@ -99,7 +100,19 @@
   }
 
   .icon {
-    margin-right: 8px;
+    color: inherit;
+    
+    svg {
+      display: block;
+      color: inherit;
+      fill: currentColor;
+      stroke: currentColor;
+      
+      path {
+        fill: currentColor;
+        stroke: currentColor;
+      }
+    }
   }
 }
 

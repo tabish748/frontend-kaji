@@ -21,6 +21,7 @@
 .logoMobile {
   display: none;
   @include respond-to("large") {
+    padding: 20px 0;
     display: block;
   }
 }

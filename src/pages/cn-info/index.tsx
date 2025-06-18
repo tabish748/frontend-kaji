@@ -41,6 +41,13 @@ export default function CnAbout() {
     type: string;
   } | null>(null);
 
+  // Accordion state management
+  const [accordionState, setAccordionState] = useState<number | null>(null);
+  const [hasOpenedAccordions, setHasOpenedAccordions] = useState<Record<string, boolean>>({});
+  const [loadingAccordion, setLoadingAccordion] = useState<number | null>(null);
+  const [loadedSections, setLoadedSections] = useState<Record<string, boolean>>({});
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   // Form errors state
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
   const [billingFormErrors, setBillingFormErrors] = React.useState<
@@ -117,71 +124,10 @@ export default function CnAbout() {
     languages: [] as { label: string; value: string }[],
   });
 
-  // Update URL and handle data loading
-  const handleAccordionToggle = async (index: number) => {
-    console.log("handleAccordionToggle called with index:", index);
-
-    // Set loading state
-    setIsLoading(true);
-    console.log("Loading state set to true");
-
-    try {
-      // Load data for the section
-      switch (index) {
-        case 0:
-          console.log("Loading customer data");
-          await fetchCustomerData();
-          await router.push(
-            {
-              pathname: router.pathname,
-              query: { section: "customer" }
-            },
-            undefined,
-            { shallow: true }
-          );
-          break;
-        case 1:
-          console.log("Loading billing data");
-          await fetchBillingData();
-          await router.push(
-            {
-              pathname: router.pathname,
-              query: { section: "billing" }
-            },
-            undefined,
-            { shallow: true }
-          );
-          console.log("Billing data loaded");
-          break;
-        case 2:
-          console.log("Loading payment data");
-          await fetchPaymentData();
-          await router.push(
-            {
-              pathname: router.pathname,
-              query: { section: "payment" }
-            },
-            undefined,
-            { shallow: true }
-          );
-          break;
-      }
-    } catch (error) {
-      console.error("Error loading section data:", error);
-      setToast({
-        message: "Error loading section data",
-        type: "error",
-      });
-    } finally {
-      setIsLoading(false);
-      console.log("Loading complete");
-    }
-  };
-
-  // Load initial data
+  // Load initial data and set accordion state from URL
   React.useEffect(() => {
     const loadInitialData = async () => {
-      const section = router.query.section;
+      const section = router.query.section as string | undefined;
       let index = 0; // Default to first accordion
 
       if (section) {
@@ -190,37 +136,248 @@ export default function CnAbout() {
         } else if (section === "payment") {
           index = 2;
         }
-      }
+        
+        const sectionKey = section;
 
-      // Load data for the initial section
-      switch (index) {
-        case 0:
-          await fetchCustomerData();
-          break;
-        case 1:
-          await fetchBillingData();
-          break;
-        case 2:
-          await fetchPaymentData();
-          break;
+        // Only set accordion state and load data if it's different from current state
+        if (accordionState !== index) {
+          setAccordionState(index);
+          setHasOpenedAccordions(prev => ({ ...prev, [sectionKey]: true }));
+
+          // Load data only if not already loaded
+          if (!loadedSections[sectionKey]) {
+            setLoadingAccordion(index);
+            try {
+              switch (index) {
+                case 0:
+                  await fetchCustomerData();
+                  setLoadedSections(prev => ({ ...prev, customer: true }));
+                  break;
+                case 1:
+                  await fetchBillingData();
+                  setLoadedSections(prev => ({ ...prev, billing: true }));
+                  break;
+                case 2:
+                  await fetchPaymentData();
+                  setLoadedSections(prev => ({ ...prev, payment: true }));
+                  break;
+              }
+            } catch (error) {
+              console.error("Error loading initial data:", error);
+            } finally {
+              setLoadingAccordion(null);
+            }
+          }
+        }
+        
+        // Mark that initial load is complete
+        setIsInitialLoad(false);
+      } else {
+        // Only default to customer section on the very first load
+        if (isInitialLoad) {
+          // First time loading the page - default to customer section
+          await router.push(
+            {
+              pathname: router.pathname,
+              query: { section: "customer" }
+            },
+            undefined,
+            { shallow: true }
+          );
+          // Don't set accordion state here, let the effect run again with the new URL
+        } else {
+          // User has previously interacted with accordions and closed them all
+          // Keep all accordions closed (don't default to customer)
+          setAccordionState(null);
+        }
       }
     };
 
     if (router.isReady) {
       loadInitialData();
     }
-  }, [router.isReady, router.query]); // Add router.isReady and router.query as dependencies
+  }, [router.isReady, router.query.section]); // Only depend on section, not entire query
+
+  // Update URL and handle data loading
+  const handleAccordionToggle = async (index: number) => {
+    console.log("handleAccordionToggle called with index:", index, "current accordionState:", accordionState);
+
+    // Mark that initial load is complete since user is interacting
+    setIsInitialLoad(false);
+
+    // If clicking the same accordion that's open, close it
+    if (index === accordionState) {
+      console.log("Closing accordion");
+      setAccordionState(null);
+      setLoadingAccordion(null); // Clear any loading state
+      
+      // Clear URL query parameters when closing accordion
+      await router.push(
+        {
+          pathname: router.pathname,
+          query: {}
+        },
+        undefined,
+        { shallow: true }
+      );
+      return;
+    }
+
+    // Get section names
+    const sectionNames = ["customer", "billing", "payment"];
+    const sectionName = sectionNames[index];
+
+    // Check if data needs to be loaded
+    const needsDataLoad = !loadedSections[sectionName];
+
+    if (needsDataLoad) {
+      // Set loading state for specific accordion
+      setLoadingAccordion(index);
+      console.log("Loading state set for accordion:", index);
+
+      try {
+        // Load data for the section only if not loaded before
+        switch (index) {
+          case 0:
+            console.log("Loading customer data");
+            await fetchCustomerData();
+            setLoadedSections(prev => ({ ...prev, customer: true }));
+            break;
+          case 1:
+            console.log("Loading billing data");
+            await fetchBillingData();
+            setLoadedSections(prev => ({ ...prev, billing: true }));
+            break;
+          case 2:
+            console.log("Loading payment data");
+            await fetchPaymentData();
+            setLoadedSections(prev => ({ ...prev, payment: true }));
+            break;
+        }
+      } catch (error) {
+        console.error("Error loading section data:", error);
+        setToast({
+          message: "Error loading section data",
+          type: "error",
+        });
+        setLoadingAccordion(null);
+        return;
+      } finally {
+        setLoadingAccordion(null);
+        console.log("Loading complete");
+      }
+    }
+
+    // Update URL with the section
+    await router.push(
+      {
+        pathname: router.pathname,
+        query: { section: sectionName }
+      },
+      undefined,
+      { shallow: true }
+    );
+
+    // Set accordion state and mark as opened
+    setAccordionState(index);
+    setHasOpenedAccordions(prev => ({ ...prev, [sectionName]: true }));
+  };
+
+  // Auto-open next accordion after successful save
+  const openNextAccordion = async (currentIndex: number) => {
+    // Mark that initial load is complete
+    setIsInitialLoad(false);
+    
+    const nextIndex = currentIndex + 1;
+    const sectionNames = ["customer", "billing", "payment"];
+    
+    if (nextIndex < sectionNames.length) {
+      const nextSectionName = sectionNames[nextIndex];
+      
+      // Always auto-open next accordion after save, regardless of previous state
+      setTimeout(async () => {
+        try {
+          // Check if data needs to be loaded for next section
+          const needsDataLoad = !loadedSections[nextSectionName];
+          
+          if (needsDataLoad) {
+            // Set loading state for next accordion
+            setLoadingAccordion(nextIndex);
+            
+            // Load data for the next section silently
+            switch (nextIndex) {
+              case 1:
+                console.log("Loading billing data for next accordion");
+                await fetchBillingDataSilent();
+                setLoadedSections(prev => ({ ...prev, billing: true }));
+                break;
+              case 2:
+                console.log("Loading payment data for next accordion");
+                await fetchPaymentDataSilent();
+                setLoadedSections(prev => ({ ...prev, payment: true }));
+                break;
+            }
+          }
+
+          // Update URL
+          await router.push(
+            {
+              pathname: router.pathname,
+              query: { section: nextSectionName }
+            },
+            undefined,
+            { shallow: true }
+          );
+
+          // Set accordion state and mark as opened
+          setAccordionState(nextIndex);
+          setHasOpenedAccordions(prev => ({ ...prev, [nextSectionName]: true }));
+
+        } catch (error) {
+          console.error("Error loading next section data:", error);
+          setToast({
+            message: "Error loading section data",
+            type: "error",
+          });
+        } finally {
+          setLoadingAccordion(null);
+        }
+      }, 500);
+    } else {
+      // Close current accordion if it's the last one (payment section)
+      setTimeout(async () => {
+        setAccordionState(null);
+        await router.push(
+          {
+            pathname: router.pathname,
+            query: {}
+          },
+          undefined,
+          { shallow: true }
+        );
+      }, 500);
+    }
+  };
 
   const simulateApiDelay = () =>
     new Promise((resolve) => setTimeout(resolve, 1000));
 
   const fetchCustomerData = async () => {
     try {
-      setIsLoading(true);
-      // Simulate API delay
+      // Dummy API call with delay
       await simulateApiDelay();
 
-      // Mock API response
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/customer-data`,
+      //   "GET",
+      //   null,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      // For now, use mock data since API is dummy
       const mockData = {
         formValues: {
           firstName: "Test",
@@ -272,25 +429,33 @@ export default function CnAbout() {
       }));
 
       setToast({
-        message: "Test data loaded successfully",
+        message: "Customer data loaded successfully",
         type: "success",
       });
     } catch (error: any) {
-      console.log("Error loading test data:", error);
+      console.log("Error loading customer data:", error);
       setToast({
-        message: "Error loading test data",
+        message: "Error loading customer data",
         type: "error",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const fetchBillingData = async () => {
     try {
-      setIsLoading(true);
       await simulateApiDelay();
 
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/billing-data`,
+      //   "GET",
+      //   null,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      // For now, use mock data since API is dummy
       const mockData = {
         formValues: {
           firstName: "Billing",
@@ -302,6 +467,7 @@ export default function CnAbout() {
           postalCode: "160-0023",
           prefecture: "13",
           address1: "Shibuya",
+          billingType: "different" as "same" | "different",
         },
       };
 
@@ -311,25 +477,33 @@ export default function CnAbout() {
       });
 
       setToast({
-        message: "Test billing data loaded successfully",
+        message: "Billing data loaded successfully",
         type: "success",
       });
     } catch (error: any) {
-      console.log("Error loading test billing data:", error);
+      console.log("Error loading billing data:", error);
       setToast({
-        message: "Error loading test billing data",
+        message: "Error loading billing data",
         type: "error",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const fetchPaymentData = async () => {
     try {
-      setIsLoading(true);
       await simulateApiDelay();
 
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/payment-data`,
+      //   "GET",
+      //   null,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      // For now, use mock data since API is dummy
       const mockData = {
         formValues: {
           paymentMethod: "credit",
@@ -342,17 +516,85 @@ export default function CnAbout() {
       });
 
       setToast({
-        message: "Test payment data loaded successfully",
+        message: "Payment data loaded successfully",
         type: "success",
       });
     } catch (error: any) {
-      console.log("Error loading test payment data:", error);
+      console.log("Error loading payment data:", error);
       setToast({
-        message: "Error loading test payment data",
+        message: "Error loading payment data",
         type: "error",
       });
-    } finally {
-      setIsLoading(false);
+    }
+  };
+
+  // Silent data fetching functions (without loading state and toasts)
+  const fetchBillingDataSilent = async () => {
+    try {
+      await simulateApiDelay();
+
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/billing-data`,
+      //   "GET",
+      //   null,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      // For now, use mock data since API is dummy
+      const mockData = {
+        formValues: {
+          firstName: "Billing",
+          lastName: "Contact",
+          firstNameKana: "ビリング",
+          lastNameKana: "コンタクト",
+          phone1: "090-8765-4321",
+          email1: "billing@example.com",
+          postalCode: "160-0023",
+          prefecture: "13",
+          address1: "Shibuya",
+          billingType: "different" as "same" | "different",
+        },
+      };
+
+      setBillingFormValues({
+        ...billingFormValues,
+        ...mockData.formValues,
+      });
+    } catch (error: any) {
+      console.log("Error loading billing data:", error);
+    }
+  };
+
+  const fetchPaymentDataSilent = async () => {
+    try {
+      await simulateApiDelay();
+
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/payment-data`,
+      //   "GET",
+      //   null,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      // For now, use mock data since API is dummy
+      const mockData = {
+        formValues: {
+          paymentMethod: "credit",
+        },
+      };
+
+      setPaymentFormValues({
+        ...paymentFormValues,
+        ...mockData.formValues,
+      });
+    } catch (error: any) {
+      console.log("Error loading payment data:", error);
     }
   };
 
@@ -392,23 +634,33 @@ export default function CnAbout() {
         }
       }
 
-      const response = await ApiHandler.request(
-        `/api/test/${formType}-submit`,
-        "POST",
-        formData,
-        null,
-        null,
-        false
-      );
-      console.log(`${formType} form submitted:`, response);
+      // Add delay to simulate API call
+      await simulateApiDelay();
+
+      // Mock API call - replace with real endpoint later
+      // const response = await ApiHandler.request(
+      //   `/api/test/${formType}-submit`,
+      //   "POST",
+      //   formData,
+      //   null,
+      //   null,
+      //   false
+      // );
+
+      console.log(`${formType} form submitted:`, formData);
       setToast({
-        message: "Test submission successful",
+        message: "Submission successful",
         type: "success",
       });
+
+      // Auto-open next accordion after successful save
+      const currentIndex = formType === "customer" ? 0 : formType === "billing" ? 1 : 2;
+      openNextAccordion(currentIndex);
+
     } catch (error: any) {
       console.error(`Error submitting ${formType} form:`, error);
       setToast({
-        message: error.message || "Test submission failed",
+        message: error.message || "Submission failed",
         type: "error",
       });
     } finally {
@@ -528,14 +780,16 @@ export default function CnAbout() {
       <ClientLayout header={false} nav={false}>
         <h1 className={styleHeader.topHeading}>{t("cnInfo.orderForm")}</h1>
         <div className="d-flex flex-column gap-2">
-          <Accordion>
+          <Accordion
+            openIndex={accordionState}
+            onToggle={handleAccordionToggle}
+          >
             {/* Customer Information Accordion */}
             <AccordionItem
               heading={t("aboutPage.customerInfo")}
               label={t("cnInfo.required")}
-              onToggle={() => handleAccordionToggle(0)}
             >
-              {isLoading ? (
+              {loadingAccordion === 0 ? (
                 <div className="d-flex justify-content-center py-4">
                   Loading customer data...
                 </div>
@@ -898,9 +1152,8 @@ export default function CnAbout() {
             <AccordionItem
               heading={t("aboutPage.billingInfoHeading")}
               label={t("cnInfo.required")}
-              onToggle={() => handleAccordionToggle(1)}
             >
-              {isLoading ? (
+              {loadingAccordion === 1 ? (
                 <div className="d-flex justify-content-center py-4">
                   Loading billing data...
                 </div>
@@ -1131,9 +1384,8 @@ export default function CnAbout() {
             <AccordionItem
               heading={t("aboutPage.paymentInfoHeading")}
               label={t("cnInfo.required")}
-              onToggle={() => handleAccordionToggle(2)}
             >
-              {isLoading ? (
+              {loadingAccordion === 2 ? (
                 <div className="d-flex justify-content-center py-4">
                   Loading payment data...
                 </div>
