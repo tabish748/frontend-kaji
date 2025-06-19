@@ -7,8 +7,8 @@ import TextAreaField from "../text-area/text-area";
 import CheckboxField from "../checkbox-field/checkbox-field";
 import RadioField from "../radio-field/radio-field";
 import styles from "../../styles/components/molecules/inquiry-tab.module.scss";
-import { calculateAge, convertTo24Hour } from '../../libs/utils';
-import ApiHandler from '../../app/api-handler';
+import { calculateAge, convertTo24Hour } from "../../libs/utils";
+import ApiHandler from "../../app/api-handler";
 
 const InquiryTab: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -113,14 +113,17 @@ const InquiryTab: React.FC = () => {
       setLoadingDropdowns(true);
       setDropdownError(null);
       try {
-        const res = await ApiHandler.request('/api/inquiry-form-dropdowns', 'GET');
+        const res = await ApiHandler.request(
+          "/api/inquiry-form-dropdowns",
+          "GET"
+        );
         if (res.success) {
           setDropdownOptions(res.data);
         } else {
-          setDropdownError('Failed to load dropdowns');
+          setDropdownError("Failed to load dropdowns");
         }
       } catch (e) {
-        setDropdownError('Failed to load dropdowns');
+        setDropdownError("Failed to load dropdowns");
       } finally {
         setLoadingDropdowns(false);
       }
@@ -138,24 +141,26 @@ const InquiryTab: React.FC = () => {
   const handleSubmit = async () => {
     // Helper function to split time into hours and minutes
     const getTimeComponents = (timeStr: string | undefined) => {
-      if (!timeStr) return { hour: '', minute: '' };
-      const [hours, minutes] = timeStr.split(':');
-      return { hour: hours || '', minute: minutes || '' };
+      if (!timeStr) return { hour: "", minute: "" };
+      const [hours, minutes] = timeStr.split(":");
+      return { hour: hours || "", minute: minutes || "" };
     };
 
     // Convert any 12-hour times to 24-hour format first
     const newFormData = { ...formData };
-    type TimeField = 'inquiryTime' | 'responseTime' | 'orderTime';
-    (['inquiryTime', 'responseTime', 'orderTime'] as TimeField[]).forEach((field) => {
-      if (newFormData[field] && /am|pm/i.test(newFormData[field]!)) {
-        try {
-          newFormData[field] = convertTo24Hour(newFormData[field]!);
-        } catch (e) {
-          setErrors((prev) => ({ ...prev, [field]: 'Invalid time format' }));
-          return;
+    type TimeField = "inquiryTime" | "responseTime" | "orderTime";
+    (["inquiryTime", "responseTime", "orderTime"] as TimeField[]).forEach(
+      (field) => {
+        if (newFormData[field] && /am|pm/i.test(newFormData[field]!)) {
+          try {
+            newFormData[field] = convertTo24Hour(newFormData[field]!);
+          } catch (e) {
+            setErrors((prev) => ({ ...prev, [field]: "Invalid time format" }));
+            return;
+          }
         }
       }
-    });
+    );
 
     // Get time components
     const firstInquiryTime = getTimeComponents(newFormData.inquiryTime);
@@ -169,7 +174,9 @@ const InquiryTab: React.FC = () => {
     });
 
     // Format date of birth components
-    const dob = newFormData.dateOfBirth ? new Date(newFormData.dateOfBirth) : null;
+    const dob = newFormData.dateOfBirth
+      ? new Date(newFormData.dateOfBirth)
+      : null;
 
     const submissionData = {
       first_inquiry_date: newFormData.inquiryDate,
@@ -182,41 +189,54 @@ const InquiryTab: React.FC = () => {
       lead_status: Number(newFormData.leadStatus),
       name: newFormData.fullName,
       name_kana: newFormData.fullNameKatakana,
-      represents_id: Number(newFormData.contacterType === 'self' ? 1 : 
-                          newFormData.contacterType === 'family_proxy' ? 2 :
-                          newFormData.contacterType === 'secretary' ? 3 : 4),
-      dob_year: dob?.getFullYear() || '',
-      dob_month: dob ? dob.getMonth() + 1 : '',
-      dob_day: dob?.getDate() || '',
+      represents_id: Number(
+        newFormData.contacterType === "self"
+          ? 1
+          : newFormData.contacterType === "family_proxy"
+          ? 2
+          : newFormData.contacterType === "secretary"
+          ? 3
+          : 4
+      ),
+      dob_year: dob?.getFullYear() || "",
+      dob_month: dob ? dob.getMonth() + 1 : "",
+      dob_day: dob?.getDate() || "",
       age: Number(newFormData.age),
-      gender: Number(newFormData.gender === 'male' ? 1 : 
-                    newFormData.gender === 'female' ? 2 : 3),
+      gender: Number(
+        newFormData.gender === "male"
+          ? 1
+          : newFormData.gender === "female"
+          ? 2
+          : 3
+      ),
       phone_type1: newFormData.phone1Type,
       phone1: newFormData.phone1,
-      phone_type2: newFormData.phone2Type || '',
-      phone2: newFormData.phone2 || '',
-      phone_type3: newFormData.phone3Type || '',
-      phone3: newFormData.phone3 || '',
+      phone_type2: newFormData.phone2Type || "",
+      phone2: newFormData.phone2 || "",
+      phone_type3: newFormData.phone3Type || "",
+      phone3: newFormData.phone3 || "",
       email1: newFormData.email1,
-      email2: newFormData.email2 || '',
+      email2: newFormData.email2 || "",
       primary_contact_phone: newFormData.primaryPhone,
       primary_contact_email: newFormData.primaryEmail,
       post_code: newFormData.postcode,
       prefecture_id: Number(newFormData.prefecture),
       address1: newFormData.address1,
-      address2: newFormData.address2 || '',
-      apartment_name: newFormData.building || '',
+      address2: newFormData.address2 || "",
+      apartment_name: newFormData.building || "",
       language: Number(newFormData.language),
-      newsletter_emails: Number(newFormData.advertisingEmail === 'subscribe' ? 1 : 0),
+      newsletter_emails: Number(
+        newFormData.advertisingEmail === "subscribe" ? 1 : 0
+      ),
       ...servicesArray,
       first_service_requested_date: newFormData.firstServiceDate,
-      other_service_requests: newFormData.additionalRequests || '',
-      remarks: newFormData.note || '',
-      station_details: trainStations.map(station => ({
+      other_service_requests: newFormData.additionalRequests || "",
+      remarks: newFormData.note || "",
+      station_details: trainStations.map((station) => ({
         date_added: station.date,
         company: station.railwayCompany,
         route_name: station.trainLine,
-        nearest_station: station.trainStation
+        nearest_station: station.trainStation,
       })),
       inquiry_detail: {
         person_incharge_id: newFormData.owner,
@@ -224,8 +244,8 @@ const InquiryTab: React.FC = () => {
         inquiry_hour: responseTime.hour,
         inquiry_minute: responseTime.minute,
         inquiry_status: Number(newFormData.responseStatus),
-        inquiry: newFormData.inquiry || '',
-        answer: newFormData.response || ''
+        inquiry: newFormData.inquiry || "",
+        answer: newFormData.response || "",
       },
       inquiry_order_detail: {
         submission_date: newFormData.orderFormSentAt,
@@ -233,43 +253,86 @@ const InquiryTab: React.FC = () => {
         submission_minute: orderTime.minute,
         order_form_sent: newFormData.orderFormSent ? 1 : 0,
         responder_id: newFormData.orderOwner,
-        order_status: Number(newFormData.orderStatus)
-      }
+        order_status: Number(newFormData.orderStatus),
+      },
     };
 
     try {
       const response = await ApiHandler.request(
-        '/api/company/public-inquiry/create',
-        'POST',
+        "/api/company/public-inquiry/create",
+        "POST",
         submissionData,
         {},
         {},
         true
       );
-      
+
       if (response.success) {
         // Handle success
-        console.log('Inquiry created successfully');
+        console.log("Inquiry created successfully");
       } else {
         // Handle error
-        setErrors((prev) => ({ ...prev, submit: 'Failed to create inquiry' }));
+        setErrors((prev) => ({ ...prev, submit: "Failed to create inquiry" }));
       }
     } catch (error) {
-      setErrors((prev) => ({ ...prev, submit: 'Failed to create inquiry' }));
+      setErrors((prev) => ({ ...prev, submit: "Failed to create inquiry" }));
     }
   };
 
-  const channelOptions = dropdownOptions?.inquiry_media?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const referralSourceOptions = dropdownOptions?.referral_source?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const leadStatusOptions = dropdownOptions?.lead_staus?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const phoneTypeOptions = dropdownOptions?.phone_types?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const statusOptions = dropdownOptions?.inquiry_status?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const orderStatusOptions = dropdownOptions?.order_status?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const serviceOptions = dropdownOptions?.services?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const prefectureOptions = dropdownOptions?.prefectures?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const advertisingEmailOptions = dropdownOptions?.newsletter?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const languageOptions = dropdownOptions?.language?.map((item: any) => ({ value: item.value, label: item.label })) || [];
-  const assigneeOptions = dropdownOptions?.users?.filter((user: any) => user.status).map((item: any) => ({ value: item.value, label: item.label })) || [];
+  const channelOptions =
+    dropdownOptions?.inquiry_media?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const referralSourceOptions =
+    dropdownOptions?.referral_source?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const leadStatusOptions =
+    dropdownOptions?.lead_staus?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const phoneTypeOptions =
+    dropdownOptions?.phone_types?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const statusOptions =
+    dropdownOptions?.inquiry_status?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const orderStatusOptions =
+    dropdownOptions?.order_status?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const serviceOptions =
+    dropdownOptions?.services?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const prefectureOptions =
+    dropdownOptions?.prefectures?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const advertisingEmailOptions =
+    dropdownOptions?.newsletter?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const languageOptions =
+    dropdownOptions?.language?.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    })) || [];
+  const assigneeOptions =
+    dropdownOptions?.users
+      ?.filter((user: any) => user.status)
+      .map((item: any) => ({ value: item.value, label: item.label })) || [];
 
   if (loadingDropdowns) return <div>Loading options...</div>;
   if (dropdownError) return <div>{dropdownError}</div>;
@@ -296,7 +359,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-3">
+            <div className="col-sm-12 col-lg-6 col-xl-3">
               <InputField
                 name="recordId"
                 label="Record ID"
@@ -306,7 +369,7 @@ const InquiryTab: React.FC = () => {
                 validations={[{ type: "required" }]}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-sm-12 col-lg-6 col-xl-3">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
@@ -332,7 +395,7 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-sm-12 col-lg-6 col-xl-3">
               <CustomSelectField
                 name="assignee"
                 label="Assignee"
@@ -342,7 +405,7 @@ const InquiryTab: React.FC = () => {
                 validations={[{ type: "required" }]}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-sm-12 col-lg-6 col-xl-3">
               <CustomSelectField
                 name="channel"
                 label="Channel"
@@ -355,7 +418,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3">
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="referralSource"
                 label="Referral Source"
@@ -366,7 +429,7 @@ const InquiryTab: React.FC = () => {
                 }
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <InputField
                 name="referrerName"
                 label="Referrer Name"
@@ -377,7 +440,7 @@ const InquiryTab: React.FC = () => {
                 }
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-4">
               <CustomSelectField
                 name="leadStatus"
                 label="Lead Status"
@@ -400,10 +463,10 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-md-6 col-lg-3">
               <InputField
                 name="fullNameKatakana"
-                label="Full name in Katakana (Required)"
+                label="Full name in Katakana  "
                 placeholder="Full name in Katakana"
                 value={formData.fullNameKatakana}
                 onChange={(e) =>
@@ -412,17 +475,17 @@ const InquiryTab: React.FC = () => {
                 validations={[{ type: "required" }]}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-sm-6 col-md-6 col-lg-3">
               <InputField
                 name="fullName"
-                label="Full name (Required)"
+                label="Full name  "
                 placeholder="Full name"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 validations={[{ type: "required" }]}
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-6">
               <RadioField
                 name="contacterType"
                 label="Contacter Type"
@@ -436,17 +499,16 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("contacterType", e.target.value)
                 }
-                columnsLg={4}
-                columnsMd={2}
-                columnsSm={1}
               />
             </div>
           </div>
 
           {/* Date of Birth Row */}
           <div className="row g-3 mb-3">
-            <div className="col-md-6">
-              <div className={`${styles.dFlex} ${styles.gap1} ${styles.alignItemsEnd}`}>
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
+              <div
+                className={`${styles.dFlex} ${styles.gap1} ${styles.alignItemsEnd}`}
+              >
                 <div className={styles.flexOne}>
                   <InputDateField
                     name="dateOfBirth"
@@ -455,7 +517,12 @@ const InquiryTab: React.FC = () => {
                     value={formData.dateOfBirth}
                     onChange={(e) => {
                       handleInputChange("dateOfBirth", e.target.value);
-                      handleInputChange("age", e.target.value ? calculateAge(e.target.value).toString() : "");
+                      handleInputChange(
+                        "age",
+                        e.target.value
+                          ? calculateAge(e.target.value).toString()
+                          : ""
+                      );
                     }}
                   />
                 </div>
@@ -471,10 +538,10 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <RadioField
                 name="gender"
-                label="Gender (Required)"
+                label="Gender  "
                 options={[
                   { label: "Male", value: "male" },
                   { label: "Female", value: "female" },
@@ -482,35 +549,36 @@ const InquiryTab: React.FC = () => {
                 ]}
                 selectedValue={formData.gender}
                 onChange={(e) => handleInputChange("gender", e.target.value)}
-                columnsLg={4}
-                columnsMd={2}
-                columnsSm={1}
               />
             </div>
           </div>
 
-          {/* Phone Numbers Row */}
+                    {/* Phone Numbers Row */}
           <div className="row g-1 mb-3">
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <div className="d-flex gap-1 align-items-center justify-content-between">
-                <input 
-                  type="radio" 
-                  name="primaryPhone" 
-                  value="phone1"
-                  checked={formData.primaryPhone === "phone1"}
-                  onChange={() => handleInputChange("primaryPhone", "phone1")}
-                />
-                <div className={styles.flexOne}>
-                  <InputField
-                    name="phone1"
-                    label="Phone 1 (Required)"
-                    placeholder="000-0000-0000"
-                    value={formData.phone1}
-                    onChange={(e) =>
-                      handleInputChange("phone1", e.target.value)
-                    }
-                    validations={[{ type: "required" }]}
+                <div className="d-flex align-items-end justify-content-center">
+                  <input
+                    className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
+                    type="radio"
+                    name="primaryPhone"
+                    value="phone1"
+                    checked={formData.primaryPhone === "phone1"}
+                    onChange={() => handleInputChange("primaryPhone", "phone1")}
                   />
+                  <div className={styles.flexOne}>
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="phone1"
+                      label="Phone 1  "
+                      placeholder="000-0000-0000"
+                      value={formData.phone1}
+                      onChange={(e) =>
+                        handleInputChange("phone1", e.target.value)
+                      }
+                      validations={[{ type: "required" }]}
+                    />
+                  </div>
                 </div>
                 <CustomSelectField
                   name="phone1Type"
@@ -523,25 +591,27 @@ const InquiryTab: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="col-md-4">
-              <div className="d-flex gap-1 align-items-center">
-                <input 
-                  type="radio" 
-                  name="primaryPhone" 
-                  value="phone2"
-                  checked={formData.primaryPhone === "phone2"}
-                  onChange={() => handleInputChange("primaryPhone", "phone2")}
-                />
-                <div className={styles.flexOne}>
-                  <InputField
-                    name="phone2"
-                    label="Phone 2"
-                    placeholder="000-0000-0000"
-                    value={formData.phone2}
-                    onChange={(e) =>
-                      handleInputChange("phone2", e.target.value)
-                    }
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
+              <div className="d-flex gap-1 align-items-end justify-content-between">
+                <div className="d-flex align-items-end justify-content-center">
+                  <input
+                    className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
+                    type="radio"
+                    name="primaryPhone"
+                    value="phone2"
+                    checked={formData.primaryPhone === "phone2"}
+                    onChange={() => handleInputChange("primaryPhone", "phone2")}
                   />
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="phone2"
+                      label="Phone 2"
+                      placeholder="000-0000-0000"
+                      value={formData.phone2}
+                      onChange={(e) =>
+                        handleInputChange("phone2", e.target.value)
+                      }
+                    />
                 </div>
                 <CustomSelectField
                   name="phone2Type"
@@ -554,25 +624,29 @@ const InquiryTab: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="col-md-4">
-              <div className="d-flex gap-1 align-items-center">
-                <input 
-                  type="radio" 
-                  name="primaryPhone" 
-                  value="phone3"
-                  checked={formData.primaryPhone === "phone3"}
-                  onChange={() => handleInputChange("primaryPhone", "phone3")}
-                />
-                <div className={styles.flexOne}>
-                  <InputField
-                    name="phone3"
-                    label="Phone 3"
-                    placeholder="000-0000-0000"
-                    value={formData.phone3}
-                    onChange={(e) =>
-                      handleInputChange("phone3", e.target.value)
-                    }
+            <div className="col-12 col-sm-12 col-md-12 col-lg-4">
+              <div className="d-flex gap-1 align-items-center justify-content-between">
+                <div className="d-flex align-items-end justify-content-center">
+                  <input
+                    className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
+                    type="radio"
+                    name="primaryPhone"
+                    value="phone3"
+                    checked={formData.primaryPhone === "phone3"}
+                    onChange={() => handleInputChange("primaryPhone", "phone3")}
                   />
+                  <div className={styles.flexOne}>
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="phone3"
+                      label="Phone 3"
+                      placeholder="000-0000-0000"
+                      value={formData.phone3}
+                      onChange={(e) =>
+                        handleInputChange("phone3", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
                 <CustomSelectField
                   name="phone3Type"
@@ -587,44 +661,56 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Email Addresses Row */}
-          <div className="row g-3 mb-3">
-            <div className="col-md-3">
-              <div className="d-flex gap-1 align-items-center">
-                <input 
-                  type="radio" 
-                  name="primaryEmail" 
+                    {/* Email Addresses Row */}
+          <div className="row mb-3">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
+              <div
+                className={`${styles.flexOne} d-flex align-items-end justify-content-center`}
+              >
+                <input
+                  className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
+                  type="radio"
+                  name="primaryEmail"
                   value="email1"
                   checked={formData.primaryEmail === "email1"}
                   onChange={() => handleInputChange("primaryEmail", "email1")}
                 />
-                <InputField
-                  name="email1"
-                  label="E-Mail 1 (Required)"
-                  placeholder="E-mail 1"
-                  value={formData.email1}
-                  onChange={(e) => handleInputChange("email1", e.target.value)}
-                  validations={[{ type: "required" }, { type: "email" }]}
-                />
+                <div className={styles.flexOne}>
+                  <InputField
+                    labelClassName="-ml-4"
+                    name="email1"
+                    label="E-Mail 1  "
+                    placeholder="E-mail 1"
+                    value={formData.email1}
+                    onChange={(e) => handleInputChange("email1", e.target.value)}
+                    validations={[{ type: "required" }, { type: "email" }]}
+                  />
+                </div>
               </div>
             </div>
-            <div className="col-md-3">
-              <div className="d-flex gap-1 align-items-center">
-                <input 
-                  type="radio" 
-                  name="primaryEmail" 
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
+              <div
+                className={`${styles.flexOne} d-flex align-items-end justify-content-center`}
+              >
+                <input
+                  className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
+                  type="radio"
+                  name="primaryEmail"
                   value="email2"
                   checked={formData.primaryEmail === "email2"}
                   onChange={() => handleInputChange("primaryEmail", "email2")}
                 />
-                <InputField
-                  name="email2"
-                  label="E-Mail 2"
-                  placeholder="E-mail 2"
-                  value={formData.email2}
-                  onChange={(e) => handleInputChange("email2", e.target.value)}
-                  validations={[{ type: "email" }]}
-                />
+                <div className={styles.flexOne}>
+                  <InputField
+                    labelClassName="-ml-4"
+                    name="email2"
+                    label="E-Mail 2"
+                    placeholder="E-mail 2"
+                    value={formData.email2}
+                    onChange={(e) => handleInputChange("email2", e.target.value)}
+                    validations={[{ type: "email" }]}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -632,9 +718,9 @@ const InquiryTab: React.FC = () => {
           {/* Address Row */}
           <div className="row g-3 mb-3">
             <div className="col-md-12">
-              <label className={styles.addressLabel}>Address (Required)</label>
+              <label className={styles.addressLabel}>Address  </label>
               <div className="row g-2">
-                <div className="col-md-2">
+                <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <InputField
                     name="postcode"
                     // label=""
@@ -646,11 +732,11 @@ const InquiryTab: React.FC = () => {
                     validations={[{ type: "required" }]}
                   />
                 </div>
-                <div className="col-md-2">
+                <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <CustomSelectField
                     name="prefecture"
                     placeholder="Prefecture"
-                    // label="Prefecture (Required)"
+                    // label="Prefecture  "
                     options={prefectureOptions}
                     value={formData.prefecture}
                     onChange={(e) =>
@@ -659,10 +745,10 @@ const InquiryTab: React.FC = () => {
                     validations={[{ type: "required" }]}
                   />
                 </div>
-                <div className="col-md-4">
+                <div className="col-12 col-sm-6 col-md-3 col-lg-4">
                   <InputField
                     name="address1"
-                    // label="Address1 (Required)"
+                    // label="Address1  "
                     placeholder="Address1"
                     value={formData.address1}
                     onChange={(e) =>
@@ -671,7 +757,7 @@ const InquiryTab: React.FC = () => {
                     validations={[{ type: "required" }]}
                   />
                 </div>
-                <div className="col-md-4">
+                <div className="col-12 col-sm-6 col-md-3 col-lg-4">
                   <InputField
                     name="address2"
                     // label="Address 2"
@@ -701,7 +787,7 @@ const InquiryTab: React.FC = () => {
 
           {/* Train Station Grid */}
           <div className="mb-3">
-            <label className="form-label">Train Station (Required)</label>
+            <label className="form-label">Train Station  </label>
 
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.trainStationGrid}`}>
@@ -780,7 +866,7 @@ const InquiryTab: React.FC = () => {
 
           {/* Language and Advertising Email */}
           <div className="row g-3">
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <CustomSelectField
                 name="language"
                 label="Language"
@@ -789,7 +875,7 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) => handleInputChange("language", e.target.value)}
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <RadioField
                 name="advertisingEmail"
                 label="Advertising Email"
@@ -798,9 +884,6 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("advertisingEmail", e.target.value)
                 }
-                columnsLg={2}
-                columnsMd={2}
-                columnsSm={1}
               />
             </div>
           </div>
@@ -829,7 +912,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <InputDateField
                 name="firstServiceDate"
                 label="First Service Date"
@@ -867,7 +950,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="owner"
                 label="Owner"
@@ -876,7 +959,7 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) => handleInputChange("owner", e.target.value)}
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
@@ -901,7 +984,7 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-4">
               <CustomSelectField
                 name="responseStatus"
                 label="Status"
@@ -915,7 +998,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <TextAreaField
                 name="inquiry"
                 label="Inquiry"
@@ -925,7 +1008,7 @@ const InquiryTab: React.FC = () => {
                 rows={4}
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <TextAreaField
                 name="response"
                 label="Response"
@@ -1061,7 +1144,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           <div className="row g-3 mb-3">
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
@@ -1086,7 +1169,7 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="orderOwner"
                 label="Owner"
@@ -1097,7 +1180,7 @@ const InquiryTab: React.FC = () => {
                 }
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-4">
               <CustomSelectField
                 name="orderStatus"
                 label="Status"
@@ -1115,12 +1198,13 @@ const InquiryTab: React.FC = () => {
               <CheckboxField
                 name="orderFormSent"
                 label=""
-                options={[
-                  { value: "orderFormSent", label: "Order Form Sent" }
-                ]}
+                options={[{ value: "orderFormSent", label: "Order Form Sent" }]}
                 selectedValues={formData.orderFormSent ? ["orderFormSent"] : []}
                 onChange={(values) =>
-                  handleInputChange("orderFormSent", values.includes("orderFormSent"))
+                  handleInputChange(
+                    "orderFormSent",
+                    values.includes("orderFormSent")
+                  )
                 }
               />
             </div>

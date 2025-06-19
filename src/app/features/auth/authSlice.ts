@@ -130,6 +130,31 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+export const orderAcceptance = createAsyncThunk(
+  "auth/orderAcceptance",
+  async ({ id }: { id: string }) => {
+    try {
+      const response = await ApiHandler.request(
+        `/api/customer/order-acceptance/${id}`,
+        "POST",
+        { accept_terms_conditions: 1 },
+        undefined,
+        undefined,
+        false // Don't require token for order acceptance
+      );
+
+      // Store token in localStorage if it's in the response
+      if (response.data?.authorization?.token) {
+        localStorage.setItem("token", response.data.authorization.token);
+      }
+
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message || "Order acceptance failed");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -199,6 +224,55 @@ const authSlice = createSlice({
         state.loading = false;
         state.success = false;
         state.userRole = { name: "" };
+        if (action.error.message) {
+          state.message = action.error.message;
+        } else {
+          state.message = null;
+        }
+      })
+      .addCase(orderAcceptance.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        orderAcceptance.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            data: {
+              user: User;
+              authorization: Authorization;
+              role?: any;
+            };
+            message: string;
+            success: boolean;
+          }>
+        ) => {
+          state.isAuthenticated = true;
+          state.user = action.payload.data.user;
+          state.authorization = action.payload.data.authorization;
+          state.loading = false;
+          state.message = action.payload.message;
+          state.success = action.payload.success;
+          state.userRole = action.payload.data.role.label;
+
+
+          // Store relevant user info in localStorage
+          if (state.user) {
+            localStorage.setItem("loggedInUser", JSON.stringify({...state.user, userRole: state.userRole}));
+          }
+
+          if (state.userRole?.id) {
+            localStorage.setItem("loggedInUserRoleId", String(state.userRole.id));
+          }
+          if (state.authorization?.token) {
+            localStorage.setItem("token", state.authorization.token);
+          }
+        }
+      )
+      .addCase(orderAcceptance.rejected, (state, action) => {
+        state.loading = false;
+        state.success = false;
         if (action.error.message) {
           state.message = action.error.message;
         } else {

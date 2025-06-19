@@ -81,6 +81,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   }, [router.isReady]);
 
   useEffect(() => {
+    if (!language) return; // Guard clause to prevent importing when language is null
+    
     const currentYear = new Date().getFullYear() - 20;
     const dynamicTranslations = generateDateTranslations(
       2000,

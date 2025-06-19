@@ -8,12 +8,24 @@ import ClientLayout from "@/components/dashboard-layout/client-layout";
 import styleHeader from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import styleNav from "@/styles/components/organisms/client-layout.module.scss";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { orderAcceptance } from "@/app/features/auth/authSlice";
+import { AppDispatch, RootState } from "@/app/store";
 
 export default function CnAbout() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { id } = router.query;
+  const dispatch = useDispatch<AppDispatch>();
+  const authState = useSelector((state: RootState) => state.auth);
+  const { isLoading } = useSelector((state: RootState) => state.loading);
+  
+  // Extract auth properties with fallbacks
+  const message = authState?.message || null;
+  const success = authState?.success || null;
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState<string[]>([]);
   const [toast, setToast] = useState<{
     message: string | string[];
@@ -21,26 +33,57 @@ export default function CnAbout() {
   } | null>(null);
 
   const handleTermsAcceptanceChange = (selectedValues: string[]) => {
+    console.log('Checkbox onChange called with:', selectedValues); // Debug log
     setTermsAccepted(selectedValues);
+    
+    // Clear any existing error for this field
+    if (errors.termsAcceptance) {
+      setErrors(prev => ({
+        ...prev,
+        termsAcceptance: null
+      }));
+    }
   };
 
   const handleTermsSubmit = async () => {
-    setIsSubmitting(true);
+    // Check if terms are accepted
+    if (termsAccepted.length === 0) {
+      setToast({
+        message: t("cnTermsAndConditions.termsRequired") || "Please accept the terms and conditions",
+        type: "error",
+      });
+      return;
+    }
+
+    // Check if ID is available
+    if (!id) {
+      setToast({
+        message: t("cnTermsAndConditions.invalidOrder") || "Invalid order ID",
+        type: "error",
+      });
+      return;
+    }
 
     try {
-      // Handle terms acceptance submission logic here
-      setToast({
-        message: t("cnTermsAndConditions.successMessage"),
-        type: "success",
-      });
+      const result = await dispatch(orderAcceptance({ id: id as string })).unwrap();
+      
+      if (result.success) {
+        setToast({
+          message: result.message || t("cnTermsAndConditions.successMessage"),
+          type: "success",
+        });
+        
+        // Redirect to dashboard or appropriate page after successful acceptance
+        setTimeout(() => {
+          router.push('/'); // Adjust the redirect path as needed
+        }, 2000);
+      }
     } catch (error: any) {
       console.error("Terms submission error:", error);
       setToast({
         message: error.message || t("cnTermsAndConditions.errorMessage"),
         type: "error",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -78,7 +121,7 @@ export default function CnAbout() {
 
         <Form
           onSubmit={handleTermsSubmit}
-          isLoading={isSubmitting}
+          isLoading={isLoading}
           errors={errors}
           setErrors={setErrors}
           showBottomSubmitBtn={true}
@@ -147,9 +190,6 @@ export default function CnAbout() {
                 selectedValues={termsAccepted}
                 onChange={handleTermsAcceptanceChange}
                 validations={[{ type: "required" }]}
-                columnsLg={1}
-                columnsMd={1}
-                columnsSm={1}
               />
             </div>
           </div>

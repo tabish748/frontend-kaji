@@ -73,6 +73,39 @@ $spacing-unit: 8px;
   }
 }
 
+// Negative margin utilities
+@for $i from 1 through 10 {
+  .-m-#{$i} {
+    margin: -$spacing-unit * $i !important;
+  }
+
+  .-mt-#{$i} {
+    margin-top: -$spacing-unit * $i !important;
+  }
+
+  .-mr-#{$i} {
+    margin-right: -$spacing-unit * $i !important;
+  }
+
+  .-mb-#{$i} {
+    margin-bottom: -$spacing-unit * $i !important;
+  }
+
+  .-ml-#{$i} {
+    margin-left: -$spacing-unit * $i !important;
+  }
+
+  .-mx-#{$i} {
+    margin-left: -$spacing-unit * $i !important;
+    margin-right: -$spacing-unit * $i !important;
+  }
+
+  .-my-#{$i} {
+    margin-top: -$spacing-unit * $i !important;
+    margin-bottom: -$spacing-unit * $i !important;
+  }
+}
+
 input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="datetime-local"]::-webkit-inner-spin-button,

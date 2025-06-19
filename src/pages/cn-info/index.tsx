@@ -31,7 +31,7 @@ interface Plan {
   content: string;
 }
 
-export default function CnAbout() {
+export default function CnInfo() {
   const { t } = useLanguage();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +85,7 @@ export default function CnAbout() {
     birthMonth: "",
     birthDay: "",
     age: "",
-    advertising: "subscribe",
+    advertising: "1", // Default to "送付する" (send newsletter)
   });
 
   // Form 3 - Payment Information
@@ -118,10 +118,10 @@ export default function CnAbout() {
   // Add state for dropdown options
   const [dropdownOptions, setDropdownOptions] = useState({
     prefectures: [] as { label: string; value: string }[],
-    railwayCompanies: [] as { label: string; value: string }[],
-    trainLines: [] as { label: string; value: string }[],
-    trainStations: [] as { label: string; value: string }[],
     languages: [] as { label: string; value: string }[],
+    paymentMethods: [] as { label: string; value: string }[],
+    genders: [] as { label: string; value: string }[],
+    newsletter: [] as { label: string; value: string }[],
   });
 
   // Load initial data and set accordion state from URL
@@ -364,78 +364,75 @@ export default function CnAbout() {
 
   const fetchCustomerData = async () => {
     try {
-      // Dummy API call with delay
-      await simulateApiDelay();
+      // Call the real API endpoint for dropdown options
+      const response = await ApiHandler.request(
+        `/api/public-inquiry-form-dropdowns`,
+        "GET",
+        null,
+        null,
+        null,
+        false
+      );
 
-      // Mock API call - replace with real endpoint later
-      // const response = await ApiHandler.request(
-      //   `/api/test/customer-data`,
-      //   "GET",
-      //   null,
-      //   null,
-      //   null,
-      //   false
-      // );
+      if (response.success && response.data) {
+        // Transform API response to match expected dropdown format
+        const transformedOptions = {
+          prefectures: response.data.prefectures?.map((item: any) => ({
+            label: item.label,
+            value: item.value.toString()
+          })) || [],
+          languages: response.data.language?.map((item: any) => ({
+            label: item.label,
+            value: item.label // Using label as value since the component expects language names
+          })) || [],
+          genders: response.data.gender?.map((item: any) => ({
+            label: item.label,
+            value: item.label // Using label as value since the component expects gender names
+          })) || [],
+          newsletter: response.data.newsletter?.map((item: any) => ({
+            label: item.label,
+            value: item.value.toString() // Keep numeric values as strings
+          })) || [],
+          paymentMethods: [] as { label: string; value: string }[],
+        };
 
-      // For now, use mock data since API is dummy
-      const mockData = {
-        formValues: {
-          firstName: "Test",
-          lastName: "User",
-          firstNameKana: "テスト",
-          lastNameKana: "ユーザー",
-          phone1: "090-1234-5678",
-          email1: "test@example.com",
-          postalCode: "160-0023",
-          prefecture: "13",
-          address1: "Shinjuku",
+        // Mock customer data - replace with real customer data endpoint when available
+        const mockCustomerData = {
+          firstName: "",
+          lastName: "",
+          firstNameKana: "",
+          lastNameKana: "",
+          phone1: "",
+          email1: "",
+          postalCode: "",
+          prefecture: "",
+          address1: "",
           gender: "male",
           language: "japanese",
-        },
-        options: {
-          prefectures: [
-            { label: "Tokyo", value: "13" },
-            { label: "Osaka", value: "27" },
-            { label: "Kanagawa", value: "14" },
-          ],
-          railwayCompanies: [
-            { label: "JR East", value: "jr_east" },
-            { label: "Tokyo Metro", value: "tokyo_metro" },
-          ],
-          trainLines: [
-            { label: "Yamanote Line", value: "yamanote" },
-            { label: "Chuo Line", value: "chuo" },
-          ],
-          trainStations: [
-            { label: "Shinjuku", value: "shinjuku" },
-            { label: "Shibuya", value: "shibuya" },
-          ],
-          languages: [
-            { label: t("aboutPage.japanese"), value: "japanese" },
-            { label: t("aboutPage.english"), value: "english" },
-            { label: t("aboutPage.both"), value: "both" },
-          ],
-        },
-      };
+          advertising: "1", // Default to "送付する" (send newsletter)
+        };
 
-      setCustomerFormValues({
-        ...customerFormValues,
-        ...mockData.formValues,
-      });
+        setCustomerFormValues({
+          ...customerFormValues,
+          ...mockCustomerData,
+        });
 
-      setDropdownOptions((prev) => ({
-        ...prev,
-        ...mockData.options,
-      }));
+        setDropdownOptions((prev) => ({
+          ...prev,
+          ...transformedOptions,
+        }));
 
-      setToast({
-        message: "Customer data loaded successfully",
-        type: "success",
-      });
+        setToast({
+          message: "Customer data loaded successfully",
+          type: "success",
+        });
+      } else {
+        throw new Error("Invalid API response format");
+      }
     } catch (error: any) {
       console.log("Error loading customer data:", error);
       setToast({
-        message: "Error loading customer data",
+        message: error.message || "Error loading customer data",
         type: "error",
       });
     }
@@ -491,38 +488,50 @@ export default function CnAbout() {
 
   const fetchPaymentData = async () => {
     try {
-      await simulateApiDelay();
+      // Call the real API endpoint for dropdown options
+      const response = await ApiHandler.request(
+        `/api/public-inquiry-form-dropdowns`,
+        "GET",
+        null,
+        null,
+        null,
+        false
+      );
 
-      // Mock API call - replace with real endpoint later
-      // const response = await ApiHandler.request(
-      //   `/api/test/payment-data`,
-      //   "GET",
-      //   null,
-      //   null,
-      //   null,
-      //   false
-      // );
+      if (response.success && response.data) {
+        // Transform payment method options
+        const paymentMethodOptions = response.data.payment_method?.map((item: any) => ({
+          label: item.label,
+          value: item.label
+        })) || [];
 
-      // For now, use mock data since API is dummy
-      const mockData = {
-        formValues: {
-          paymentMethod: "credit",
-        },
-      };
+        // Update dropdown options with payment methods
+        setDropdownOptions((prev) => ({
+          ...prev,
+          paymentMethods: paymentMethodOptions,
+        }));
 
-      setPaymentFormValues({
-        ...paymentFormValues,
-        ...mockData.formValues,
-      });
+        // Mock payment form data
+        const mockPaymentData = {
+          paymentMethod: "credit_card",
+        };
 
-      setToast({
-        message: "Payment data loaded successfully",
-        type: "success",
-      });
+        setPaymentFormValues({
+          ...paymentFormValues,
+          ...mockPaymentData,
+        });
+
+        setToast({
+          message: "Payment data loaded successfully",
+          type: "success",
+        });
+      } else {
+        throw new Error("Invalid API response format");
+      }
     } catch (error: any) {
       console.log("Error loading payment data:", error);
       setToast({
-        message: "Error loading payment data",
+        message: error.message || "Error loading payment data",
         type: "error",
       });
     }
@@ -570,29 +579,39 @@ export default function CnAbout() {
 
   const fetchPaymentDataSilent = async () => {
     try {
-      await simulateApiDelay();
+      // Call the real API endpoint for dropdown options
+      const response = await ApiHandler.request(
+        `/api/public-inquiry-form-dropdowns`,
+        "GET",
+        null,
+        null,
+        null,
+        false
+      );
 
-      // Mock API call - replace with real endpoint later
-      // const response = await ApiHandler.request(
-      //   `/api/test/payment-data`,
-      //   "GET",
-      //   null,
-      //   null,
-      //   null,
-      //   false
-      // );
+      if (response.success && response.data) {
+        // Transform payment method options
+        const paymentMethodOptions = response.data.payment_method?.map((item: any) => ({
+          label: item.label,
+          value: item.label
+        })) || [];
 
-      // For now, use mock data since API is dummy
-      const mockData = {
-        formValues: {
-          paymentMethod: "credit",
-        },
-      };
+        // Update dropdown options with payment methods
+        setDropdownOptions((prev) => ({
+          ...prev,
+          paymentMethods: paymentMethodOptions,
+        }));
 
-      setPaymentFormValues({
-        ...paymentFormValues,
-        ...mockData.formValues,
-      });
+        // Mock payment form data
+        const mockPaymentData = {
+          paymentMethod: "credit_card",
+        };
+
+        setPaymentFormValues({
+          ...paymentFormValues,
+          ...mockPaymentData,
+        });
+      }
     } catch (error: any) {
       console.log("Error loading payment data:", error);
     }
@@ -972,36 +991,30 @@ export default function CnAbout() {
                     </div>
                     <div className={styles.fieldGroup}>
                       <div className={styles.stationGroup}>
-                        <SelectField
+                        <InputField
                           name="railwayCompany1"
                           placeholder={t(
                             "aboutPage.railwayCompany1Placeholder"
                           )}
-                          options={dropdownOptions.railwayCompanies}
                           value={customerFormValues.railwayCompany1}
                           onChange={(e) => handleInputChange("customer", e)}
                           validations={[{ type: "required" }]}
-                          errorText={errors.railwayCompany1 || undefined}
                           icon={<MdOutlineTrain size={12} />}
                         />
-                        <SelectField
+                        <InputField
                           name="trainLine1"
                           placeholder={t("aboutPage.trainLine1Placeholder")}
-                          options={dropdownOptions.trainLines}
                           value={customerFormValues.trainLine1}
                           onChange={(e) => handleInputChange("customer", e)}
                           validations={[{ type: "required" }]}
-                          errorText={errors.trainLine1 || undefined}
                           icon={<MdOutlineTrain size={12} />}
                         />
-                        <SelectField
+                        <InputField
                           name="trainStation1"
                           placeholder={t("aboutPage.trainStation1Placeholder")}
-                          options={dropdownOptions.trainStations}
                           value={customerFormValues.trainStation1}
                           onChange={(e) => handleInputChange("customer", e)}
                           validations={[{ type: "required" }]}
-                          errorText={errors.trainStation1 || undefined}
                           icon={<MdOutlineTrain size={12} />}
                         />
                       </div>
@@ -1042,7 +1055,7 @@ export default function CnAbout() {
                     <div>
                       <RadioField
                         name="gender"
-                        options={[
+                        options={dropdownOptions.genders || [
                           { label: t("aboutPage.male"), value: "male" },
                           { label: t("aboutPage.female"), value: "female" },
                           { label: t("aboutPage.other"), value: "other" },
@@ -1119,7 +1132,7 @@ export default function CnAbout() {
                     </div>
                     <RadioField
                       name="advertising"
-                      options={[
+                      options={dropdownOptions.newsletter.length > 0 ? dropdownOptions.newsletter : [
                         { label: t("aboutPage.subscribe"), value: "subscribe" },
                         {
                           label: t("aboutPage.unsubscribe"),
@@ -1408,15 +1421,7 @@ export default function CnAbout() {
                     <div>
                       <RadioField
                         name="paymentMethod"
-                        options={[
-                          { label: t("aboutPage.bank"), value: "bank" },
-                          { label: t("aboutPage.credit"), value: "credit" },
-                          { label: t("aboutPage.invoice"), value: "invoice" },
-                          {
-                            label: t("aboutPage.convenience"),
-                            value: "convenience",
-                          },
-                        ]}
+                        options={dropdownOptions.paymentMethods}
                         selectedValue={paymentFormValues.paymentMethod}
                         onChange={(e) => handleInputChange("payment", e)}
                         className={styles.radioGroup}

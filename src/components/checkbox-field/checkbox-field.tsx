@@ -15,7 +15,7 @@ export interface CheckboxFieldProps {
   validations?: any; // <-- Add this line for validations
 }
 
-const CheckboxField: React.FC<CheckboxFieldProps> = ({
+const CheckboxField = React.forwardRef<HTMLDivElement, CheckboxFieldProps>(({
   label,
   name,
   options,
@@ -26,7 +26,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   errorText,
   tag,
   validations,
-}) => {
+}, ref) => {
   const renderTags = () => {
     if (Array.isArray(tag)) {
       return tag.map((item, index) => (
@@ -70,6 +70,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 
   return (
     <div
+      ref={ref}
       className={`${styles.inputWrapper} ${className || ""} ${
         errorText ? styles.hasError : ""
       }`}
@@ -101,6 +102,8 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
       {errorText && <div className={styles.errorText} role="alert">{errorText}</div>}
     </div>
   );
-};
+});
+
+CheckboxField.displayName = 'CheckboxField';
 
 export default CheckboxField;
