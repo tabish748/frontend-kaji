@@ -271,7 +271,7 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
           {/* customer top view */}
         </header>
       )}
-      {nav && (
+      {header && (
         <>
           <h1 className={styles.topHeading}> {t("profile")} </h1>
           <div className={styles.topProfileCardWrapper}>

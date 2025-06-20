@@ -553,7 +553,7 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-                    {/* Phone Numbers Row */}
+          {/* Phone Numbers Row */}
           <div className="row g-1 mb-3">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <div className="d-flex gap-1 align-items-center justify-content-between">
@@ -602,16 +602,16 @@ const InquiryTab: React.FC = () => {
                     checked={formData.primaryPhone === "phone2"}
                     onChange={() => handleInputChange("primaryPhone", "phone2")}
                   />
-                    <InputField
-                      labelClassName="-ml-4"
-                      name="phone2"
-                      label="Phone 2"
-                      placeholder="000-0000-0000"
-                      value={formData.phone2}
-                      onChange={(e) =>
-                        handleInputChange("phone2", e.target.value)
-                      }
-                    />
+                  <InputField
+                    labelClassName="-ml-4"
+                    name="phone2"
+                    label="Phone 2"
+                    placeholder="000-0000-0000"
+                    value={formData.phone2}
+                    onChange={(e) =>
+                      handleInputChange("phone2", e.target.value)
+                    }
+                  />
                 </div>
                 <CustomSelectField
                   name="phone2Type"
@@ -661,7 +661,7 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-                    {/* Email Addresses Row */}
+          {/* Email Addresses Row */}
           <div className="row mb-3">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <div
@@ -682,7 +682,9 @@ const InquiryTab: React.FC = () => {
                     label="E-Mail 1  "
                     placeholder="E-mail 1"
                     value={formData.email1}
-                    onChange={(e) => handleInputChange("email1", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("email1", e.target.value)
+                    }
                     validations={[{ type: "required" }, { type: "email" }]}
                   />
                 </div>
@@ -707,7 +709,9 @@ const InquiryTab: React.FC = () => {
                     label="E-Mail 2"
                     placeholder="E-mail 2"
                     value={formData.email2}
-                    onChange={(e) => handleInputChange("email2", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("email2", e.target.value)
+                    }
                     validations={[{ type: "email" }]}
                   />
                 </div>
@@ -718,7 +722,7 @@ const InquiryTab: React.FC = () => {
           {/* Address Row */}
           <div className="row g-3 mb-3">
             <div className="col-md-12">
-              <label className={styles.addressLabel}>Address  </label>
+              <label className={styles.formLabel}>Address </label>
               <div className="row g-2">
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <InputField
@@ -787,7 +791,7 @@ const InquiryTab: React.FC = () => {
 
           {/* Train Station Grid */}
           <div className="mb-3">
-            <label className="form-label">Train Station  </label>
+            <label className={styles.formLabel}>Train Station </label>
 
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.trainStationGrid}`}>
@@ -1143,8 +1147,8 @@ const InquiryTab: React.FC = () => {
             </h3>
           </div>
 
-          <div className="row g-3 mb-3">
-            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
+          <div className="row g-3 mb-3 align-items-center">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
@@ -1169,32 +1173,7 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-12 col-sm-12 col-md-6 col-lg-4">
-              <CustomSelectField
-                name="orderOwner"
-                label="Owner"
-                options={assigneeOptions}
-                value={formData.orderOwner}
-                onChange={(e) =>
-                  handleInputChange("orderOwner", e.target.value)
-                }
-              />
-            </div>
-            <div className="col-12 col-sm-12 col-md-12 col-lg-4">
-              <CustomSelectField
-                name="orderStatus"
-                label="Status"
-                options={orderStatusOptions}
-                value={formData.orderStatus}
-                onChange={(e) =>
-                  handleInputChange("orderStatus", e.target.value)
-                }
-              />
-            </div>
-          </div>
-
-          <div className="row g-3 mb-3">
-            <div className="col-md-12">
+            <div className="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3 mt-4  p-2">
               <CheckboxField
                 name="orderFormSent"
                 label=""
@@ -1205,6 +1184,28 @@ const InquiryTab: React.FC = () => {
                     "orderFormSent",
                     values.includes("orderFormSent")
                   )
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+              <CustomSelectField
+                name="orderOwner"
+                label="Owner"
+                options={assigneeOptions}
+                value={formData.orderOwner}
+                onChange={(e) =>
+                  handleInputChange("orderOwner", e.target.value)
+                }
+              />
+            </div>
+            <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+              <CustomSelectField
+                name="orderStatus"
+                label="Status"
+                options={orderStatusOptions}
+                value={formData.orderStatus}
+                onChange={(e) =>
+                  handleInputChange("orderStatus", e.target.value)
                 }
               />
             </div>

@@ -1,5 +1,5 @@
-@import '../../base/_colors.scss';
-@import '../../base/_mixins.scss';
+@import "../../base/_colors.scss";
+@import "../../base/_mixins.scss";
 
 // Section headers
 .sectionHeader {
@@ -20,30 +20,123 @@
   gap: 0.5rem;
   align-items: flex-end;
   width: 100%;
-  
+
   .dateField {
     flex: 1;
     min-width: 0;
   }
-  
+
   .timeField {
-    flex: 0 0 120px;
+    flex: 1;
     max-width: 120px;
+  }
+
+  @include respond-to("small") {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    
+    .dateField {
+      flex: 1;
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      
+      > div {
+        width: 100%;
+      }
+    }
+
+    .timeField {
+      flex: 1;
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      
+      > div {
+        width: 100%;
+      }
+    }
   }
 }
 
 // Address label
-.addressLabel {
+.formLabel {
   display: inline-block;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 16px;
+}
+
+// Address row responsive gaps
+.addressRow {
+  // Mobile and Small screens (≤ 767px) - Single column, no gaps
+  @media (max-width: 767px) {
+    margin-left: 0;
+    margin-right: 0;
+    flex-direction: column;
+    
+    > div {
+      padding-left: 0;
+      padding-right: 0;
+      margin-bottom: 8px;
+      width: 100% !important;
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  // Medium screens (768px - 991px) - 2 columns with row gap
+  @media (min-width: 768px) and (max-width: 991px) {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    
+    > div {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+      margin-bottom: 12px;
+      
+      &:nth-child(3),
+      &:nth-child(4) {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  // Large screens and above (≥ 992px) - 4 columns
+  @media (min-width: 992px) {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    
+    > div {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+  }
+}
+
+// Address field specific styling to force mobile behavior
+.addressField {
+  @media (max-width: 767px) {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 // TextArea full height
 .fullHeightTextArea {
   height: 100% !important;
   min-height: 100px !important;
-  
+
   textarea {
     height: 100% !important;
     min-height: 100px !important;
@@ -86,11 +179,56 @@
 .inquiryRecordsGrid {
   grid-template-columns: 1fr 1fr 2fr 2fr 1fr auto;
 
-  @include respond-to("medium") {
-    grid-template-columns: 1fr 1fr;
+  // Convert to card layout starting from medium screens (768px and above)
+  @media (max-width: 991px) {
+    display: block;
+    
+    &.gridHeader {
+      display: none;
+    }
+    
+    &.gridRow {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: block;
+      
+      > div {
+        margin-bottom: 12px;
+        
+        &:last-child {
+          margin-bottom: 0;
+          text-align: right;
+        }
+        
+        &:before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #6c757d;
+          font-size: 12px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 4px;
+        }
+        
+        &:nth-child(1):before { content: "INQUIRY DATE / UPDATED DATE"; }
+        &:nth-child(2):before { content: "ASSIGNEE / UPDATED BY"; }
+        &:nth-child(3):before { content: "INQUIRY DETAILS"; }
+        &:nth-child(4):before { content: "RESPONSE"; }
+        &:nth-child(5):before { content: "STATUS"; }
+        &:nth-child(6):before { content: "ACTION"; }
+      }
+    }
   }
+  
+  // Full width buttons on small screens only
   @include respond-to("small") {
-    grid-template-columns: 1fr;
+    .deleteButton {
+      width: 100%;
+    }
   }
 }
 
@@ -113,24 +251,33 @@
   -moz-appearance: none;
   width: 24px;
   height: 24px;
-  border: 4px solid #ccc;
+  min-width: 24px;
+  min-height: 24px;
+  border: 2px solid #ccc;
   border-radius: 50%;
   background-color: white;
   cursor: pointer;
   position: relative;
   margin-bottom: 1px;
-  margin-right: 1px;
-  
+  margin-right: 8px;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: top;
+
   &:checked {
     border-color: $primary;
-    border-width: 4px;
+    border-width: 6px;
     background-color: white;
   }
-  
+
   &:hover:not(:checked) {
     border-color: #999;
   }
-  
+
+  &:focus {
+    outline: 2px solid rgba(1, 127, 250, 0.3);
+    outline-offset: 2px;
+  }
 }
 
 // Button styles
@@ -144,7 +291,7 @@
   font-weight: bold;
   cursor: pointer;
   text-transform: uppercase;
-  
+
   &:hover {
     background-color: $success-dark;
   }
@@ -160,7 +307,7 @@
   font-weight: bold;
   cursor: pointer;
   text-transform: uppercase;
-  
+
   &:hover {
     background-color: $danger-dark;
   }
@@ -179,9 +326,10 @@
   }
 }
 
-.editButton, .deleteButton {
+.editButton,
+.deleteButton {
   @include respond-to("small") {
     width: 100%;
     margin-bottom: 8px;
   }
-} 
+}

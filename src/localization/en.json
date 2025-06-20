@@ -331,8 +331,6 @@
     "orderForm": "ORDER FORM",
     "required": "Required",
     "billingContact": "Billing contact information",
-    "sameAsCustomer": "Same as customer information",
-    "differentFromCustomer": "Different from customer information",
     "childInfoForm": "CHILD INFORMATION REGISTRATION FORM",
     "childInfo": "CHILD INFORMATION",
     "nickname": "Nickname",

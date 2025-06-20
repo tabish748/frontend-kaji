@@ -19,9 +19,9 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
   const router = useRouter();
   const currentPath = router.pathname;
 
-  const isCustomerRoute = CUSTOMER_ROUTES.includes(currentPath);
-  const isAdminRoute = [...CUSTOMER_ROUTES, ...ADMIN_ROUTES].includes(
-    currentPath
+  const isCustomerRoute = CUSTOMER_ROUTES.some(route => currentPath.startsWith(route));
+  const isAdminRoute = [...CUSTOMER_ROUTES, ...ADMIN_ROUTES].some(route => 
+    currentPath.startsWith(route)
   );
   const isPublicRoute = [...CUSTOMER_PUBLIC_ROUTES, ...ADMIN_PUBLIC_ROUTES].includes(currentPath);
 
@@ -49,7 +49,7 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
 
   const shouldHideHeader = CUSTOMER_ROUTES.some((route) =>
     currentPath.startsWith(route + "/")
-  );
+  ) || currentPath === "/cn-info";
 
   return (
     <AuthMiddleware>
