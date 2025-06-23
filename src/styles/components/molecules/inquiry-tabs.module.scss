@@ -1,4 +1,11 @@
-.inquiry-tabs {
+@import "../../base/_mixins.scss";
+@import "../../base/_colors.scss";
+
+.inquiryCreateContainer {
+  width: 100%;
+}
+
+.inquiryTabs {
   display: flex;
   background: $background;
   border-radius: 8px;
@@ -7,6 +14,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
   gap: 4px;
+  scrollbar-width: thin;
   
   &::-webkit-scrollbar {
     height: 4px;
@@ -22,7 +30,7 @@
     border-radius: 2px;
   }
 
-  .tab-item {
+  .tabItem {
     position: relative;
     display: flex;
     align-items: center;
@@ -39,6 +47,7 @@
     font-size: 13px;
     font-weight: 500;
     color: #4a5568;
+    flex-shrink: 0;
 
     &:hover {
       background: #f7fafc;
@@ -48,18 +57,13 @@
     }
 
     &.active {
-      background: #667eea;
+      background: $primary;
       color: #fff;
-      border-color: #667eea;
+      border-color: $primary;
       box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
     }
 
-    // Remove icon and label specific styles since we're using simple text buttons
-    .tab-icon {
-      display: none;
-    }
-
-    .tab-label {
+    .tabLabel {
       font-size: inherit;
       font-weight: inherit;
       color: inherit;
@@ -69,27 +73,27 @@
   }
 }
 
-.tab-content {
+.tabContent {
   background: #fff;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-height: 400px;
 
-  .content-header {
+  .contentHeader {
     display: flex;
     align-items: center;
     margin-bottom: 24px;
     padding-bottom: 16px;
     border-bottom: 2px solid #e2e8f0;
 
-    .content-icon {
+    .contentIcon {
       width: 24px;
       height: 24px;
       margin-right: 12px;
     }
 
-    .content-title {
+    .contentTitle {
       font-size: 24px;
       font-weight: 600;
       color: #2d3748;
@@ -98,18 +102,72 @@
   }
 }
 
-@media (max-width: 768px) {
-  .inquiry-tabs {
+// Mobile responsiveness
+@include respond-to('small') {
+  .inquiryTabs {
     padding: 6px;
+    gap: 2px;
     
-    .tab-item {
-      padding: 10px 16px;
-      font-size: 12px;
-      min-width: 100px;
+    .tabItem {
+      padding: 8px 12px;
+      font-size: 11px;
+      min-width: 80px;
+      
+      .tabLabel {
+        font-size: 11px;
+        line-height: 1.1;
+      }
     }
   }
   
-  .tab-content {
+  .tabContent {
     padding: 16px;
+    
+    .contentHeader {
+      .contentTitle {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// Extra small screens (phones in portrait)
+@media (max-width: 480px) {
+  .inquiryTabs {
+    padding: 4px;
+    gap: 1px;
+    
+    .tabItem {
+      padding: 6px 8px;
+      font-size: 9px;
+      min-width: 60px;
+      border-radius: 4px;
+      
+      .tabLabel {
+        font-size: 9px;
+        line-height: 1;
+        word-break: break-word;
+        hyphens: auto;
+      }
+    }
+  }
+}
+
+// Very small screens - consider stacking or different layout
+@media (max-width: 360px) {
+  .inquiryTabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    
+    .tabItem {
+      flex: 1;
+      min-width: calc(50% - 2px);
+      margin-bottom: 2px;
+      text-align: center;
+      
+      .tabLabel {
+        font-size: 8px;
+      }
+    }
   }
 } 

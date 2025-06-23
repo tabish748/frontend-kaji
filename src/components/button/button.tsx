@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from 'next/router'; // Import useRouter hook from Next.js
 
 type ButtonSize = "small" | "medium" | "large";
-type ButtonType = "primary" | "secondary" | "danger" | "tertiary";
+type ButtonType = "primary" | "secondary" | "danger" | "tertiary" | "success";
 
 interface ButtonProps {
   text?: string;

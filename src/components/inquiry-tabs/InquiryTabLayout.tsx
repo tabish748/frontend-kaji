@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import styles from '../../styles/components/molecules/inquiry-tabs.module.scss';
 
 interface InquiryTabLayoutProps {
   children: React.ReactNode;
@@ -55,15 +56,15 @@ const InquiryTabLayout: React.FC<InquiryTabLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="inquiry-create-container">
-      <div className="inquiry-tabs">
+    <div className={styles.inquiryCreateContainer}>
+      <div className={styles.inquiryTabs}>
         {tabs.map((tab) => (
           <Link 
             key={tab.id} 
             href={tab.href}
-            className={`tab-item ${isActive(tab.href) ? 'active' : ''}`}
+            className={`${styles.tabItem} ${isActive(tab.href) ? styles.active : ''}`}
           >
-            <span className="tab-label">{tab.label}</span>
+            <span className={styles.tabLabel}>{tab.label}</span>
           </Link>
         ))}
       </div>

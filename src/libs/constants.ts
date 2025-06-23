@@ -59,5 +59,5 @@ export const LANG = ["EN", "JP"];
 
 export const USER_TYPE = {
   customer: "end-user",
-  admin: "client-cont",
+  admin: "super-admin",
 };

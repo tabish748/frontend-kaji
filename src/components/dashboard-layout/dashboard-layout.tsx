@@ -106,12 +106,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
   const { t } = useLanguage();
   const router = useRouter();
   const dispatch = useDispatch();
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [activeSubDropdown, setActiveSubDropdown] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
+    null
+  );
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [isDesktopSidebarVisible, setIsDesktopSidebarVisible] = useState(true);
-  const [officeName, setOfficeName] = useState(false);
+  const [officeName, setOfficeName] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
@@ -134,6 +136,44 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     } else {
       setIsDesktopSidebarVisible(true);
     }
+
+    // Reset dropdown states first
+    setActiveDropdown(null);
+    setActiveSubDropdown(null);
+
+    // Get sidebar items and check for active routes
+    const items = getSidebarItems();
+
+    items.forEach((item) => {
+      if (item.isDropdown) {
+        // Check if any sub-item in this dropdown is active
+        const hasActiveRoute = item.dropdownItems.some((dropdownItem: any) => {
+          if (dropdownItem.subItems) {
+            return dropdownItem.subItems.some(
+              (subItem: any) => router.pathname === subItem.path
+            );
+          }
+          return router.pathname === dropdownItem.path;
+        });
+
+        if (hasActiveRoute) {
+          // Open the main dropdown
+          setActiveDropdown(item.id);
+
+          // Find and open the specific sub-dropdown
+          item.dropdownItems.forEach((dropdownItem: any, index: number) => {
+            if (dropdownItem.subItems) {
+              const hasActiveSubItem = dropdownItem.subItems.some(
+                (subItem: any) => router.pathname === subItem.path
+              );
+              if (hasActiveSubItem) {
+                setActiveSubDropdown(`${item.id}-${index}`);
+              }
+            }
+          });
+        }
+      }
+    });
   }, [router.pathname]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -142,10 +182,18 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
   const hamburgerRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = (dropdownId: any) => {
+    // Don't open dropdowns when sidebar is collapsed
+    if (!isDesktopSidebarVisible) {
+      return;
+    }
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
 
   const toggleSubDropdown = (subDropdownId: any) => {
+    // Don't open sub-dropdowns when sidebar is collapsed
+    if (!isDesktopSidebarVisible) {
+      return;
+    }
     setActiveSubDropdown(
       activeSubDropdown === subDropdownId ? null : subDropdownId
     );
@@ -158,7 +206,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
       // mobile breakpoint
       setSidebarVisible(!isSidebarVisible);
     } else {
-      setIsDesktopSidebarVisible(!isDesktopSidebarVisible);
+      const newCollapsedState = !isDesktopSidebarVisible;
+      setIsDesktopSidebarVisible(newCollapsedState);
+      
+      // Close all dropdowns when collapsing sidebar
+      if (!newCollapsedState) {
+        setActiveDropdown(null);
+        setActiveSubDropdown(null);
+      }
     }
   };
 
@@ -180,17 +235,26 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     };
   }, [isSidebarVisible]);
 
-  const currentDate = formatDate(new Date());
+  const { currentLanguage } = useLanguage();
+  const currentDate = formatDate(new Date(), currentLanguage);
   useEffect(() => {
-    const name =
-      JSON.parse(localStorage.getItem("userOffice") || "{}")?.name || null;
-    const deptId =
-      JSON.parse(localStorage.getItem("userDepartment") || "{}")?.id || null;
-    setDepartmentId(String(deptId));
-    setOfficeName(name);
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
+    
+    // Get company information
+    const companyId = loggedInUser?.company_id || null;
+    const companyDepartmentId = loggedInUser?.company_department_id || null;
+    
+    // Set company name - you might need to fetch this from an API or have it stored
+    // For now, using a fallback approach
+    const companyName = userDepartment?.company_name || `Company ${companyId}` || "Company";
+    const departmentName = userDepartment?.department_name || (companyDepartmentId ? `Department ${companyDepartmentId}` : "Department");
+    
+    setOfficeName(companyName);
+    setDepartmentId(departmentName);
   }, []);
 
-  const currentDay = extractDay(new Date());
+  const currentDay = extractDay(new Date(), currentLanguage);
 
   const handleLogout = async () => {
     dispatch(logout());
@@ -199,15 +263,16 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
   };
 
   useEffect(() => {
-    const name = localStorage.getItem("loggedInUserName");
+    const name = currentLanguage === "jp" ? JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name_kana + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name_kana : JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name ;
     if (name) setUserName(name);
   }, []);
 
   useEffect(() => {
-    const deptId = localStorage.getItem("userDepartment");
-    if (deptId === "1") {
+    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
+    const deptId = userDepartment?.id;
+    if (deptId === "1" || deptId === 1) {
       router.push("/projectConfirmed?project_category=1&limit=50&active_tab=2");
-    } else if (deptId === "2") {
+    } else if (deptId === "2" || deptId === 2) {
       router.push("/projectLegal/listing/1");
     }
   }, []);
@@ -325,12 +390,23 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     mainPath?: string
   ) => {
     if (paths && paths.length > 0) {
-      return paths.some((path) => currentPath == path);
+      return paths.some((path) => currentPath === path);
     }
     if (mainPath) {
       return currentPath === mainPath;
     }
     return false;
+  };
+
+  const isDropdownActiveByRoute = (dropdownItems: any[]) => {
+    return dropdownItems.some((dropdownItem) => {
+      if (dropdownItem.subItems) {
+        return dropdownItem.subItems.some(
+          (subItem: any) => router.pathname === subItem.path
+        );
+      }
+      return router.pathname === dropdownItem.path;
+    });
   };
 
   useEffect(() => {
@@ -411,7 +487,13 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
                   isRouteActive(router.pathname, item.forActivePaths, item.path)
                     ? styles.active
                     : ""
-                } ${activeDropdown === item.id ? styles.dropdownActive : ""}`}
+                } ${
+                  activeDropdown === item.id ||
+                  (item.isDropdown &&
+                    isDropdownActiveByRoute(item.dropdownItems))
+                    ? styles.dropdownActive
+                    : ""
+                }`}
               >
                 <div
                   className={styles.sidebarItemIconTextWrapper}
@@ -449,13 +531,15 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
                     />
                   )}
                   {item.id == "settings" && (
-                    <IoSettingsOutline 
+                    <IoSettingsOutline
                       className={styles.menuIcon}
                       focusable="false"
                     />
                   )}
                   {!item.isDropdown && item.path ? (
-                    <Link href={item.path}><span className={styles.menuLabel}>{item.title}</span></Link>
+                    <Link href={item.path}>
+                      <span className={styles.menuLabel}>{item.title}</span>
+                    </Link>
                   ) : (
                     <span className={styles.menuLabel}>{item.title}</span>
                   )}
@@ -509,6 +593,13 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
                           } ${
                             activeSubDropdown === `${item.id}-${index}`
                               ? styles.subDropdownActive
+                              : ""
+                          } ${
+                            dropdownItem.subItems &&
+                            dropdownItem.subItems.some(
+                              (subItem: any) => router.pathname === subItem.path
+                            )
+                              ? styles.parentActive
                               : ""
                           }`}
                         >
@@ -695,7 +786,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
                 height={15}
                 className={styles.iconMargin}
               />
-              {officeName}
+              {officeName} {departmentId}
             </span>
             <span className={`${styles.currentDate}`}>
               <Image

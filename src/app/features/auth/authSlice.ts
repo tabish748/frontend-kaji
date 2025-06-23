@@ -88,7 +88,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ formData, loginType = USER_TYPE.customer }: { formData: FormData; loginType?: string }) => {
     try {
-      const endpoint = loginType === USER_TYPE.admin ? "/api/contractor/login" : "/api/customer/login";
+      const endpoint = loginType === USER_TYPE.admin ? "/api/company/login" : "/api/customer/login";
       
       const response = await ApiHandler.request(
         endpoint,

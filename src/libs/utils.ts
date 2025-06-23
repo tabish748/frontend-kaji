@@ -54,12 +54,20 @@ export function extractDateNeglectTime(timestamp: any) {
   return res;
 }
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: Date, lang: string = 'jp'): string => {
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Note: January is 0
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const month = months[date.getMonth()];
   const year = date.getFullYear();
 
-  return `${year}年${month}月${day}日 `;
+  if (lang === 'jp') {
+    return `${year}年${String(date.getMonth() + 1).padStart(2, "0")}月${day}日`;
+  }
+  
+  return `${month} ${day}, ${year}`;
 };
 export function extractDate(datetimeStr: string) {
   if (datetimeStr) {
@@ -79,11 +87,15 @@ export function extractDateFromTimeAndSlashes(datetimeStr: string) {
   // Format date as desired: ${year}/${month}/${day}
   return `${year}/${month}/${day}`;
 }
-export const extractDay = (date: Date): string => {
-  const daysOfWeek = ["日", "月", "火", "水", "木", "金", "土"];
-  const dayIndex = date.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+export const extractDay = (date: Date, lang: string = 'jp'): string => {
+  const daysOfWeekJP = ["日", "月", "火", "水", "木", "金", "土"];
+  const daysOfWeekEN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayIndex = date.getDay();
 
-  return `(${daysOfWeek[dayIndex]})`;
+  if (lang === 'jp') {
+    return `(${daysOfWeekJP[dayIndex]})`;
+  }
+  return `(${daysOfWeekEN[dayIndex]})`;
 };
 
 export function scrollToTopSmooth() {

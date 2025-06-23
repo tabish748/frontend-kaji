@@ -9,6 +9,7 @@ import RadioField from "../radio-field/radio-field";
 import styles from "../../styles/components/molecules/inquiry-tab.module.scss";
 import { calculateAge, convertTo24Hour } from "../../libs/utils";
 import ApiHandler from "../../app/api-handler";
+import Button from "../button/button";
 
 const InquiryTab: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -857,12 +858,8 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div className="d-flex gap-1">
-                  <button type="button" className={styles.editButton}>
-                    EDIT
-                  </button>
-                  <button type="button" className={styles.deleteButton}>
-                    DELETE
-                  </button>
+                  <Button text="EDIT" type="success" />
+                  <Button text="DELETE" type="danger" />
                 </div>
               </div>
             ))}

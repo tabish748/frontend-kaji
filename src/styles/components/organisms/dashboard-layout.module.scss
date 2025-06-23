@@ -59,6 +59,26 @@
       margin: auto !important;
     }
 
+    // Prevent dropdown menus from affecting layout when collapsed
+    .dropdownMenu {
+      position: absolute;
+      left: 100%;
+      top: 0;
+      min-width: 200px;
+      background: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    // Hide sub-dropdown menus completely when collapsed
+    .subDropdownMenu {
+      display: none !important;
+    }
+
     // Hover effect for collapsed sidebar (desktop only)
     &:hover {
       width: 250px;
@@ -73,6 +93,19 @@
         visibility: visible;
         transition: opacity 0.3s, visibility 0.3s;
         transition-delay: 0.2s;
+      }
+
+      // Reset dropdown positioning on hover
+      .dropdownMenu {
+        position: static;
+        background: transparent;
+        box-shadow: none;
+        pointer-events: auto;
+      }
+
+      // Show sub-dropdown menus on hover
+      .subDropdownMenu {
+        display: block !important;
       }
 
       .menuIcon {
@@ -476,9 +509,12 @@
     padding: 17px 0px;
 
     &:hover {
+      background-color: rgba(235, 241, 255, 0.5);
+      
       .sidebarItemIconTextWrapper {
 
         a,
+        span,
         svg {
           transition: .4s;
           color: $primary !important;
@@ -638,6 +674,13 @@
     fill: $primary;
   }
   
+  // Target both a and span elements for active items
+  .sidebarItemIconTextWrapper {
+    a, span {
+      color: $primary !important;
+    }
+  }
+  
   .dropdownItemContent {
     color: $primary;
     
@@ -646,6 +689,10 @@
     }
     
     .dropdownIcon {
+      color: $primary;
+    }
+    
+    svg {
       color: $primary;
     }
     
@@ -746,6 +793,10 @@
         .dropdownIcon {
           color: $primary;
         }
+        
+        svg {
+          color: $primary;
+        }
       }
     }
   }
@@ -801,12 +852,12 @@
   // More reliable approach using class-based targeting
   &.dropdownActive {
     .sidebarItemIconTextWrapper {
-      a {
+      a, span {
         color: $primary !important;
       }
       
       svg:not(.menuArrowIcon) {
-        // fill: $primary !important;
+        color: $primary !important;
       }
     }
   }
@@ -814,12 +865,12 @@
   // When dropdown has open menu, make parent text blue (fallback approach)
   &:has(.dropdownMenu.open) {
     .sidebarItemIconTextWrapper {
-      a {
+      a, span {
         color: $primary !important;
       }
       
       svg:not(.menuArrowIcon) {
-        // fill: $primary !important;
+        color: $primary !important;
       }
     }
   }
@@ -833,18 +884,19 @@
   
   // When containing rotated arrow, make text blue
   &:has(.arrowRotated) {
-    a {
+    a, span {
       color: $primary !important;
     }
     
     svg:not(.menuArrowIcon) {
-      // fill: $primary !important;
+      color: $primary !important;
     }
   }
 }
 
 // Fallback for browsers without :has support - when arrow is rotated, target parent
-.sidebarItem:has(.menuArrowIcon.arrowRotated) .sidebarItemIconTextWrapper a {
+.sidebarItem:has(.menuArrowIcon.arrowRotated) .sidebarItemIconTextWrapper a,
+.sidebarItem:has(.menuArrowIcon.arrowRotated) .sidebarItemIconTextWrapper span {
   color: $primary !important;
 }
 
@@ -856,6 +908,10 @@
     }
     
     .dropdownIcon {
+      color: $primary;
+    }
+    
+    svg {
       color: $primary;
     }
     
@@ -873,6 +929,52 @@
     }
     
     .dropdownIcon {
+      color: $primary;
+    }
+    
+    svg {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
+}
+
+// When a sub-dropdown item is active, make the parent dropdown item active too
+.sidebarItem .dropdownMenu li:has(.subDropdownMenu .activeDropdownItem) {
+  > .subDropdownContainer > .dropdownItemContent {
+    span {
+      color: $primary !important;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    svg {
+      color: $primary;
+    }
+    
+    .subDropdownArrow {
+      color: $primary;
+    }
+  }
+}
+
+// Parent dropdown item styling when any child is active
+.sidebarItem .dropdownMenu li.parentActive {
+  > .subDropdownContainer > .dropdownItemContent {
+    span {
+      color: $primary !important;
+    }
+    
+    .dropdownIcon {
+      color: $primary;
+    }
+    
+    svg {
       color: $primary;
     }
     
@@ -922,6 +1024,29 @@
   
   .menuLabel {
     display: none !important;
+  }
+
+  // Prevent any dropdown interactions when collapsed
+  .sidebarItem {
+    overflow: visible;
+    
+    &.dropdownActive .dropdownMenu {
+      display: none !important;
+    }
+    
+    .dropdownMenu.open {
+      display: none !important;
+    }
+    
+    .subDropdownMenu.open {
+      display: none !important;
+    }
+  }
+
+  // Only show icons, hide all text and dropdowns
+  .sidebarItemIconTextWrapper {
+    justify-content: center;
+    padding: 0 20px;
   }
 }
 
