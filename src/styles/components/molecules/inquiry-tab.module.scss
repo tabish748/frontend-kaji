@@ -31,28 +31,18 @@
     max-width: 120px;
   }
 
-  @include respond-to("small") {
+  @media (max-width: 767px) {
     flex-direction: column;
     gap: 0.75rem;
     width: 100%;
-    
-    .dateField {
-      flex: 1;
-      width: 100%;
-      max-width: none;
-      min-width: 0;
-      
-      > div {
-        width: 100%;
-      }
-    }
 
+    .dateField,
     .timeField {
       flex: 1;
       width: 100%;
       max-width: none;
       min-width: 0;
-      
+
       > div {
         width: 100%;
       }
@@ -74,7 +64,7 @@
     margin-left: 0;
     margin-right: 0;
     flex-direction: column;
-    
+
     > div {
       padding-left: 0;
       padding-right: 0;
@@ -82,35 +72,35 @@
       width: 100% !important;
       flex: 0 0 100% !important;
       max-width: 100% !important;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
     }
   }
-  
+
   // Medium screens (768px - 991px) - 2 columns with row gap
   @media (min-width: 768px) and (max-width: 991px) {
     margin-left: -0.25rem;
     margin-right: -0.25rem;
-    
+
     > div {
       padding-left: 0.25rem;
       padding-right: 0.25rem;
       margin-bottom: 12px;
-      
+
       &:nth-child(3),
       &:nth-child(4) {
         margin-bottom: 0;
       }
     }
   }
-  
+
   // Large screens and above (≥ 992px) - 4 columns
   @media (min-width: 992px) {
     margin-left: -0.25rem;
     margin-right: -0.25rem;
-    
+
     > div {
       padding-left: 0.25rem;
       padding-right: 0.25rem;
@@ -125,7 +115,7 @@
     flex: 0 0 100% !important;
     max-width: 100% !important;
     margin-bottom: 8px;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
@@ -149,7 +139,7 @@
   margin-bottom: 8px;
   font-size: 12px;
   gap: 10px;
-  background-color: #6c757d;
+  background-color: #4e5d6e;
   color: white;
   padding: 10px;
   font-weight: bold;
@@ -165,45 +155,45 @@
 
 // Train station grid
 .trainStationGrid {
-  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  grid-template-columns: 50px 1fr 1fr 1fr 1fr auto;
 
-  @include respond-to("medium") {
-    grid-template-columns: 1fr 1fr;
-  }
-  @include respond-to("small") {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Inquiry records grid
-.inquiryRecordsGrid {
-  grid-template-columns: 1fr 1fr 2fr 2fr 1fr auto;
-
-  // Convert to card layout starting from medium screens (768px and above)
+  // Tablet view - 2 columns
   @media (max-width: 991px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    &.gridRow > div:nth-child(5) {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+  }
+
+  // Mobile view - single column with labels
+  @media (max-width: 767px) {
     display: block;
-    
+
     &.gridHeader {
       display: none;
     }
-    
+
     &.gridRow {
       background: white;
       border: 1px solid #dee2e6;
       border-radius: 8px;
       margin-bottom: 16px;
       padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       display: block;
-      
+
       > div {
         margin-bottom: 12px;
-        
+
         &:last-child {
           margin-bottom: 0;
-          text-align: right;
         }
-        
+
         &:before {
           content: attr(data-label);
           font-weight: bold;
@@ -213,17 +203,111 @@
           display: block;
           margin-bottom: 4px;
         }
-        
-        &:nth-child(1):before { content: "INQUIRY DATE / UPDATED DATE"; }
-        &:nth-child(2):before { content: "ASSIGNEE / UPDATED BY"; }
-        &:nth-child(3):before { content: "INQUIRY DETAILS"; }
-        &:nth-child(4):before { content: "RESPONSE"; }
-        &:nth-child(5):before { content: "STATUS"; }
-        &:nth-child(6):before { content: "ACTION"; }
+
+        &:nth-child(1):before {
+          content: "ROW #";
+        }
+        &:nth-child(2):before {
+          content: "DATE";
+        }
+        &:nth-child(3):before {
+          content: "RAILWAY COMPANY";
+        }
+        &:nth-child(4):before {
+          content: "TRAIN LINE";
+        }
+        &:nth-child(5):before {
+          content: "TRAIN STATION";
+        }
+        &:nth-child(6):before {
+          content: "ACTIONS";
+          text-align: center;
+        }
+
+        &:nth-child(6) {
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+        }
       }
     }
   }
-  
+}
+
+// Inquiry records grid
+.inquiryRecordsGrid {
+  grid-template-columns: 50px 1fr 1fr 2fr 2fr 1fr auto;
+
+  // Convert to card layout starting from medium screens (768px and above)
+  @media (max-width: 991px) {
+    display: block;
+
+    &.gridHeader {
+      display: none;
+    }
+
+    &.gridRow {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: block;
+
+      > div {
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+          text-align: right;
+        }
+
+        &:before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #6c757d;
+          font-size: 12px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        &:nth-child(1):before {
+          content: "ROW #";
+        }
+        &:nth-child(2):before {
+          content: "INQUIRY DATE / UPDATED DATE";
+        }
+        &:nth-child(3):before {
+          content: "ASSIGNEE / UPDATED BY";
+        }
+        &:nth-child(4):before {
+          content: "INQUIRY DETAILS";
+        }
+        &:nth-child(5):before {
+          content: "RESPONSE";
+        }
+        &:nth-child(6):before {
+          content: "STATUS";
+        }
+        &:nth-child(7):before {
+          content: "ACTION";
+          text-align: center;
+        }
+
+        &:nth-child(7) {
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+
   // Full width buttons on small screens only
   @include respond-to("small") {
     .deleteButton {
@@ -234,13 +318,65 @@
 
 // Order records grid
 .orderRecordsGrid {
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 50px 1fr 1fr 1fr 1fr;
 
-  @include respond-to("medium") {
+  // Tablet view - 2 columns
+  @media (max-width: 991px) {
     grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
-  @include respond-to("small") {
-    grid-template-columns: 1fr;
+
+  // Mobile view - single column with labels
+  @media (max-width: 767px) {
+    display: block;
+
+    &.gridHeader {
+      display: none;
+    }
+
+    &.gridRow {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: block;
+
+      > div {
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        &:before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #6c757d;
+          font-size: 12px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        &:nth-child(1):before {
+          content: "ROW #";
+        }
+        &:nth-child(2):before {
+          content: "ORDER FORM SENT AT";
+        }
+        &:nth-child(3):before {
+          content: "ASSIGNEE";
+        }
+        &:nth-child(4):before {
+          content: "STATUS";
+        }
+        &:nth-child(5):before {
+          content: "";
+        }
+      }
+    }
   }
 }
 
@@ -280,56 +416,165 @@
   }
 }
 
-// Button styles
-.editButton {
-  background-color: $success;
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  text-transform: uppercase;
-
-  &:hover {
-    background-color: $success-dark;
-  }
-}
-
-.deleteButton {
-  background-color: $danger;
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  text-transform: uppercase;
-
-  &:hover {
-    background-color: $danger-dark;
-  }
-}
-
+// Mobile responsive form sections
 .form-section {
-  @include respond-to("small") {
+  @media (max-width: 767px) {
     padding: 8px;
+    margin-bottom: 1.5rem;
   }
 }
 
+// Make all rows single column on mobile
 .row {
-  @include respond-to("small") {
+  @media (max-width: 767px) {
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
+    margin-left: 0;
+    margin-right: 0;
+
+    // Force all columns to full width on mobile
+    [class*="col-"] {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 
-.editButton,
-.deleteButton {
-  @include respond-to("small") {
-    width: 100%;
-    margin-bottom: 8px;
+// Mobile button styles
+// Row number styling
+.rowNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  min-width: 30px;
+  height: 30px;
+  font-size: 10px;
+  margin: auto;
+}
+
+// Button component mobile responsiveness will be handled by the Button component itself
+
+// Mobile specific utilities
+.mobileStack {
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    > * {
+      width: 100%;
+    }
   }
+}
+
+// Mobile responsive utilities for the inquiry form
+@media (max-width: 767px) {
+  // Stack flex items vertically on mobile
+  .d-flex {
+    flex-direction: column !important;
+    gap: 0.75rem;
+
+    &.gap-1 {
+      gap: 0.75rem;
+    }
+
+    // Exception for radio buttons and checkboxes
+    &.align-items-center,
+    &.align-items-end {
+      flex-direction: row !important;
+      flex-wrap: wrap;
+    }
+  }
+
+  // Make sure all form sections are properly spaced
+  .form-section {
+    .row {
+      > div {
+        margin-bottom: 1rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Address section mobile improvements
+  .addressField {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 0.75rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Phone and email sections mobile improvements
+  .borderOnlyRadio {
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  // Phone and type container - mobile single column
+  .phoneTypeContainer {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+
+    > div {
+      width: 100%;
+    }
+  }
+
+  // Phone input with radio button container
+  .phoneInputContainer {
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100%;
+
+    .borderOnlyRadio {
+      flex-shrink: 0;
+      margin-right: 8px;
+      align-self: flex-end;
+      margin-bottom: 8px;
+    }
+  }
+
+  // Checkbox and radio improvements for mobile
+  .checkbox-field-container,
+  .radio-field-container {
+    .checkbox-option,
+    .radio-option {
+      margin-bottom: 0.5rem;
+      margin-right: 0;
+      width: 100%;
+    }
+  }
+
+  // Action buttons and labels mobile alignment
+  .d-flex.gap-1 {
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap;
+
+    > * {
+      margin: 0.25rem;
+    }
+  }
+}
+
+.submitButton {
+  background-color: $primary;
 }

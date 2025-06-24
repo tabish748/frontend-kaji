@@ -42,21 +42,24 @@ const TextAreaField: React.FC<TextAreaFieldProps> = forwardRef<HTMLDivElement, T
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Add useEffect to calculate initial height
+    // Add useEffect to calculate initial height only if rows is not provided
     React.useEffect(() => {
-      if (textareaRef.current) {
+      if (textareaRef.current && !rows) {
         adjustTextareaHeight();
       }
-    }, [value]);
+    }, [value, rows]);
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      adjustTextareaHeight();
+      // Only use auto-height if rows prop is not provided
+      if (!rows) {
+        adjustTextareaHeight();
+      }
       onChange?.(e);
     };
 
     // Extract height calculation logic into a separate function
     const adjustTextareaHeight = () => {
-      if (textareaRef.current) {
+      if (textareaRef.current && !rows) {
         // Use a hidden div to calculate height without causing reflow
         const hiddenDiv = document.createElement('div');
         const styles = window.getComputedStyle(textareaRef.current);
@@ -109,7 +112,7 @@ const TextAreaField: React.FC<TextAreaFieldProps> = forwardRef<HTMLDivElement, T
           style={{ 
             resize: 'none',
             minHeight: style?.minHeight || '60px',
-            height: 'auto!important'
+            ...(rows ? {} : { height: 'auto' })
           }}
         ></textarea>
         {errorText && <div className={styles.errorText}>{errorText}</div>}

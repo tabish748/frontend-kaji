@@ -74,6 +74,15 @@
     }
   }
 
+  &.success {
+    background-color: $success;
+    color: $white;
+
+    &:hover {
+      background-color: rgba($success, 0.8);
+      color: #ffffff;
+    }
+  }
 
   &.tertiary {
     background-color: $tertiary;

@@ -63,44 +63,51 @@ const InquiryTab: React.FC = () => {
     note: "",
   });
 
-  // Separate array states for display purposes
+  // Mock array states for display purposes (will be replaced by API data)
   const [trainStations, setTrainStations] = useState([
     {
-      date: "",
+      date: "2024/01/15",
       railwayCompany: "JR",
       trainLine: "山手線",
       trainStation: "渋谷",
     },
     {
-      date: "",
-      railwayCompany: "JR",
-      trainLine: "山手線",
-      trainStation: "渋谷",
+      date: "2024/02/20",
+      railwayCompany: "東急",
+      trainLine: "田園都市線",
+      trainStation: "二子玉川",
+    },
+    {
+      date: "2024/03/10",
+      railwayCompany: "小田急",
+      trainLine: "小田原線",
+      trainStation: "新宿",
     },
   ]);
 
   const [inquiryRecords, setInquiryRecords] = useState([
     {
-      inquiryDate: "",
-      assignee: "",
-      updatedBy: "",
-      inquiryDetails: "",
-      response: "",
-      status: "",
+      inquiryDate: "2024/01/10",
+      assignee: "田中太郎",
+      updatedBy: "佐藤花子",
+      inquiryDetails: "税務相談について詳細を確認したい",
+      response: "担当者から連絡いたします",
+      status: "対応中",
     },
     {
-      inquiryDate: "",
-      assignee: "",
-      updatedBy: "",
-      inquiryDetails: "",
-      response: "",
-      status: "",
+      inquiryDate: "2024/01/20",
+      assignee: "山田次郎",
+      updatedBy: "鈴木一郎",
+      inquiryDetails: "法務相談の件でフォローアップ",
+      response: "資料を準備してお送りします",
+      status: "完了",
     },
   ]);
 
   const [orderRecords, setOrderRecords] = useState([
-    { orderFormSentAt: "", assignee: "", status: "" },
-    { orderFormSentAt: "", assignee: "", status: "" },
+    { orderFormSentAt: "2024/01/15", assignee: "田中太郎", status: "送信済み" },
+    { orderFormSentAt: "2024/02/01", assignee: "佐藤花子", status: "確認中" },
+    { orderFormSentAt: "2024/02/15", assignee: "山田次郎", status: "完了" },
   ]);
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
@@ -137,6 +144,28 @@ const InquiryTab: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Remove functions for API-driven data (keeping delete for demo purposes)
+  const removeTrainStation = (index: number) => {
+    if (trainStations.length > 1) {
+      const newStations = trainStations.filter((_, i) => i !== index);
+      setTrainStations(newStations);
+    }
+  };
+
+  const removeInquiryRecord = (index: number) => {
+    if (inquiryRecords.length > 1) {
+      const newRecords = inquiryRecords.filter((_, i) => i !== index);
+      setInquiryRecords(newRecords);
+    }
+  };
+
+  const removeOrderRecord = (index: number) => {
+    if (orderRecords.length > 1) {
+      const newRecords = orderRecords.filter((_, i) => i !== index);
+      setOrderRecords(newRecords);
+    }
   };
 
   const handleSubmit = async () => {
@@ -340,26 +369,18 @@ const InquiryTab: React.FC = () => {
 
   return (
     <div className="tab-content">
-      <div className="content-header d-flex justify-content-between align-items-center mb-4">
-        <h1 className="content-title">ADD NEW</h1>
-      </div>
-
-      <Form
-        onSubmit={handleSubmit}
-        showBottomSubmitBtn={true}
-        registerBtnText="REGISTER"
-        setErrors={setErrors}
+              <Form
+          onSubmit={handleSubmit}
+          // showBottomSubmitBtn={true}
+          registerBtnText="REGISTER"
+          setErrors={setErrors}
         errors={errors}
       >
         {/* FIRST INQUIRY INFO Section */}
         <div className="form-section mb-4">
-          <div className="bg-secondary text-white p-3 mb-3">
-            <h3 className={`mb-0 text-uppercase ${styles.sectionHeader}`}>
-              FIRST INQUIRY INFO
-            </h3>
-          </div>
+          <h3 className="ad-heading">FIRST INQUIRY INFO</h3>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-sm-12 col-lg-6 col-xl-3">
               <InputField
                 name="recordId"
@@ -457,13 +478,9 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRER INFO Section */}
         <div className="form-section mb-4">
-          <div className="section-header bg-secondary text-white p-3 mb-3">
-            <h3 className={`mb-0 text-uppercase ${styles.sectionHeader}`}>
-              INQUIRER INFO
-            </h3>
-          </div>
+          <h3 className="ad-heading">INQUIRER INFO</h3>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-12 col-sm-6 col-md-6 col-lg-3">
               <InputField
                 name="fullNameKatakana"
@@ -505,7 +522,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Date of Birth Row */}
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <div
                 className={`${styles.dFlex} ${styles.gap1} ${styles.alignItemsEnd}`}
@@ -555,10 +572,14 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Phone Numbers Row */}
-          <div className="row g-1 mb-3">
+          <div className="row g-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
-              <div className="d-flex gap-1 align-items-center justify-content-between">
-                <div className="d-flex align-items-end justify-content-center">
+              <div
+                className={`d-flex gap-1 align-items-center justify-content-start ${styles.phoneTypeContainer}`}
+              >
+                <div
+                  className={`d-flex align-items-end justify-content-center ${styles.phoneInputContainer} ${styles.flexOne}`}
+                >
                   <input
                     className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
                     type="radio"
@@ -593,8 +614,12 @@ const InquiryTab: React.FC = () => {
               </div>
             </div>
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
-              <div className="d-flex gap-1 align-items-end justify-content-between">
-                <div className="d-flex align-items-end justify-content-center">
+              <div
+                className={`d-flex gap-1 align-items-center justify-content-start ${styles.phoneTypeContainer}`}
+              >
+                <div
+                  className={`d-flex align-items-end justify-content-center ${styles.phoneInputContainer} ${styles.flexOne}`}
+                >
                   <input
                     className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
                     type="radio"
@@ -603,16 +628,18 @@ const InquiryTab: React.FC = () => {
                     checked={formData.primaryPhone === "phone2"}
                     onChange={() => handleInputChange("primaryPhone", "phone2")}
                   />
-                  <InputField
-                    labelClassName="-ml-4"
-                    name="phone2"
-                    label="Phone 2"
-                    placeholder="000-0000-0000"
-                    value={formData.phone2}
-                    onChange={(e) =>
-                      handleInputChange("phone2", e.target.value)
-                    }
-                  />
+                  <div className={styles.flexOne}>
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="phone2"
+                      label="Phone 2"
+                      placeholder="000-0000-0000"
+                      value={formData.phone2}
+                      onChange={(e) =>
+                        handleInputChange("phone2", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
                 <CustomSelectField
                   name="phone2Type"
@@ -626,8 +653,12 @@ const InquiryTab: React.FC = () => {
               </div>
             </div>
             <div className="col-12 col-sm-12 col-md-12 col-lg-4">
-              <div className="d-flex gap-1 align-items-center justify-content-between">
-                <div className="d-flex align-items-end justify-content-center">
+              <div
+                className={`d-flex gap-1 align-items-center justify-content-start ${styles.phoneTypeContainer}`}
+              >
+                <div
+                  className={`d-flex align-items-end justify-content-center ${styles.phoneInputContainer} ${styles.flexOne}`}
+                >
                   <input
                     className={`mb-1 mr-1 ${styles.borderOnlyRadio}`}
                     type="radio"
@@ -663,7 +694,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Email Addresses Row */}
-          <div className="row mb-3">
+          <div className="row">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <div
                 className={`${styles.flexOne} d-flex align-items-end justify-content-center`}
@@ -721,7 +752,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Address Row */}
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-md-12">
               <label className={styles.formLabel}>Address </label>
               <div className="row g-2">
@@ -791,11 +822,14 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Train Station Grid */}
-          <div className="mb-3">
+          <div className="">
             <label className={styles.formLabel}>Train Station </label>
 
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.trainStationGrid}`}>
+              <div className="d-flex justify-content-center align-items-center">
+                #
+              </div>
               <div>DATE</div>
               <div>RAILWAY COMPANY</div>
               <div>TRAIN LINE</div>
@@ -809,6 +843,7 @@ const InquiryTab: React.FC = () => {
                 key={index}
                 className={`${styles.gridRow} ${styles.trainStationGrid}`}
               >
+                <div className={styles.rowNumber}>{index + 1}</div>
                 <div>
                   <InputDateField
                     name={`trainStation${index}Date`}
@@ -859,7 +894,11 @@ const InquiryTab: React.FC = () => {
                 </div>
                 <div className="d-flex gap-1">
                   <Button text="EDIT" type="success" />
-                  <Button text="DELETE" type="danger" />
+                  <Button
+                    text="DELETE"
+                    type="danger"
+                    onClick={() => removeTrainStation(index)}
+                  />
                 </div>
               </div>
             ))}
@@ -892,13 +931,9 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRY DETAILS Section */}
         <div className="form-section mb-4">
-          <div className="section-header bg-secondary text-white p-3 mb-3">
-            <h3 className={`mb-0 text-uppercase ${styles.sectionHeader}`}>
-              INQUIRY DETAILS
-            </h3>
-          </div>
+          <h3 className="ad-heading">INQUIRY DETAILS</h3>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-md-12">
               <CheckboxField
                 name="preferredServices"
@@ -912,7 +947,7 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <InputDateField
                 name="firstServiceDate"
@@ -944,13 +979,9 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRY RESPONSE Section */}
         <div className="form-section mb-4">
-          <div className="section-header bg-secondary text-white p-3 mb-3">
-            <h3 className={`mb-0 text-uppercase ${styles.sectionHeader}`}>
-              INQUIRY RESPONSE
-            </h3>
-          </div>
+          <h3 className="ad-heading">INQUIRY RESPONSE</h3>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="owner"
@@ -998,7 +1029,7 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3 mb-3">
+          <div className="row g-3 ">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <TextAreaField
                 name="inquiry"
@@ -1022,11 +1053,14 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Inquiry Records Grid */}
-          <div className="mb-3">
+          <div className="">
             {/* Header Row */}
             <div
               className={`${styles.gridHeader} ${styles.inquiryRecordsGrid}`}
             >
+              <div className="d-flex justify-content-center align-items-center">
+                #
+              </div>
               <div>INQUIRY DATE / UPDATED DATE</div>
               <div>ASSIGNEE / UPDATED BY</div>
               <div>INQUIRY DETAILS</div>
@@ -1041,6 +1075,7 @@ const InquiryTab: React.FC = () => {
                 key={index}
                 className={`${styles.gridRow} ${styles.inquiryRecordsGrid} align-items-center`}
               >
+                <div className={styles.rowNumber}>{index + 1}</div>
                 <div className="d-flex flex-column gap-1">
                   <InputDateField
                     name={`inquiryRecord${index}Date1`}
@@ -1127,9 +1162,11 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <button type="button" className={styles.deleteButton}>
-                    DELETE
-                  </button>
+                  <Button
+                    text="DELETE"
+                    type="danger"
+                    onClick={() => removeInquiryRecord(index)}
+                  />
                 </div>
               </div>
             ))}
@@ -1138,13 +1175,9 @@ const InquiryTab: React.FC = () => {
 
         {/* ORDER Section */}
         <div className="form-section mb-4">
-          <div className="section-header bg-secondary text-white p-3 mb-3">
-            <h3 className={`mb-0 text-uppercase ${styles.sectionHeader}`}>
-              ORDER
-            </h3>
-          </div>
+          <h3 className="ad-heading">ORDER</h3>
 
-          <div className="row g-3 mb-3 align-items-center">
+          <div className="row g-3  align-items-center">
             <div className="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
@@ -1209,12 +1242,16 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Order Records Grid */}
-          <div className="mb-3">
+          <div className="">
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.orderRecordsGrid}`}>
+              <div className="d-flex justify-content-center align-items-center">
+                #
+              </div>
               <div>ORDER FORM SENT AT</div>
               <div>ASSIGNEE</div>
               <div>STATUS</div>
+              <div></div>
             </div>
 
             {/* Data Rows */}
@@ -1223,6 +1260,7 @@ const InquiryTab: React.FC = () => {
                 key={index}
                 className={`${styles.gridRow} ${styles.orderRecordsGrid}`}
               >
+                <div className={styles.rowNumber}>{index + 1}</div>
                 <div>
                   <InputDateField
                     name={`orderRecord${index}Date`}
@@ -1259,6 +1297,7 @@ const InquiryTab: React.FC = () => {
                     }}
                   />
                 </div>
+                <div></div>
               </div>
             ))}
           </div>
@@ -1275,6 +1314,19 @@ const InquiryTab: React.FC = () => {
                 value={formData.note}
                 onChange={(e) => handleInputChange("note", e.target.value)}
                 rows={6}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="form-section mb-4">
+          <div className="row">
+            <div className="col-12 d-flex justify-content-center">
+              <Button 
+                text="REGISTER" 
+                type="primary" 
+                htmlType="submit"
               />
             </div>
           </div>

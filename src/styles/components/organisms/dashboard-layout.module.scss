@@ -262,7 +262,6 @@
   position: relative;
   margin-left: 250px;
   transition: margin-left 0.4s;
-  padding: 20px;
 
   @include respond-to('small') {
     margin-left: 0;
