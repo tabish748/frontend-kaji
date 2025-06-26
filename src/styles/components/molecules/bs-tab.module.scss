@@ -1,0 +1,493 @@
+@import "../../base/_colors.scss";
+@import "../../base/_mixins.scss";
+
+// Age Table Styles
+.ageTableHeader {
+  grid-template-columns: 50px 1fr 1fr 2fr 1fr;
+  
+  // Mobile view - single column with labels
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.ageTableRow {
+  grid-template-columns: 50px 1fr 1fr 2fr 1fr;
+  
+  // Mobile view - card layout
+  @media (max-width: 767px) {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+
+    > div {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      &:nth-child(1):before {
+        content: "ROW #";
+      }
+      &:nth-child(2):before {
+        content: "AGE";
+      }
+      &:nth-child(3):before {
+        content: "GENDER";
+      }
+      &:nth-child(4):before {
+        content: "NOTE";
+      }
+      &:nth-child(5):before {
+        content: "ACTION";
+      }
+
+      &:nth-child(5) {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Child Registration Form Table Styles
+.childRegHeader {
+  grid-template-columns: 50px 1fr 2fr 2fr 2fr;
+  
+  // Mobile view - hide header
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.childRegRow {
+  grid-template-columns: 50px 1fr 2fr 2fr 2fr;
+  
+  // Mobile view - card layout
+  @media (max-width: 767px) {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+
+    > div {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      &:nth-child(1):before {
+        content: "ROW #";
+      }
+      &:nth-child(2):before {
+        content: "CHILD REGISTRATION FORM SENT AT";
+      }
+      &:nth-child(3):before {
+        content: "OWNER";
+      }
+      &:nth-child(4):before {
+        content: "STATUS";
+      }
+      &:nth-child(5):before {
+        content: "";
+      }
+    }
+  }
+}
+
+// Family Doctor Table Styles
+.familyDoctorHeader {
+  grid-template-columns: 50px 2fr 2fr 2fr 1fr 1fr;
+  
+  // Mobile view - hide header
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.familyDoctorRow {
+  grid-template-columns: 50px 2fr 2fr 2fr 1fr 1fr;
+  
+  // Mobile view - card layout
+  @media (max-width: 767px) {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+
+    > div {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+        text-align: center;
+      }
+
+      &:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      &:nth-child(1):before {
+        content: "ROW #";
+      }
+      &:nth-child(2):before {
+        content: "FAMILY DOCTOR";
+      }
+      &:nth-child(3):before {
+        content: "PHONE";
+      }
+      &:nth-child(4):before {
+        content: "PRIMARY DOCTOR";
+      }
+      &:nth-child(5):before {
+        content: "HOSPITAL VISITS";
+      }
+      &:nth-child(6):before {
+        content: "ACTION";
+      }
+
+      &:nth-child(5),
+      &:nth-child(6) {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}
+
+// School Information Table Styles
+.schoolInfoHeader {
+  grid-template-columns: 50px 2fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  
+  // Mobile view - hide header
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.schoolInfoRow {
+  grid-template-columns: 50px 2fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  
+  // Mobile view - card layout
+  @media (max-width: 767px) {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+
+    > div {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+        text-align: center;
+      }
+
+      &:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      &:nth-child(1):before {
+        content: "ROW #";
+      }
+      &:nth-child(2):before {
+        content: "SCHOOL INFORMATION";
+      }
+      &:nth-child(3):before {
+        content: "PHONE";
+      }
+      &:nth-child(4):before {
+        content: "SCHOOL COMMUTE";
+      }
+      &:nth-child(5):before {
+        content: "ACTION";
+      }
+
+      &:nth-child(4),
+      &:nth-child(5) {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.schoolInfoAddressRow {
+  grid-template-columns: 50px 1fr;
+  gap: 0.5rem;
+  
+  // Mobile view - simple block layout
+  @media (max-width: 767px) {
+    display: block;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px;
+
+    > div:first-child {
+      display: none; // Hide row number
+    }
+
+    > div:last-child {
+      &:before {
+        content: "ADDRESS";
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
+.schoolInfoDetailsRow {
+  grid-template-columns: 50px 1fr 1fr 1fr;
+  gap: 0.5rem;
+  
+  // Mobile view - card layout
+  @media (max-width: 767px) {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px;
+    display: block;
+
+    > div:first-child {
+      display: none; // Hide row number
+    }
+
+    > div {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      &:nth-child(2):before {
+        content: "CLASS TEACHER";
+      }
+      &:nth-child(3):before {
+        content: "GRADE";
+      }
+      &:nth-child(4):before {
+        content: "CLASS";
+      }
+    }
+  }
+}
+
+// Common table styles - inherit from inquiry-tab styles
+.tableHeader {
+  display: grid;
+  margin-bottom: 8px;
+  font-size: 12px;
+  gap: 10px;
+  background-color: #4e5d6e;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.tableRow {
+  display: grid;
+  margin-bottom: 8px;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  overflow: hidden;
+  
+  // Alternating row colors - automatically applied
+  &:nth-child(even) {
+    background-color: #f9fafb;
+  }
+  
+  &:nth-child(odd) {
+    background-color: white;
+  }
+}
+
+// Center alignment utility
+.centerAlign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Button container styles
+.buttonContainer {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.addChildButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+// Mobile responsive utilities
+@media (max-width: 767px) {
+  // Make all rows single column on mobile
+  .row {
+    flex-direction: column;
+    gap: 0;
+    margin-left: 0;
+    margin-right: 0;
+
+    // Force all columns to full width on mobile
+    [class*="col-"] {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // Stack flex items vertically on mobile
+  .d-flex {
+    flex-direction: column !important;
+    gap: 0.75rem;
+
+    &.gap-1,
+    &.gap-2 {
+      gap: 0.75rem;
+    }
+
+    // Exception for radio buttons and checkboxes
+    &.align-items-center,
+    &.align-items-end {
+      flex-direction: row !important;
+      flex-wrap: wrap;
+    }
+  }
+
+  // Form sections mobile improvements
+  .form-section {
+    padding: 8px;
+    margin-bottom: 1.5rem;
+
+    .row {
+      > div {
+        margin-bottom: 1rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Button improvements for mobile
+  .buttonContainer,
+  .addChildButtonContainer {
+    margin-top: 1rem;
+    
+    button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  // Character other inputs mobile layout
+  .d-flex.flex-wrap {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    
+    > div {
+      width: 100%;
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // Action buttons mobile layout
+  .d-flex.gap-1 {
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap;
+
+    > * {
+      margin: 0.25rem;
+      min-width: 80px;
+    }
+  }
+} 

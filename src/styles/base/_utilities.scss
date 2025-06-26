@@ -310,6 +310,13 @@ input[type="number"] {
   gap: 3rem;
 }
 
+// Gap utilities
+@for $i from 1 through 10 {
+  .gap-#{$i} {
+    gap: $spacing-unit * $i;
+  }
+}
+
 .gap-half {
   gap: 0.5rem;
 }
@@ -1144,7 +1151,7 @@ textarea[disabled],
 textarea[readonly] {
   cursor: not-allowed !important;
   opacity: 0.6;
-  
+
   &:hover {
     cursor: not-allowed !important;
   }
@@ -1154,7 +1161,7 @@ textarea[readonly] {
 .ad-heading {
   background-color: $border !important;
   color: $mud-gray !important;
-  padding: .75rem !important;
+  padding: 0.75rem !important;
   margin-bottom: 1rem !important;
   text-transform: uppercase !important;
   font-size: 12px !important;
@@ -1167,70 +1174,70 @@ textarea[readonly] {
     display: flex !important;
     flex-direction: column !important;
     gap: 1rem;
-    
+
     > * {
       width: 100% !important;
       flex: 0 0 100% !important;
       max-width: 100% !important;
     }
   }
-  
+
   // Mobile stack utility
   .mobile-stack {
     display: flex !important;
     flex-direction: column !important;
     gap: 0.75rem;
   }
-  
+
   // Mobile full width
   .mobile-full-width {
     width: 100% !important;
     max-width: 100% !important;
     flex: 0 0 100% !important;
   }
-  
+
   // Override Bootstrap grid on mobile
   .row {
     margin-left: 0 !important;
     margin-right: 0 !important;
-    
-    [class*='col-'] {
+
+    [class*="col-"] {
       padding-left: 0 !important;
       padding-right: 0 !important;
       flex: 0 0 100% !important;
       max-width: 100% !important;
       margin-bottom: 1rem;
-      
+
       &:last-child {
         margin-bottom: 0;
       }
     }
   }
-  
+
   // Mobile form improvements
   .form-section {
     padding: 0.5rem !important;
     margin-bottom: 1.5rem !important;
   }
-  
+
   // Mobile gap utilities
   .gap-1 {
     gap: 0.75rem !important;
   }
-  
+
   .gap-2 {
     gap: 1rem !important;
   }
-  
+
   .gap-half {
     gap: 0.5rem !important;
   }
-  
+
   // Mobile button improvements
   button:not(.btn-inline) {
     width: 100% !important;
     margin-bottom: 0.5rem;
-    
+
     &:last-child {
       margin-bottom: 0;
     }

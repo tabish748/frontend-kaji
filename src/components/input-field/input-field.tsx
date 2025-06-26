@@ -1,5 +1,8 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from "react";
+import { IoClose } from "react-icons/io5";
+import { FiPaperclip } from "react-icons/fi";
 import styles from "../../styles/components/atoms/input.module.scss";
+
 interface InputFieldProps {
   label?: string;
   tag?: any;
@@ -14,16 +17,19 @@ interface InputFieldProps {
   className?: string;
   dataLabel?: string;
   autocomplete?: string;
-  id?:string;
+  id?: string;
   validations?: any;
   onClick?: any;
   ref?: any;
   readOnly?: boolean;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   icon?: React.ReactNode | string; // Add icon prop
+  accept?: string; // File types allowed
+  onFileChange?: (file: File | null) => void; // Custom file change handler
+  fileValue?: File | null; // Actual file object for validation
 }
+
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
- 
   label,
   tag,
   type = "text",
@@ -41,8 +47,34 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   onClick,
   onBlur,
   labelClassName,
-  icon
+  icon,
+  accept,
+  onFileChange
 }, ref) => { 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileDisplayName, setFileDisplayName] = useState<string>("");
+  const internalRef = useRef<HTMLInputElement>(null);
+
+  // Expose custom methods through ref
+  useImperativeHandle(ref, () => ({
+    ...internalRef.current,
+    clearFile: () => {
+      if (internalRef.current) {
+        internalRef.current.value = '';
+        setSelectedFile(null);
+        setFileDisplayName("");
+        if (onFileChange) {
+          onFileChange(null);
+        }
+      }
+    },
+    getFile: () => selectedFile,
+    hasFile: () => !!selectedFile
+  } as HTMLInputElement & { 
+    clearFile: () => void; 
+    getFile: () => File | null; 
+    hasFile: () => boolean; 
+  }));
     
   const getTagClass = (tagValue: string) => {
     switch (tagValue) {
@@ -84,18 +116,138 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           </span>
         );
       } else {
-        // Handle text icon
-        return <span className={styles.iconWrapper}>{icon}</span>;
+        // Handle text icon (emoji or text)
+        return <span className={styles.iconWrapper} style={{ fontSize: '16px' }}>{icon}</span>;
       }
     }
     return <span className={styles.iconWrapper}>{icon}</span>;
   };
 
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
+    
+    if (file) {
+      const fileName = file.name;
+      const fileType = file.type || fileName.split('.').pop()?.toUpperCase() || 'Unknown';
+      setFileDisplayName(`${fileName} (${fileType})`);
+    } else {
+      setFileDisplayName("");
+    }
+
+    // Call custom file change handler if provided
+    if (onFileChange) {
+      onFileChange(file);
+    }
+
+    // Call original onChange with modified event for form compatibility
+    if (onChange) {
+      const modifiedEvent = {
+        ...e,
+        target: {
+          ...e.target,
+          value: file ? file.name : "",
+          name: name || ""
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(modifiedEvent);
+    }
+  };
+
+  // Handle file removal
+  const handleFileRemove = () => {
+    // Clear the actual input value so same file can be selected again
+    if (internalRef.current) {
+      internalRef.current.value = '';
+    }
+    
+    setSelectedFile(null);
+    setFileDisplayName("");
+    
+    if (onFileChange) {
+      onFileChange(null);
+    }
+
+    // Create a synthetic event for form compatibility
+    if (onChange) {
+      const syntheticEvent = {
+        target: {
+          value: "",
+          name: name || "",
+          files: null
+        }
+      } as any;
+      onChange(syntheticEvent);
+    }
+  };
+
+  // Get file info for inline display
+  const getFileInfo = () => {
+    if (!selectedFile) return placeholder || "Choose file...";
+    return selectedFile.name;
+  };
+
+  // For file inputs, render special UI
+  if (type === 'file') {
+    return (
+      <div className={`${styles.inputWrapper} ${styles.fileInputWrapper}`}>
+        {/* Label with tags */}
+        <div className={` ${label ? "":"d-none"} ${labelClassName || ''}`}>
+          {label && <>{label}</>}
+          {renderTags()}
+        </div>
+        
+        {/* File input container */}
+        <div className={styles.simpleFileContainer}>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            name={name}
+            onBlur={onBlur}
+            onClick={onClick}
+            disabled={disabled}
+            ref={internalRef}
+            className={styles.hiddenFileInput}
+            id={id || name}
+            accept={accept}
+          />
+          
+          {/* Clickable icon */}
+          <label 
+            htmlFor={id || name} 
+            className={`${styles.fileIconButton} ${disabled ? styles.disabled : ''} ${errorText ? styles.error : ''}`}
+            title={selectedFile ? `Selected: ${selectedFile.name}` : placeholder || "Click to choose file"}
+          >
+            <FiPaperclip style={{ fontSize: '22px' }} />
+          </label>
+          
+          {/* Selected file display */}
+          {selectedFile && (
+            <div className={styles.selectedFileDisplay}>
+              <span className={styles.fileName}>{selectedFile.name}</span>
+              <button 
+                type="button" 
+                className={styles.removeFileButton}
+                onClick={handleFileRemove}
+                disabled={disabled}
+                title="Remove file"
+              >
+                <IoClose />
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {errorText && <div className={styles.errorText}>{errorText}</div>}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.inputWrapper}>
       <label htmlFor={name} className={` ${label ? "":"d-none"} ${labelClassName}`}>
         {label && <>{label}</>}
-        {/* {tag && <span className={styles.tag}>{tag}</span>} */}
         {renderTags()}
       </label>
       <div style={{ position: 'relative' }} className={errorText ? styles.hasError : ""}>
@@ -112,7 +264,6 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           ref={ref}
           autoComplete={autocomplete}
           className={`${errorText ? styles.error : ""} ${className}`}
-          // data-placeholder= {label}
           readOnly={readOnly}
           id={id}
           style={icon ? { paddingLeft: 50 } : {}} // Add left padding if icon
@@ -122,6 +273,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
     </div>
   );
 });
-InputField.displayName = 'InputField'; // Assign displayName here
+
+InputField.displayName = 'InputField';
 
 export default InputField;

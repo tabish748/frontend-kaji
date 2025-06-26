@@ -117,6 +117,19 @@ export const Form: React.FC<FormProps> = ({
           continue;
         }
 
+        // Special handling for file inputs
+        if (name.toLowerCase().includes('file') || name.toLowerCase().includes('upload') || name.toLowerCase().includes('attachment')) {
+          // For file inputs, check if File object exists
+          if (!value || (value instanceof File && value === null)) {
+            console.log('File validation failed for:', name);
+            return Validators.required(
+              { value: "" },
+              label || placeholder || name
+            );
+          }
+          continue;
+        }
+
         // Handle empty string or undefined/null values
         if (value === undefined || value === null || value === '') {
           console.log('Required validation failed for:', name);
@@ -151,7 +164,7 @@ export const Form: React.FC<FormProps> = ({
     const traverseAndValidate = (elements: React.ReactNode) => {
       React.Children.forEach(elements, (child) => {
         if (React.isValidElement(child)) {
-          const { name, value, validations, placeholder, label, selectedValues, type, isRange } = child.props;
+          const { name, value, validations, placeholder, label, selectedValues, type, isRange, fileValue } = child.props;
 
           if (
             child.type === InputField ||
@@ -174,6 +187,12 @@ export const Form: React.FC<FormProps> = ({
               if ((child.type === InputDateField || child.type === CustomDateField)) {
                 checkValue = value || '';
                 console.log('Date field validation:', name, checkValue, isRange);
+              }
+
+              // Special handling for file fields - use fileValue if available
+              if (child.type === InputField && type === 'file' && fileValue !== undefined) {
+                checkValue = fileValue;
+                console.log('File field validation:', name, checkValue);
               }
 
               const error = validateField(

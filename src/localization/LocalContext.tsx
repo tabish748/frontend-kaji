@@ -43,7 +43,9 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     setLanguageState(lang);
     localStorage.setItem("preferredLanguage", lang);
 
-    // Update the URL with ?lang=... using shallow routing
+    // Only update URL if the language is actually different
+    const currentQueryLang = router.query.lang as string;
+    if (currentQueryLang !== lang) {
     router.push(
       {
         pathname: router.pathname,
@@ -52,6 +54,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
       undefined,
       { shallow: true }
     );
+    }
   };
 
   useEffect(() => {
@@ -69,15 +72,31 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     const storedLang = localStorage.getItem("preferredLanguage");
     const browserLang = navigator.language?.slice(0, 2); // e.g. "en-US" → "en"
 
+    let selectedLang = "en"; // default
+
     if (queryLang && ["en", "jp"].includes(queryLang)) {
-      setLanguage(queryLang);
+      selectedLang = queryLang;
     } else if (storedLang && ["en", "jp"].includes(storedLang)) {
-      setLanguage(storedLang);
+      selectedLang = storedLang;
     } else if (["en", "jp"].includes(browserLang)) {
-      setLanguage(browserLang);
-    } else {
-      setLanguage("en");
+      selectedLang = browserLang;
     }
+
+    // Only update URL if lang parameter is missing or different
+    if (!queryLang || queryLang !== selectedLang) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, lang: selectedLang },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+
+    // Set the language state
+    setLanguageState(selectedLang);
+    localStorage.setItem("preferredLanguage", selectedLang);
   }, [router.isReady]);
 
   useEffect(() => {

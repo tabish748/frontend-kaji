@@ -1,115 +1,162 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useLanguage } from '../../localization/LocalContext';
+import styles from "../../styles/components/molecules/basic-info2-tab.module.scss";
 
-const BasicInfo2Tab: React.FC = () => {
+interface BasicInfo2TabProps {
+  children?: React.ReactNode;
+}
+
+const getNestedTabs = (t: any) => [
+  {
+    id: 'hk',
+    label: t('adInquiryCreate.nestedTabs.hk'),
+    href: '/inquiry/create/basic-info-2/hk',
+  },
+  {
+    id: 'bs',
+    label: t('adInquiryCreate.nestedTabs.bs'),
+    href: '/inquiry/create/basic-info-2/bs',
+  },
+  {
+    id: 'hc',
+    label: t('adInquiryCreate.nestedTabs.hc'),
+    href: '/inquiry/create/basic-info-2/hc',
+  },
+  {
+    id: 'introduced-talent',
+    label: t('adInquiryCreate.nestedTabs.introducedTalent'),
+    href: '/inquiry/create/basic-info-2/introduced-talent',
+  },
+  {
+    id: 'hms',
+    label: t('adInquiryCreate.nestedTabs.hms'),
+    href: '/inquiry/create/basic-info-2/hms',
+  },
+];
+
+const BasicInfo2Tab: React.FC<BasicInfo2TabProps> = ({ children }) => {
+  const router = useRouter();
+  const { t } = useLanguage();
+  const [activeNestedTab, setActiveNestedTab] = useState('hk');
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navigatingToTab, setNavigatingToTab] = useState<string | null>(null);
+  
+  const nestedTabs = getNestedTabs(t);
+
+  // Debug: Log styles to check if they're loaded
+  useEffect(() => {
+    console.log('BasicInfo2Tab styles loaded:', styles);
+    console.log('Available nested tabs:', nestedTabs);
+  }, [nestedTabs]);
+
+  // Set active tab based on URL path
+  useEffect(() => {
+    const currentPath = router.asPath;
+    console.log('Current path:', currentPath); // Debug log
+    
+    // Extract the last segment from the path, handle query parameters
+    const pathWithoutQuery = currentPath.split('?')[0];
+    const pathSegments = pathWithoutQuery.split('/').filter(segment => segment.length > 0);
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    
+    console.log('Last segment:', lastSegment); // Debug log
+    
+    // Map URL segments to tab IDs
+    let tabId = lastSegment;
+    if (lastSegment === 'introduced-talent') {
+      tabId = 'introduced-talent';
+    }
+    
+    // Check if the tab ID matches any of our nested tabs
+    const matchingTab = nestedTabs.find(tab => tab.id === tabId);
+    if (matchingTab) {
+      console.log('Found matching tab:', matchingTab.id); // Debug log
+      setActiveNestedTab(matchingTab.id);
+    } else if (currentPath.includes('/inquiry/create/basic-info-2')) {
+      // Default to 'hk' if we're on the basic-info-2 page but no specific tab
+      console.log('Defaulting to hk tab'); // Debug log
+      setActiveNestedTab('hk');
+    }
+  }, [router.asPath, router.pathname, nestedTabs]);
+
+  const handleTabClick = async (tabId: string, href: string) => {
+    console.log('Tab clicked:', tabId, href); // Debug log
+    
+    // Prevent multiple clicks during navigation
+    if (isNavigating) return;
+    
+    try {
+      setIsNavigating(true);
+      setNavigatingToTab(tabId); // Track which tab we're navigating to
+    
+      // Preserve all existing query parameters when navigating
+    const targetUrl = {
+      pathname: href,
+        query: router.query,
+      };
+      
+      console.log('Navigating to:', targetUrl); // Debug log
+      
+      // Use push for better navigation experience
+      await router.push(targetUrl);
+      
+      // Update active tab after successful navigation
+      setActiveNestedTab(tabId);
+      
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Reset active tab on error
+      const currentPath = router.asPath.split('?')[0];
+      const currentSegment = currentPath.split('/').pop();
+      const currentTab = nestedTabs.find(tab => tab.id === currentSegment);
+      if (currentTab) {
+        setActiveNestedTab(currentTab.id);
+      }
+    } finally {
+      setIsNavigating(false);
+      setNavigatingToTab(null); // Clear navigation target
+    }
+  };
+
   return (
     <div className="tab-content">
-      <div className="content-header">
-        <svg className="content-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-        <h1 className="content-title">Basic Information 2</h1>
-      </div>
-      
-      <div className="basic-info-form">
-        <div className="form-section">
-          <h3>Address Information</h3>
-          <div className="form-group">
-            <label htmlFor="address1">Address Line 1</label>
-            <input 
-              type="text" 
-              id="address1" 
-              className="form-control" 
-              placeholder="Enter street address"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="address2">Address Line 2 (Optional)</label>
-            <input 
-              type="text" 
-              id="address2" 
-              className="form-control" 
-              placeholder="Apartment, suite, unit, etc."
-            />
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="city">City</label>
-              <input 
-                type="text" 
-                id="city" 
-                className="form-control" 
-                placeholder="Enter city"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="state">State/Province</label>
-              <input 
-                type="text" 
-                id="state" 
-                className="form-control" 
-                placeholder="Enter state/province"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="zip">ZIP/Postal Code</label>
-              <input 
-                type="text" 
-                id="zip" 
-                className="form-control" 
-                placeholder="Enter ZIP code"
-              />
-            </div>
-          </div>
+      <div className={styles.nestedTabsContainer || 'nested-tabs-container'}>
+        {/* Nested Tab Navigation */}
+        <div className={styles.nestedTabs || 'nested-tabs'}>
+          {nestedTabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`${styles.nestedTabItem || 'nested-tab-item'} ${
+                activeNestedTab === tab.id ? (styles.activeNested || 'active-nested') : ""
+              }`}
+              onClick={() => handleTabClick(tab.id, tab.href)}
+              type="button"
+              disabled={isNavigating}
+              style={{
+                // Add inline styles as fallback to ensure highlighting works
+                color: activeNestedTab === tab.id ? '#4f46e5' : '#6b7280',
+                borderBottomColor: activeNestedTab === tab.id ? '#4f46e5' : 'transparent',
+                fontWeight: activeNestedTab === tab.id ? '600' : '500',
+                opacity: isNavigating ? 0.6 : 1,
+                cursor: isNavigating ? 'wait' : 'pointer',
+              }}
+            >
+              <span className={styles.nestedTabLabel || 'nested-tab-label'}>
+                {isNavigating && navigatingToTab === tab.id ? 'Loading...' : tab.label}
+              </span>
+            </button>
+          ))}
         </div>
-        
-        <div className="form-section">
-          <h3>Additional Details</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="industry">Industry</label>
-              <select id="industry" className="form-control">
-                <option value="">Select industry</option>
-                <option value="technology">Technology</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="finance">Finance</option>
-                <option value="education">Education</option>
-                <option value="retail">Retail</option>
-                <option value="manufacturing">Manufacturing</option>
-                <option value="other">Other</option>
-              </select>
+
+        {/* Nested Tab Content */}
+        <div className={styles.nestedTabContent || 'nested-tab-content'}>
+          {children || (
+            <div className="nested-tab-content-inner">
+              <h4>Select a tab to view content</h4>
+              <p>Please select one of the tabs above to view the specific content.</p>
             </div>
-            
-            <div className="form-group">
-              <label htmlFor="company-size">Company Size</label>
-              <select id="company-size" className="form-control">
-                <option value="">Select company size</option>
-                <option value="1-10">1-10 employees</option>
-                <option value="11-50">11-50 employees</option>
-                <option value="51-200">51-200 employees</option>
-                <option value="201-1000">201-1000 employees</option>
-                <option value="1000+">1000+ employees</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="website">Website URL</label>
-            <input 
-              type="url" 
-              id="website" 
-              className="form-control" 
-              placeholder="https://example.com"
-            />
-          </div>
-        </div>
-        
-        <div className="form-actions">
-          <button type="button" className="btn btn-secondary">Previous</button>
-          <button type="button" className="btn btn-primary">Next</button>
+          )}
         </div>
       </div>
     </div>

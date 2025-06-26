@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form } from "../form/form";
 import InputField from "../input-field/input-field";
 import CustomSelectField from "../custom-select/custom-select";
+import SelectField from "../select-field/select-field";
 import InputDateField from "../input-date/input-date";
 import TextAreaField from "../text-area/text-area";
 import CheckboxField from "../checkbox-field/checkbox-field";
@@ -10,8 +11,10 @@ import styles from "../../styles/components/molecules/inquiry-tab.module.scss";
 import { calculateAge, convertTo24Hour } from "../../libs/utils";
 import ApiHandler from "../../app/api-handler";
 import Button from "../button/button";
+import { useLanguage } from "../../localization/LocalContext";
 
 const InquiryTab: React.FC = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     recordId: "",
     inquiryDate: "",
@@ -23,8 +26,8 @@ const InquiryTab: React.FC = () => {
     leadStatus: "",
     fullNameKatakana: "",
     fullName: "",
-    contacterType: "self",
-    gender: "male",
+    contacterType: "1",
+    gender: "1",
     dateOfBirth: "",
     age: "",
     phone1: "",
@@ -219,26 +222,12 @@ const InquiryTab: React.FC = () => {
       lead_status: Number(newFormData.leadStatus),
       name: newFormData.fullName,
       name_kana: newFormData.fullNameKatakana,
-      represents_id: Number(
-        newFormData.contacterType === "self"
-          ? 1
-          : newFormData.contacterType === "family_proxy"
-          ? 2
-          : newFormData.contacterType === "secretary"
-          ? 3
-          : 4
-      ),
+      represents_id: Number(newFormData.contacterType),
       dob_year: dob?.getFullYear() || "",
       dob_month: dob ? dob.getMonth() + 1 : "",
       dob_day: dob?.getDate() || "",
       age: Number(newFormData.age),
-      gender: Number(
-        newFormData.gender === "male"
-          ? 1
-          : newFormData.gender === "female"
-          ? 2
-          : 3
-      ),
+      gender: Number(newFormData.gender),
       phone_type1: newFormData.phone1Type,
       phone1: newFormData.phone1,
       phone_type2: newFormData.phone2Type || "",
@@ -302,69 +291,79 @@ const InquiryTab: React.FC = () => {
         console.log("Inquiry created successfully");
       } else {
         // Handle error
-        setErrors((prev) => ({ ...prev, submit: "Failed to create inquiry" }));
+        setErrors((prev) => ({ ...prev, submit: t("admin-form.errors.submitFailed") }));
       }
     } catch (error) {
-      setErrors((prev) => ({ ...prev, submit: "Failed to create inquiry" }));
+      setErrors((prev) => ({ ...prev, submit: t("admin-form.errors.submitFailed") }));
     }
   };
 
   const channelOptions =
     dropdownOptions?.inquiry_media?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const referralSourceOptions =
     dropdownOptions?.referral_source?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const leadStatusOptions =
     dropdownOptions?.lead_staus?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const phoneTypeOptions =
     dropdownOptions?.phone_types?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const statusOptions =
     dropdownOptions?.inquiry_status?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const orderStatusOptions =
     dropdownOptions?.order_status?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const serviceOptions =
     dropdownOptions?.services?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const prefectureOptions =
     dropdownOptions?.prefectures?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const advertisingEmailOptions =
     dropdownOptions?.newsletter?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const languageOptions =
     dropdownOptions?.language?.map((item: any) => ({
-      value: item.value,
+      value: String(item.value),
       label: item.label,
     })) || [];
   const assigneeOptions =
     dropdownOptions?.users
       ?.filter((user: any) => user.status)
-      .map((item: any) => ({ value: item.value, label: item.label })) || [];
+      .map((item: any) => ({ value: String(item.value), label: item.label })) || [];
+  const genderOptions =
+    dropdownOptions?.gender?.map((item: any) => ({
+      value: String(item.value),
+      label: item.label,
+    })) || [];
+  const contacterTypeOptions =
+    dropdownOptions?.represents?.map((item: any) => ({
+      value: String(item.value),
+      label: item.label,
+    })) || [];
 
-  if (loadingDropdowns) return <div>Loading options...</div>;
+  if (loadingDropdowns) return <div>{t("admin-form.loading.options")}</div>;
   if (dropdownError) return <div>{dropdownError}</div>;
 
   return (
@@ -378,14 +377,14 @@ const InquiryTab: React.FC = () => {
       >
         {/* FIRST INQUIRY INFO Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">FIRST INQUIRY INFO</h3>
+          <h3 className="ad-heading">{t("adInquiryCreate.firstInquiryInfo")}</h3>
 
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-sm-12 col-lg-6 col-xl-3">
               <InputField
                 name="recordId"
-                label="Record ID"
-                placeholder="Record ID"
+                label={t("admin-form.labels.recordId")}
+                placeholder={t("admin-form.placeholders.recordId")}
                 value={formData.recordId}
                 onChange={(e) => handleInputChange("recordId", e.target.value)}
                 validations={[{ type: "required" }]}
@@ -396,8 +395,8 @@ const InquiryTab: React.FC = () => {
                 <div className={styles.dateField}>
                   <InputDateField
                     name="inquiryDate"
-                    label="Inquiry Date/Time"
-                    placeholder="2024/8/22"
+                    label={t("admin-form.labels.inquiryDateTime")}
+                    placeholder={t("admin-form.placeholders.date")}
                     value={formData.inquiryDate}
                     onChange={(e) =>
                       handleInputChange("inquiryDate", e.target.value)
@@ -420,7 +419,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-sm-12 col-lg-6 col-xl-3">
               <CustomSelectField
                 name="assignee"
-                label="Assignee"
+                label={t("admin-form.labels.assignee")}
                 options={assigneeOptions}
                 value={formData.assignee}
                 onChange={(e) => handleInputChange("assignee", e.target.value)}
@@ -430,7 +429,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-sm-12 col-lg-6 col-xl-3">
               <CustomSelectField
                 name="channel"
-                label="Channel"
+                label={t("admin-form.labels.channel")}
                 options={channelOptions}
                 value={formData.channel}
                 onChange={(e) => handleInputChange("channel", e.target.value)}
@@ -439,11 +438,11 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3">
+          <div className="row g-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="referralSource"
-                label="Referral Source"
+                label={t("admin-form.labels.referralSource")}
                 options={referralSourceOptions}
                 value={formData.referralSource}
                 onChange={(e) =>
@@ -454,8 +453,8 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <InputField
                 name="referrerName"
-                label="Referrer Name"
-                placeholder="Referrer Name"
+                label={t("admin-form.labels.referrerName")}
+                placeholder={t("admin-form.placeholders.referrerName")}
                 value={formData.referrerName}
                 onChange={(e) =>
                   handleInputChange("referrerName", e.target.value)
@@ -465,7 +464,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-12 col-lg-4">
               <CustomSelectField
                 name="leadStatus"
-                label="Lead Status"
+                label={t("admin-form.labels.leadStatus")}
                 options={leadStatusOptions}
                 value={formData.leadStatus}
                 onChange={(e) =>
@@ -478,14 +477,14 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRER INFO Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">INQUIRER INFO</h3>
+          <h3 className="ad-heading">{t("adInquiryCreate.inquirerInfo")}</h3>
 
-          <div className="row g-3 ">
-            <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+          <div className="row g-1 mb-1">
+            <div className="col-12 col-sm-6 col-md-6 col-lg-3  ">
               <InputField
                 name="fullNameKatakana"
-                label="Full name in Katakana  "
-                placeholder="Full name in Katakana"
+                label={t("admin-form.labels.fullNameKatakana")}
+                placeholder={t("admin-form.placeholders.fullNameKatakana")}
                 value={formData.fullNameKatakana}
                 onChange={(e) =>
                   handleInputChange("fullNameKatakana", e.target.value)
@@ -493,11 +492,11 @@ const InquiryTab: React.FC = () => {
                 validations={[{ type: "required" }]}
               />
             </div>
-            <div className="col-12 col-sm-6 col-md-6 col-lg-3">
+            <div className="col-12 col-sm-6 col-md-6 col-lg-3  ">
               <InputField
                 name="fullName"
-                label="Full name  "
-                placeholder="Full name"
+                label={t("admin-form.labels.fullName")}
+                placeholder={t("admin-form.placeholders.fullName")}
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 validations={[{ type: "required" }]}
@@ -506,13 +505,8 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-12 col-lg-6">
               <RadioField
                 name="contacterType"
-                label="Contacter Type"
-                options={[
-                  { label: "Self", value: "self" },
-                  { label: "Family Proxy", value: "family_proxy" },
-                  { label: "Secretary", value: "secretary" },
-                  { label: "Concierge", value: "concierge" },
-                ]}
+                label={t("admin-form.labels.contacterType")}
+                options={contacterTypeOptions}
                 selectedValue={formData.contacterType}
                 onChange={(e) =>
                   handleInputChange("contacterType", e.target.value)
@@ -522,15 +516,13 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Date of Birth Row */}
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
-              <div
-                className={`${styles.dFlex} ${styles.gap1} ${styles.alignItemsEnd}`}
-              >
-                <div className={styles.flexOne}>
+              <div className="d-flex gap-2 align-items-end">
+                <div style={{ flex: '1' }}>
                   <InputDateField
                     name="dateOfBirth"
-                    label="Date Of Birth"
+                    label={t("admin-form.labels.dateOfBirth")}
                     placeholder="YYYY/MM/DD"
                     value={formData.dateOfBirth}
                     onChange={(e) => {
@@ -544,11 +536,11 @@ const InquiryTab: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className={styles.flexAgeField}>
+                <div style={{ width: '80px' }}>
                   <InputField
                     name="age"
-                    label="Age"
-                    placeholder="Age"
+                    label={t("admin-form.labels.age")}
+                    placeholder={t("admin-form.placeholders.age")}
                     value={formData.age}
                     readOnly
                     disabled
@@ -559,12 +551,8 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <RadioField
                 name="gender"
-                label="Gender  "
-                options={[
-                  { label: "Male", value: "male" },
-                  { label: "Female", value: "female" },
-                  { label: "Other", value: "other" },
-                ]}
+                label={t("admin-form.labels.gender")}
+                options={genderOptions}
                 selectedValue={formData.gender}
                 onChange={(e) => handleInputChange("gender", e.target.value)}
               />
@@ -572,7 +560,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Phone Numbers Row */}
-          <div className="row g-1">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <div
                 className={`d-flex gap-1 align-items-center justify-content-start ${styles.phoneTypeContainer}`}
@@ -592,8 +580,8 @@ const InquiryTab: React.FC = () => {
                     <InputField
                       labelClassName="-ml-4"
                       name="phone1"
-                      label="Phone 1  "
-                      placeholder="000-0000-0000"
+                      label={t("admin-form.labels.phone1")}
+                      placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone1}
                       onChange={(e) =>
                         handleInputChange("phone1", e.target.value)
@@ -604,7 +592,7 @@ const InquiryTab: React.FC = () => {
                 </div>
                 <CustomSelectField
                   name="phone1Type"
-                  label="Type"
+                  label={t("admin-form.labels.type")}
                   options={phoneTypeOptions}
                   value={formData.phone1Type}
                   onChange={(e) =>
@@ -632,8 +620,8 @@ const InquiryTab: React.FC = () => {
                     <InputField
                       labelClassName="-ml-4"
                       name="phone2"
-                      label="Phone 2"
-                      placeholder="000-0000-0000"
+                      label={t("admin-form.labels.phone2")}
+                      placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone2}
                       onChange={(e) =>
                         handleInputChange("phone2", e.target.value)
@@ -643,7 +631,7 @@ const InquiryTab: React.FC = () => {
                 </div>
                 <CustomSelectField
                   name="phone2Type"
-                  label="Type"
+                  label={t("admin-form.labels.type")}
                   options={phoneTypeOptions}
                   value={formData.phone2Type}
                   onChange={(e) =>
@@ -671,8 +659,8 @@ const InquiryTab: React.FC = () => {
                     <InputField
                       labelClassName="-ml-4"
                       name="phone3"
-                      label="Phone 3"
-                      placeholder="000-0000-0000"
+                      label={t("admin-form.labels.phone3")}
+                      placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone3}
                       onChange={(e) =>
                         handleInputChange("phone3", e.target.value)
@@ -682,7 +670,7 @@ const InquiryTab: React.FC = () => {
                 </div>
                 <CustomSelectField
                   name="phone3Type"
-                  label="Type"
+                  label={t("admin-form.labels.type")}
                   options={phoneTypeOptions}
                   value={formData.phone3Type}
                   onChange={(e) =>
@@ -694,7 +682,7 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Email Addresses Row */}
-          <div className="row">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <div
                 className={`${styles.flexOne} d-flex align-items-end justify-content-center`}
@@ -707,19 +695,19 @@ const InquiryTab: React.FC = () => {
                   checked={formData.primaryEmail === "email1"}
                   onChange={() => handleInputChange("primaryEmail", "email1")}
                 />
-                <div className={styles.flexOne}>
-                  <InputField
-                    labelClassName="-ml-4"
-                    name="email1"
-                    label="E-Mail 1  "
-                    placeholder="E-mail 1"
-                    value={formData.email1}
-                    onChange={(e) =>
-                      handleInputChange("email1", e.target.value)
-                    }
-                    validations={[{ type: "required" }, { type: "email" }]}
-                  />
-                </div>
+                                  <div className={styles.flexOne}>
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="email1"
+                      label={t("admin-form.labels.email1")}
+                      placeholder={t("admin-form.placeholders.email1")}
+                      value={formData.email1}
+                      onChange={(e) =>
+                        handleInputChange("email1", e.target.value)
+                      }
+                      validations={[{ type: "required" }, { type: "email" }]}
+                    />
+                  </div>
               </div>
             </div>
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
@@ -734,33 +722,33 @@ const InquiryTab: React.FC = () => {
                   checked={formData.primaryEmail === "email2"}
                   onChange={() => handleInputChange("primaryEmail", "email2")}
                 />
-                <div className={styles.flexOne}>
-                  <InputField
-                    labelClassName="-ml-4"
-                    name="email2"
-                    label="E-Mail 2"
-                    placeholder="E-mail 2"
-                    value={formData.email2}
-                    onChange={(e) =>
-                      handleInputChange("email2", e.target.value)
-                    }
-                    validations={[{ type: "email" }]}
-                  />
-                </div>
+                                  <div className={styles.flexOne}>
+                    <InputField
+                      labelClassName="-ml-4"
+                      name="email2"
+                      label={t("admin-form.labels.email2")}
+                      placeholder={t("admin-form.placeholders.email2")}
+                      value={formData.email2}
+                      onChange={(e) =>
+                        handleInputChange("email2", e.target.value)
+                      }
+                      validations={[{ type: "email" }]}
+                    />
+                  </div>
               </div>
             </div>
           </div>
 
           {/* Address Row */}
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-md-12">
-              <label className={styles.formLabel}>Address </label>
+              <label className={styles.formLabel}>{t("admin-form.labels.address")} </label>
               <div className="row g-2">
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <InputField
                     name="postcode"
                     // label=""
-                    placeholder="Postcode"
+                    placeholder={t("admin-form.placeholders.postcode")}
                     value={formData.postcode}
                     onChange={(e) =>
                       handleInputChange("postcode", e.target.value)
@@ -771,7 +759,7 @@ const InquiryTab: React.FC = () => {
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <CustomSelectField
                     name="prefecture"
-                    placeholder="Prefecture"
+                    placeholder={t("admin-form.placeholders.prefecture")}
                     // label="Prefecture  "
                     options={prefectureOptions}
                     value={formData.prefecture}
@@ -785,7 +773,7 @@ const InquiryTab: React.FC = () => {
                   <InputField
                     name="address1"
                     // label="Address1  "
-                    placeholder="Address1"
+                    placeholder={t("admin-form.placeholders.address1")}
                     value={formData.address1}
                     onChange={(e) =>
                       handleInputChange("address1", e.target.value)
@@ -797,7 +785,7 @@ const InquiryTab: React.FC = () => {
                   <InputField
                     name="address2"
                     // label="Address 2"
-                    placeholder="Address 2"
+                    placeholder={t("admin-form.placeholders.address2")}
                     value={formData.address2}
                     onChange={(e) =>
                       handleInputChange("address2", e.target.value)
@@ -810,7 +798,7 @@ const InquiryTab: React.FC = () => {
                   <InputField
                     name="building"
                     // label="Building"
-                    placeholder="Building"
+                    placeholder={t("admin-form.placeholders.building")}
                     value={formData.building}
                     onChange={(e) =>
                       handleInputChange("building", e.target.value)
@@ -823,18 +811,18 @@ const InquiryTab: React.FC = () => {
 
           {/* Train Station Grid */}
           <div className="">
-            <label className={styles.formLabel}>Train Station </label>
+            <label className={styles.formLabel}>{t("admin-form.labels.trainStation")} </label>
 
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.trainStationGrid}`}>
               <div className="d-flex justify-content-center align-items-center">
-                #
+                {t("adInquiryCreate.gridHeaders.number")}
               </div>
-              <div>DATE</div>
-              <div>RAILWAY COMPANY</div>
-              <div>TRAIN LINE</div>
-              <div>TRAIN STATION</div>
-              <div>ACTION</div>
+              <div>{t("adInquiryCreate.gridHeaders.date")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.railwayCompany")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.trainLine")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.trainStation")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.action")}</div>
             </div>
 
             {/* Data Rows */}
@@ -847,7 +835,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputDateField
                     name={`trainStation${index}Date`}
-                    placeholder="年/月/日"
+                    placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={station.date}
                     onChange={(e) => {
                       const newStations = [...trainStations];
@@ -859,7 +847,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputField
                     name={`trainStation${index}Company`}
-                    placeholder="JR"
+                    placeholder={t("admin-form.placeholders.railwayCompanyJR")}
                     value={station.railwayCompany}
                     onChange={(e) => {
                       const newStations = [...trainStations];
@@ -871,7 +859,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputField
                     name={`trainStation${index}Line`}
-                    placeholder="山手線"
+                    placeholder={t("admin-form.placeholders.trainLineExample")}
                     value={station.trainLine}
                     onChange={(e) => {
                       const newStations = [...trainStations];
@@ -883,7 +871,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputField
                     name={`trainStation${index}Station`}
-                    placeholder="渋谷"
+                    placeholder={t("admin-form.placeholders.trainStationExample")}
                     value={station.trainStation}
                     onChange={(e) => {
                       const newStations = [...trainStations];
@@ -893,9 +881,9 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div className="d-flex gap-1">
-                  <Button text="EDIT" type="success" />
+                  <Button text={t("buttons.edit")} type="success" />
                   <Button
-                    text="DELETE"
+                    text={t("buttons.delete")}
                     type="danger"
                     onClick={() => removeTrainStation(index)}
                   />
@@ -905,11 +893,11 @@ const InquiryTab: React.FC = () => {
           </div>
 
           {/* Language and Advertising Email */}
-          <div className="row g-3">
+          <div className="row g-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <CustomSelectField
                 name="language"
-                label="Language"
+                label={t("admin-form.labels.language")}
                 options={languageOptions}
                 value={formData.language}
                 onChange={(e) => handleInputChange("language", e.target.value)}
@@ -918,7 +906,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <RadioField
                 name="advertisingEmail"
-                label="Advertising Email"
+                label={t("admin-form.labels.advertisingEmail")}
                 options={advertisingEmailOptions}
                 selectedValue={formData.advertisingEmail}
                 onChange={(e) =>
@@ -931,13 +919,13 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRY DETAILS Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">INQUIRY DETAILS</h3>
+          <h3 className="ad-heading">{t("adInquiryCreate.inquiryDetails")}</h3>
 
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-md-12">
               <CheckboxField
                 name="preferredServices"
-                label="Preferred Service"
+                label={t("admin-form.labels.preferredService")}
                 options={serviceOptions}
                 selectedValues={formData.preferredServices}
                 onChange={(values) =>
@@ -947,12 +935,12 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <InputDateField
                 name="firstServiceDate"
-                label="First Service Date"
-                placeholder="2024/8/22"
+                label={t("admin-form.labels.firstServiceDate")}
+                placeholder={t("admin-form.placeholders.date")}
                 value={formData.firstServiceDate}
                 onChange={(e) =>
                   handleInputChange("firstServiceDate", e.target.value)
@@ -961,12 +949,12 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3">
+          <div className="row g-1">
             <div className="col-md-12">
               <TextAreaField
                 name="additionalRequests"
-                label="Additional Requests"
-                placeholder="Additional Requests"
+                label={t("admin-form.labels.additionalRequests")}
+                placeholder={t("admin-form.placeholders.additionalRequests")}
                 value={formData.additionalRequests}
                 onChange={(e) =>
                   handleInputChange("additionalRequests", e.target.value)
@@ -979,13 +967,13 @@ const InquiryTab: React.FC = () => {
 
         {/* INQUIRY RESPONSE Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">INQUIRY RESPONSE</h3>
+          <h3 className="ad-heading">{t("adInquiryCreate.inquiryResponse")}</h3>
 
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-4">
               <CustomSelectField
                 name="owner"
-                label="Owner"
+                label={t("admin-form.labels.owner")}
                 options={assigneeOptions}
                 value={formData.owner}
                 onChange={(e) => handleInputChange("owner", e.target.value)}
@@ -996,8 +984,8 @@ const InquiryTab: React.FC = () => {
                 <div className={styles.dateField}>
                   <InputDateField
                     name="responseInquiryDate"
-                    label="Inquiry Date/Time"
-                    placeholder="2024/8/22"
+                    label={t("admin-form.labels.inquiryDateTime")}
+                    placeholder={t("admin-form.placeholders.date")}
                     value={formData.responseInquiryDate}
                     onChange={(e) =>
                       handleInputChange("responseInquiryDate", e.target.value)
@@ -1019,7 +1007,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-12 col-lg-4">
               <CustomSelectField
                 name="responseStatus"
-                label="Status"
+                label={t("admin-form.labels.status")}
                 options={statusOptions}
                 value={formData.responseStatus}
                 onChange={(e) =>
@@ -1029,12 +1017,12 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="row g-3 ">
+          <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <TextAreaField
                 name="inquiry"
-                label="Inquiry"
-                placeholder="Inquiry"
+                label={t("admin-form.labels.inquiry")}
+                placeholder={t("admin-form.placeholders.inquiry")}
                 value={formData.inquiry}
                 onChange={(e) => handleInputChange("inquiry", e.target.value)}
                 rows={4}
@@ -1043,8 +1031,8 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <TextAreaField
                 name="response"
-                label="Response"
-                placeholder="Response"
+                label={t("admin-form.labels.response")}
+                placeholder={t("admin-form.placeholders.response")}
                 value={formData.response}
                 onChange={(e) => handleInputChange("response", e.target.value)}
                 rows={4}
@@ -1059,14 +1047,14 @@ const InquiryTab: React.FC = () => {
               className={`${styles.gridHeader} ${styles.inquiryRecordsGrid}`}
             >
               <div className="d-flex justify-content-center align-items-center">
-                #
+                {t("adInquiryCreate.gridHeaders.number")}
               </div>
-              <div>INQUIRY DATE / UPDATED DATE</div>
-              <div>ASSIGNEE / UPDATED BY</div>
-              <div>INQUIRY DETAILS</div>
-              <div>RESPONSE</div>
-              <div>STATUS</div>
-              <div>ACTION</div>
+              <div>{t("adInquiryCreate.gridHeaders.inquiryDateUpdated")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.assigneeUpdatedBy")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.inquiryDetails")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.response")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.status")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.action")}</div>
             </div>
 
             {/* Data Rows */}
@@ -1079,7 +1067,7 @@ const InquiryTab: React.FC = () => {
                 <div className="d-flex flex-column gap-1">
                   <InputDateField
                     name={`inquiryRecord${index}Date1`}
-                    placeholder="年/月/日"
+                    placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={record.inquiryDate}
                     onChange={(e) => {
                       const newRecords = [...inquiryRecords];
@@ -1089,7 +1077,7 @@ const InquiryTab: React.FC = () => {
                   />
                   <InputDateField
                     name={`inquiryRecord${index}Date2`}
-                    placeholder="年/月/日"
+                    placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={record.inquiryDate}
                     onChange={(e) => {
                       const newRecords = [...inquiryRecords];
@@ -1099,7 +1087,7 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div className="d-flex flex-column gap-1">
-                  <CustomSelectField
+                  <SelectField
                     name={`inquiryRecord${index}Assignee`}
                     options={assigneeOptions}
                     value={record.assignee}
@@ -1109,10 +1097,10 @@ const InquiryTab: React.FC = () => {
                       setInquiryRecords(newRecords);
                     }}
                   />
-                  <CustomSelectField
+                  <SelectField
                     name={`inquiryRecord${index}UpdatedBy`}
                     options={[
-                      { value: "", label: "Updated By" },
+                      { value: "", label: t("admin-form.placeholders.updatedBy") },
                       ...assigneeOptions.slice(1),
                     ]}
                     value={record.updatedBy}
@@ -1126,7 +1114,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <TextAreaField
                     name={`inquiryRecord${index}Details`}
-                    placeholder="Inquiry Details"
+                    placeholder={t("admin-form.placeholders.inquiryDetails")}
                     value={record.inquiryDetails}
                     onChange={(e) => {
                       const newRecords = [...inquiryRecords];
@@ -1139,7 +1127,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <TextAreaField
                     name={`inquiryRecord${index}Response`}
-                    placeholder="Response"
+                    placeholder={t("admin-form.placeholders.response")}
                     value={record.response}
                     onChange={(e) => {
                       const newRecords = [...inquiryRecords];
@@ -1150,7 +1138,7 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <CustomSelectField
+                  <SelectField
                     name={`inquiryRecord${index}Status`}
                     options={statusOptions}
                     value={record.status}
@@ -1163,7 +1151,7 @@ const InquiryTab: React.FC = () => {
                 </div>
                 <div>
                   <Button
-                    text="DELETE"
+                    text={t("buttons.delete")}
                     type="danger"
                     onClick={() => removeInquiryRecord(index)}
                   />
@@ -1175,16 +1163,16 @@ const InquiryTab: React.FC = () => {
 
         {/* ORDER Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">ORDER</h3>
+          <h3 className="ad-heading">{t("adInquiryCreate.order")}</h3>
 
-          <div className="row g-3  align-items-center">
+          <div className="row g-1 align-items-center">
             <div className="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
                     name="orderFormSentAt"
-                    label="Order Form Sent At"
-                    placeholder="2024/8/22"
+                    label={t("admin-form.labels.orderFormSentAt")}
+                    placeholder={t("admin-form.placeholders.date")}
                     value={formData.orderFormSentAt}
                     onChange={(e) =>
                       handleInputChange("orderFormSentAt", e.target.value)
@@ -1207,7 +1195,7 @@ const InquiryTab: React.FC = () => {
               <CheckboxField
                 name="orderFormSent"
                 label=""
-                options={[{ value: "orderFormSent", label: "Order Form Sent" }]}
+                options={[{ value: "orderFormSent", label: t("admin-form.labels.orderFormSent") }]}
                 selectedValues={formData.orderFormSent ? ["orderFormSent"] : []}
                 onChange={(values) =>
                   handleInputChange(
@@ -1220,7 +1208,7 @@ const InquiryTab: React.FC = () => {
             <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
               <CustomSelectField
                 name="orderOwner"
-                label="Owner"
+                label={t("admin-form.labels.owner")}
                 options={assigneeOptions}
                 value={formData.orderOwner}
                 onChange={(e) =>
@@ -1228,10 +1216,10 @@ const InquiryTab: React.FC = () => {
                 }
               />
             </div>
-            <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+            <div className={`${styles.orderStatusContainer} col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3`}>
               <CustomSelectField
                 name="orderStatus"
-                label="Status"
+                label={t("admin-form.labels.status")}
                 options={orderStatusOptions}
                 value={formData.orderStatus}
                 onChange={(e) =>
@@ -1246,11 +1234,11 @@ const InquiryTab: React.FC = () => {
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.orderRecordsGrid}`}>
               <div className="d-flex justify-content-center align-items-center">
-                #
+                {t("adInquiryCreate.gridHeaders.number")}
               </div>
-              <div>ORDER FORM SENT AT</div>
-              <div>ASSIGNEE</div>
-              <div>STATUS</div>
+              <div>{t("adInquiryCreate.gridHeaders.orderFormSentAt")}</div>
+              <div>{t("admin-form.labels.assignee")}</div>
+              <div>{t("adInquiryCreate.gridHeaders.status")}</div>
               <div></div>
             </div>
 
@@ -1264,7 +1252,7 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputDateField
                     name={`orderRecord${index}Date`}
-                    placeholder="年/月/日"
+                    placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={record.orderFormSentAt}
                     onChange={(e) => {
                       const newRecords = [...orderRecords];
@@ -1274,7 +1262,7 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <CustomSelectField
+                  <SelectField
                     name={`orderRecord${index}Assignee`}
                     options={assigneeOptions}
                     value={record.assignee}
@@ -1286,7 +1274,7 @@ const InquiryTab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <CustomSelectField
+                  <SelectField
                     name={`orderRecord${index}Status`}
                     options={orderStatusOptions}
                     value={record.status}
@@ -1305,12 +1293,12 @@ const InquiryTab: React.FC = () => {
 
         {/* Note Section */}
         <div className="form-section mb-4">
-          <div className="row g-3">
+          <div className="row g-1">
             <div className="col-md-12">
               <TextAreaField
                 name="note"
-                label="Note"
-                placeholder="Note"
+                label={t("admin-form.labels.note")}
+                placeholder={t("admin-form.placeholders.note")}
                 value={formData.note}
                 onChange={(e) => handleInputChange("note", e.target.value)}
                 rows={6}
@@ -1324,8 +1312,8 @@ const InquiryTab: React.FC = () => {
           <div className="row">
             <div className="col-12 d-flex justify-content-center">
               <Button 
-                text="REGISTER" 
-                type="primary" 
+                text={t("buttons.register")} 
+                className={styles.registerButton}
                 htmlType="submit"
               />
             </div>

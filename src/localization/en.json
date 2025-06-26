@@ -253,7 +253,10 @@
     "submit": "Submit",
     "submitting": "Submitting",
     "save": "Save",
-    "saving": "Saving"
+    "saving": "Saving",
+    "edit": "EDIT",
+    "delete": "DELETE",
+    "register": "REGISTER"
   },
   "error": {
     "invalidEmail": "Invalid email address",
@@ -421,5 +424,182 @@
       "content2": "Non-performance of payment obligations such as fees, no response to communications from the Company for a certain period, no use of the Service for a certain period since the last use, or other cases where the Company deems the use of the Service inappropriate.",
       "content3": "If any of the items in the preceding paragraph applies, the User shall naturally lose the benefit of time for all debts owed to the Company and must immediately repay all debts owed at that time in a lump sum. The Company shall not be liable for any damages incurred by Users due to actions taken by the Company based on this article."
     }
+  },
+  "adInquiryCreate": {
+    "addNew": "ADD NEW",
+    "firstInquiryInfo": "FIRST INQUIRY INFO",
+    "inquirerInfo": "INQUIRER INFO",
+    "inquiryDetails": "INQUIRY DETAILS",
+    "inquiryResponse": "INQUIRY RESPONSE",
+    "order": "ORDER",
+    "tabs": {
+      "inquiry": "INQUIRY",
+      "basicInfo1": "BASIC INFORMATION 1",
+      "basicInfo2": "BASIC INFORMATION 2",
+      "contract": "CONTRACT",
+      "quotation": "QUOTATION",
+      "invoice": "INVOICE",
+      "history": "HISTORY"
+    },
+    "nestedTabs": {
+      "hk": "HK",
+      "bs": "BS",
+      "hc": "HC",
+      "introducedTalent": "INTRODUCED TALENT",
+      "hms": "HMS"
+    },
+    "gridHeaders": {
+      "number": "#",
+      "date": "DATE",
+      "railwayCompany": "RAILWAY COMPANY",
+      "trainLine": "TRAIN LINE",
+      "trainStation": "TRAIN STATION",
+      "action": "ACTION",
+      "inquiryDateUpdated": "INQUIRY DATE / UPDATED DATE",
+      "assigneeUpdatedBy": "ASSIGNEE / UPDATED BY",
+      "inquiryDetails": "INQUIRY DETAILS",
+      "response": "RESPONSE",
+      "status": "STATUS",
+      "orderFormSentAt": "ORDER FORM SENT AT"
+    }
+  },
+  "adBasicInfo1": {
+    "orderInfo": "ORDER INFO",
+    "inquiryInfo": "INQUIRY INFO", 
+    "keyInOurPossession": "KEY IN OUR POSSESSION",
+    "signalStatus": "SIGNAL STATUS",
+    "other": "OTHER",
+    "note": "NOTE",
+    "gridHeaders": {
+      "dateOfReceived": "DATE OF RECEIVED",
+      "dateOfReturned": "DATE OF RETURNED", 
+      "staffName": "STAFF NAME",
+      "status": "STATUS",
+      "receipt": "RECEIPT"
+    }
+  },
+  "admin-form": {
+    "labels": {
+      "recordId": "Record ID",
+      "inquiryDateTime": "Inquiry Date/Time",
+      "assignee": "Assignee",
+      "channel": "Channel",
+      "referralSource": "Referral Source",
+      "referrerName": "Referrer Name",
+      "leadStatus": "Lead Status",
+      "fullNameKatakana": "Full name in Katakana",
+      "fullName": "Full name",
+      "contacterType": "Contacter Type",
+      "dateOfBirth": "Date Of Birth",
+      "age": "Age",
+      "gender": "Gender",
+      "phone1": "Phone 1",
+      "phone2": "Phone 2",
+      "phone3": "Phone 3",
+      "type": "Type",
+      "email1": "E-Mail 1",
+      "email2": "E-Mail 2",
+      "address": "Address",
+      "trainStation": "Train Station",
+      "language": "Language",
+      "advertisingEmail": "Advertising Email",
+      "preferredService": "Preferred Service",
+      "firstServiceDate": "First Service Date",
+      "additionalRequests": "Additional Requests",
+      "owner": "Owner",
+      "status": "Status",
+      "inquiry": "Inquiry",
+      "response": "Response",
+      "orderFormSentAt": "Order Form Sent At",
+      "orderFormSent": "Order Form Sent",
+      "note": "Note",
+      "orderDateTime": "Order Date/Time",
+      "customerStatus": "Customer Status",
+      "customerId": "Customer ID", 
+      "customerType": "Customer Type",
+      "proxyCheckIn": "Proxy Check-In",
+      "matchingListHK": "Matching List (HK)",
+      "matchingListBS": "Matching List (BS)",
+      "serviceDetails": "Service Details",
+      "cleaningArea": "Cleaning Area",
+      "inspectionArea": "Inspection Area",
+      "layout": "Layout",
+      "layoutMap": "Layout Map",
+      "atHomeStatus": "At-Home Status",
+      "pets": "Pets",
+      "other": "Other",
+      "otherRequirementText": "Other requirement",
+      "otherCleaningAreaText": "Other cleaning area",
+      "noteText": "Note"
+    },
+    "placeholders": {
+      "recordId": "Record ID",
+      "date": "2024/8/22",
+      "referrerName": "Referrer Name",
+      "fullNameKatakana": "Full name in Katakana",
+      "fullName": "Full name",
+      "age": "Age",
+      "phone": "000-0000-0000",
+      "email1": "E-mail 1",
+      "email2": "E-mail 2",
+      "postcode": "Postcode",
+      "prefecture": "Prefecture",
+      "address1": "Address1",
+      "address2": "Address 2",
+      "building": "Building",
+      "japaneseDate": "年/月/日",
+      "railwayCompanyJR": "JR",
+      "trainLineExample": "山手線",
+      "trainStationExample": "渋谷",
+      "additionalRequests": "Additional Requests",
+      "inquiry": "Inquiry",
+      "response": "Response",
+      "note": "Note",
+      "inquiryDetails": "Inquiry Details",
+      "updatedBy": "Updated By",
+      "customerId": "Customer ID",
+      "year": "Year",
+      "month": "Month", 
+      "day": "Day",
+      "owner": "コーディネーターA",
+      "otherRequirement": "Other requirement",
+      "otherCleaningArea": "Other cleaning area",
+      "otherInspectionArea": "Other inspection area",
+      "layout": "Layout",
+      "otherPet": "Other Pet"
+    },
+    "loading": {
+      "options": "Loading options...",
+      "failed": "Failed to load dropdowns"
+    },
+    "errors": {
+      "submitFailed": "Failed to create inquiry"
+    }
+  },
+  "adHk": {
+    "basicServiceInfo": "BASIC SERVICE INFO",
+    "serviceDetails": "SERVICE DETAILS",
+    "cleaningArea": "CLEANING AREA",
+    "inspectionArea": "INSPECTION AREA",
+    "other": "OTHER",
+    "note": "NOTE"
+  },
+
+  "adHc": {
+    "basicServiceInfo": "BASIC SERVICE INFO",
+    "serviceDetails": "SERVICE DETAILS",
+    "cleaningArea": "CLEANING AREA",
+    "inspectionArea": "INSPECTION AREA",
+    "other": "OTHER",
+    "note": "NOTE"
+  },
+
+  "adHms": {
+    "basicServiceInfo": "BASIC SERVICE INFO",
+    "serviceDetails": "SERVICE DETAILS",
+    "cleaningArea": "CLEANING AREA",
+    "inspectionArea": "INSPECTION AREA",
+    "other": "OTHER",
+    "note": "NOTE"
   }
 }

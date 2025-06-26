@@ -1,0 +1,162 @@
+@import "../../base/mixins";
+@import "../../base/colors";
+@import "../../base/variables";
+
+// Nested tabs styles for BasicInfo2Tab
+.nestedTabsContainer {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+}
+
+.nestedTabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0;
+  overflow-x: auto;
+  align-items: center;
+
+  &::-webkit-scrollbar {
+    height: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 1px;
+  }
+
+  // Make tabs vertical on small screens
+  @include respond-to('small') {
+    flex-direction: column;
+    align-items: stretch;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: visible;
+    overflow-y: visible;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+.nestedTabItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 32px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: fit-content;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #6b7280;
+  flex-shrink: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &:hover {
+    color: $primary;
+    border-bottom-color: $primary-light;
+  }
+
+  &.activeNested {
+    color: $primary;
+    border-bottom-color: $primary;
+    font-weight: 600;
+  }
+
+  // Vertical layout for small screens
+  @include respond-to('small') {
+    justify-content: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: none;
+    width: 100%;
+    min-width: auto;
+    white-space: normal;
+
+    &:hover {
+      border-bottom-color: $primary-light;
+      background-color: #f8fafc;
+    }
+
+    &.activeNested {
+      border-bottom-color: $primary;
+      background-color: #f1f5f9;
+    }
+
+    &:last-child {
+      border-bottom: none;
+      
+      &.activeNested {
+        border-bottom: 1px solid $primary;
+      }
+    }
+  }
+}
+
+.nestedTabLabel {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-align: center;
+  line-height: 1.2;
+
+  @include respond-to('small') {
+    text-align: left;
+  }
+}
+
+.nestedTabContent {
+  background: transparent;
+  border: none;
+  padding-bottom: 20px;
+  min-height: 300px;
+  box-shadow: none;
+
+  @include respond-to('small') {
+    padding-bottom: 16px;
+    min-height: 250px;
+  }
+}
+
+.nestedTabContentInner {
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px;
+
+    @include respond-to('small') {
+      font-size: 15px;
+    }
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+
+    @include respond-to('small') {
+      font-size: 13px;
+    }
+  }
+}
+
+
+
+

@@ -328,10 +328,177 @@
     "rescheduling": "日程変更申請",
     "cancel": "キャンセル申請",
     "pafDownload": "PDFダウンロード",
-    "submit": "送信"
+    "submit": "送信",
+    "edit": "編集",
+    "delete": "削除",
+    "register": "登録"
   },
 
   "pleaseSelect": "選択してください",
+
+  "admin-form": {
+    "labels": {
+      "recordId": "レコード番号",
+      "inquiryDateTime": "問合せ日時",
+      "assignee": "対応者",
+      "channel": "問合せ媒体",
+      "referralSource": "紹介元",
+      "referrerName": "紹介者名",
+      "leadStatus": "リードの状況",
+      "contacterType": "属性",
+      "firstServiceDate": "初回サービス希望日",
+      "additionalRequests": "その他ご要望",
+      "inquiry": "問合せ",
+      "response": "回答",
+      "status": "ステータス",
+      "orderFormSentAt": "オーダーフォーム送信日時",
+      "orderFormSent": "オーダーフォーム送信",
+      "orderDateTime": "申込日時",
+      "customerStatus": "顧客ステータス",
+      "customerId": "利用者番号",
+      "fullNameKatakana": "セイメイ",
+      "fullName": "姓名",
+      "customerType": "ご利用者情報",
+      "dateOfBirth": "生年月日",
+      "age": "歳",
+      "gender": "性別",
+      "phone1": "電話番号 1",
+      "phone2": "電話番号 2", 
+      "phone3": "電話番号 3",
+      "type": "属性",
+      "email1": "メールアドレス",
+      "email2": "メールアドレス",
+      "address": "住所",
+      "trainStation": "最寄り駅",
+      "language": "言語",
+      "advertisingEmail": "広告メール",
+      "preferredService": "ご希望のサービス",
+      "proxyCheckIn": "代理チェックイン",
+      "matchingListHK": "マッチングリスト（HK）",
+      "matchingListBS": "マッチングリスト（BS）",
+      "owner": "担当者",
+      "serviceDetails": "サービス内容",
+      "cleaningArea": "掃除場所",
+      "inspectionArea": "点検場所",
+      "layout": "間取り",
+      "layoutMap": "間取り図",
+      "atHomeStatus": "在宅状況",
+      "pets": "ペット",
+      "otherRequirementText": "その他の業務内容",
+      "otherCleaningAreaText": "その他の掃除場所",
+      "noteText": "備考",
+      "note": "備考"
+    },
+    "placeholders": {
+      "recordId": "レコード番号",
+      "referrerName": "紹介者名",
+      "customerId": "利用者番号",
+      "fullNameKatakana": "セイメイ",
+      "fullName": "姓名",
+      "phone": "000-0000-0000",
+      "email1": "メールアドレス",
+      "postcode": "郵便番号",
+      "prefecture": "都道府県",
+      "address1": "住所",
+      "building": "マンション名",
+      "japaneseDate": "年/月/日",
+      "railwayCompanyJR": "JR",
+      "trainLineExample": "山手線",
+      "trainStationExample": "渋谷",
+      "language": "言語",
+      "additionalRequests": "その他ご要望",
+      "inquiry": "問合せ",
+      "response": "回答",
+      "note": "備考",
+      "owner": "対応者",
+      "otherRequirement": "その他",
+      "otherCleaningArea": "その他",
+      "otherPet": "その他",
+      "layout": "間取り"
+    }
+  },
+
+  "adInquiryCreate": {
+    "addNew": "新規登録",
+    "firstInquiryInfo": "初回問合せ情報",
+    "inquirerInfo": "お問合せ者情報",
+    "inquiryDetails": "問合せ内容",
+    "inquiryResponse": "問合せ対応",
+    "order": "お申込み",
+    "tabs": {
+      "inquiry": "お問合せ情報",
+      "basicInfo1": "ご登録基本情報①",
+      "basicInfo2": "ご登録基本情報②",
+      "contract": "ご契約情報",
+      "quotation": "お見積りの情報",
+      "invoice": "ご請求情報",
+      "history": "対応履歴"
+    },
+    "nestedTabs": {
+      "hk": "HK",
+      "bs": "BS", 
+      "hc": "HC",
+      "introducedTalent": "紹介人材",
+      "hms": "HMS"
+    },
+    "gridHeaders": {
+      "number": "#",
+      "date": "追加日時",
+      "railwayCompany": "利用会社",
+      "trainLine": "利用路線",
+      "trainStation": "最寄り駅",
+      "action": "操作",
+      "inquiryDateUpdated": "問合せ日/最終更新日",
+      "assigneeUpdatedBy": "対応者/最終更新者",
+      "inquiryDetails": "問合せ内容",
+      "response": "回答内容",
+      "status": "ステータス",
+      "orderFormSentAt": "オーダーフォーム送信日時"
+    }
+  },
+
+  "adBasicInfo1": {
+    "orderInfo": "申込情報",
+    "inquiryInfo": "ご利用者情報",
+    "keyInOurPossession": "鍵情報",
+    "signalStatus": "電波状況",
+    "other": "その他",
+    "note": "備考",
+    "gridHeaders": {
+      "dateOfReceived": "お預かり日",
+      "dateOfReturned": "ご返却日",
+      "staffName": "スタッフ",
+      "status": "ステータス",
+      "receipt": "預かり証"
+    }
+  },
+
+  "adHk": {
+    "basicServiceInfo": "サービス基本情報",
+    "serviceDetails": "サービス内容",
+    "cleaningArea": "掃除場所",
+    "inspectionArea": "点検場所",
+    "other": "その他",
+    "note": "備考"
+  },
+
+  "adHc": {
+    "basicServiceInfo": "サービス基本情報",
+    "serviceDetails": "サービス内容",
+    "cleaningArea": "掃除場所",
+    "inspectionArea": "点検場所",
+    "other": "その他",
+    "note": "備考"
+  },
+
+  "adHms": {
+    "basicServiceInfo": "サービス基本情報",
+    "serviceDetails": "サービス内容",
+    "cleaningArea": "掃除場所",
+    "inspectionArea": "点検場所",
+    "other": "その他",
+    "note": "備考"
+  },
   
   "cnTermsAndConditions": {
     "title": "利用規約",

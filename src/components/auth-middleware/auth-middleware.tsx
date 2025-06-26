@@ -112,7 +112,6 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
 
     // Handle admin routes
     if (userRole === USER_TYPE.admin) {
-      // Admin can access both client and admin routes
       const isAdminRoute = [...ADMIN_ROUTES].some(route => currentPath.startsWith(route));
       if (!isAdminRoute) {
         router.push("/unauthenticated");

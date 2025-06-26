@@ -126,14 +126,18 @@
 .fullHeightTextArea {
   height: 100% !important;
   min-height: 100px !important;
+}
 
-  textarea {
-    height: 100% !important;
-    min-height: 100px !important;
+.orderStatusContainer {
+  @include respond-to("small") {
+    margin-bottom: 20px;
   }
 }
 
 // Grid layouts
+// Usage: Apply .gridHeader to table headers and .gridRow to table rows
+// Automatic alternating row colors will be applied
+// Use .rowNumber class for the first column to display row numbers
 .gridHeader {
   display: grid;
   margin-bottom: 8px;
@@ -151,14 +155,49 @@
   gap: 10px;
   padding: 10px;
   border: 1px solid #dee2e6;
+  overflow: hidden;
+  
+  // Alternating row colors - automatically applied
+  &:nth-child(even) {
+    background-color: $whiteSmoke;
+  }
+  
+  &:nth-child(odd) {
+    background-color: $white;
+  }
+}
+
+// Row number styling - use for first column in tables
+.rowNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 14px;
 }
 
 // Train station grid
 .trainStationGrid {
-  grid-template-columns: 50px 1fr 1fr 1fr 1fr auto;
+  grid-template-columns: 50px 1fr 1fr 1fr 1fr 200px;
+  
+  .gridRow > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    width: 100%;
+    
+    button {
+      padding: 6px 12px;
+      font-size: 12px;
+      min-width: 70px;
+    }
+  }
 
   // Tablet view - 2 columns
-  @media (max-width: 991px) {
+  @include respond-to("large") {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
 
@@ -238,10 +277,16 @@
 
 // Inquiry records grid
 .inquiryRecordsGrid {
-  grid-template-columns: 50px 1fr 1fr 2fr 2fr 1fr auto;
+  grid-template-columns: 50px 1fr 1fr 2fr 2fr 1fr 100px;
+  
+  .gridRow > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   // Convert to card layout starting from medium screens (768px and above)
-  @media (max-width: 991px) {
+  @include respond-to("large") {
     display: block;
 
     &.gridHeader {
@@ -316,12 +361,98 @@
   }
 }
 
+// Key possession records grid (for BasicInfo1Tab)
+.keyPossessionGrid {
+  grid-template-columns: 50px 1fr 1fr 1.5fr 1fr 60px 200px;
+  
+  .gridRow > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  // Convert to card layout starting from medium screens (768px and above)
+  @include respond-to("large") {
+    display: block;
+
+    &.gridHeader {
+      display: none;
+    }
+
+    &.gridRow {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: block;
+
+      > div {
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+          text-align: right;
+        }
+
+        &:before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #6c757d;
+          font-size: 12px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        &:nth-child(1):before {
+          content: "ROW #";
+        }
+        &:nth-child(2):before {
+          content: "DATE OF RECEIVED";
+        }
+        &:nth-child(3):before {
+          content: "DATE OF RETURNED";
+        }
+        &:nth-child(4):before {
+          content: "STAFF NAME";
+        }
+        &:nth-child(5):before {
+          content: "STATUS";
+        }
+        &:nth-child(6):before {
+          content: "RECEIPT";
+        }
+        &:nth-child(7):before {
+          content: "ACTION";
+          text-align: center;
+        }
+
+        &:nth-child(7) {
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+
+  // Full width buttons on small screens only
+  @include respond-to("small") {
+    .deleteButton {
+      width: 100%;
+    }
+  }
+}
+
 // Order records grid
 .orderRecordsGrid {
   grid-template-columns: 50px 1fr 1fr 1fr 1fr;
 
   // Tablet view - 2 columns
-  @media (max-width: 991px) {
+  @include respond-to("large") {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
@@ -424,6 +555,22 @@
   }
 }
 
+// Register button styling
+.registerButton {
+  background-color: $ad-primary-color !important;
+  border-color: $ad-primary-color !important;
+  color: white !important;
+  
+  &:hover {
+    background-color: darken($ad-primary-color, 10%) !important;
+    border-color: darken($ad-primary-color, 10%) !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(78, 93, 110, 0.25) !important;
+  }
+}
+
 // Make all rows single column on mobile
 .row {
   @media (max-width: 767px) {
@@ -456,8 +603,26 @@
   border-radius: 4px;
   min-width: 30px;
   height: 30px;
-  font-size: 10px;
+  font-size: 14px;
   margin: auto;
+  text-align: center;
+}
+
+// Fix grid header alignment
+.gridHeader {
+  > div:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  > div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
 }
 
 // Button component mobile responsiveness will be handled by the Button component itself
@@ -577,4 +742,47 @@
 
 .submitButton {
   background-color: $primary;
+}
+
+// Add button styling for plus icons
+.addButton {
+  background-color: $ad-primary-color !important;
+  border-color: $ad-primary-color !important;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 8px !important;
+
+  &.danger {
+    background-color: $danger !important;
+    border-color: $danger !important;
+
+    &:hover {
+      background-color: darken($danger, 10%) !important;
+      border-color: darken($danger, 10%) !important;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
+    }
+  }
+  
+  &:hover {
+    background-color: darken($ad-primary-color, 10%) !important;
+    border-color: darken($ad-primary-color, 10%) !important;
+    color: white !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(78, 93, 110, 0.25) !important;
+    color: white !important;
+  }
+  
+  &:active {
+    background-color: darken($ad-primary-color, 15%) !important;
+    border-color: darken($ad-primary-color, 15%) !important;
+    color: white !important;
+  }
 }
