@@ -11,6 +11,7 @@ import InputDateField from "../input-date/input-date";
 import CustomDateField from "../custom-date-field/custom-date-field";
 import TextAreaField from "../text-area/text-area";
 import CheckboxField from "../checkbox-field/checkbox-field";
+import RadioField from "../radio-field/radio-field";
 
 interface FormProps {
   children: ReactNode;
@@ -173,7 +174,8 @@ export const Form: React.FC<FormProps> = ({
             child.type === SelectField ||
             child.type === InputDateField ||
             child.type === CustomDateField ||
-            child.type === CheckboxField
+            child.type === CheckboxField ||
+            child.type === RadioField
           ) {
             if (validations) {
               let checkValue = value;
@@ -181,6 +183,11 @@ export const Form: React.FC<FormProps> = ({
               // Special handling for CheckboxField
               if (child.type === CheckboxField) {
                 checkValue = selectedValues || [];
+              }
+              
+              // Special handling for RadioField
+              if (child.type === RadioField) {
+                checkValue = value || '';
               }
 
               // Special handling for date fields
@@ -204,12 +211,15 @@ export const Form: React.FC<FormProps> = ({
               );
 
               if (error) {
-                console.log('Validation error for field:', name, 'error:', error);
+                console.log('Validation error for field:', name, 'error:', error, 'value:', checkValue, 'type:', child.type?.name);
                 newErrors[name] = error;
                 formValid = false;
                 if (!firstInvalidField) {
                   firstInvalidField = name;
+                  console.log('Setting firstInvalidField to:', name);
                 }
+              } else {
+                console.log('Field passed validation:', name, 'value:', checkValue);
               }
             }
           } else if (child.props && child.props.children) {
@@ -226,16 +236,94 @@ export const Form: React.FC<FormProps> = ({
       setErrors(newErrors);
     }
 
-    if (firstInvalidField && fieldRefs.current[firstInvalidField]) {
-      const elementPosition =
-        (fieldRefs.current[firstInvalidField]?.getBoundingClientRect()
-          .top as any) + window.pageYOffset;
+    // Debug logging for field refs and validation
+    console.log('firstInvalidField:', firstInvalidField);
+    console.log('fieldRefs.current:', fieldRefs.current);
+    console.log('Available field refs:', Object.keys(fieldRefs.current));
 
-      window.scrollTo({
-        top: elementPosition - 100,
-        behavior: "smooth",
-      });
-      fieldRefs.current[firstInvalidField]?.focus();
+    if (firstInvalidField) {
+      const fieldElement = fieldRefs.current[firstInvalidField];
+      console.log(`Field element for ${firstInvalidField}:`, fieldElement);
+      
+      if (fieldElement) {
+        // Check if the element has getBoundingClientRect method
+        if (typeof fieldElement.getBoundingClientRect === 'function') {
+          console.log('Scrolling to field:', firstInvalidField);
+          const elementPosition = fieldElement.getBoundingClientRect().top + window.pageYOffset;
+
+          window.scrollTo({
+            top: elementPosition - 100,
+            behavior: "smooth",
+          });
+          
+          // Try to focus on the element or its first focusable child
+          if (typeof fieldElement.focus === 'function') {
+            fieldElement.focus();
+          } else {
+            // For elements that can't be focused directly (like divs), try to focus the first input
+            const firstInput = fieldElement.querySelector('input, select, textarea') as HTMLElement;
+            if (firstInput && typeof firstInput.focus === 'function') {
+              firstInput.focus();
+            }
+          }
+        } else {
+          console.warn(`Field element for ${firstInvalidField} doesn't have getBoundingClientRect method`, fieldElement);
+        }
+      } else {
+        console.warn(`No field element found for ${firstInvalidField}. Available refs:`, Object.keys(fieldRefs.current));
+        
+        // Try to find the field by querying the DOM directly
+        const domElement = document.querySelector(`[name="${firstInvalidField}"], [data-testid*="${firstInvalidField}"], input[name="${firstInvalidField}"]`) as HTMLElement;
+        if (domElement) {
+          console.log('Found field via DOM query:', domElement);
+          
+          // Check if the field is inside a collapsed accordion
+          const accordionPanel = domElement.closest('[class*="accordionPanel"]');
+          if (accordionPanel) {
+            console.log('Field is inside accordion panel:', accordionPanel);
+            
+            // Check if the accordion panel is closed
+            const isClosed = accordionPanel.classList.contains('panelClosed') || 
+                           accordionPanel.className.includes('panelClosed') ||
+                           !accordionPanel.classList.contains('panelOpen');
+            
+            if (isClosed) {
+              // Try to find and click the accordion header to open it
+              const accordionItem = accordionPanel.parentElement;
+              const accordionHeader = accordionItem?.querySelector('[class*="accordionLabel"]');
+              
+                              if (accordionHeader && accordionHeader instanceof HTMLElement) {
+                  console.log('Found accordion header, clicking to open:', accordionHeader);
+                  accordionHeader.click();
+                  
+                  // Wait a bit for accordion animation to complete before scrolling
+                  setTimeout(() => {
+                    const elementPosition = domElement.getBoundingClientRect().top + window.pageYOffset;
+                    window.scrollTo({
+                      top: elementPosition - 100,
+                      behavior: "smooth",
+                    });
+                    if (domElement.focus) {
+                      domElement.focus();
+                    }
+                  }, 300);
+                  return;
+                }
+              }
+            }
+          
+          const elementPosition = domElement.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({
+            top: elementPosition - 100,
+            behavior: "smooth",
+          });
+          if (domElement.focus) {
+            domElement.focus();
+          }
+        } else {
+          console.warn(`Could not find field ${firstInvalidField} in DOM either`);
+        }
+      }
     }
 
     return formValid;
@@ -259,6 +347,8 @@ export const Form: React.FC<FormProps> = ({
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
         if (child.type === CheckboxField && child.props.name === name) {
+          validateInput(child.props);
+        } else if (child.type === RadioField && child.props.name === name) {
           validateInput(child.props);
         } else if (
           (child.type === InputField ||
@@ -297,6 +387,8 @@ export const Form: React.FC<FormProps> = ({
       if (React.isValidElement(child)) {
         if (child.type === CheckboxField && child.props.name === name) {
           validateInput(child.props);
+        } else if (child.type === RadioField && child.props.name === name) {
+          validateInput(child.props);
         } else if (
           (child.type === InputField ||
           child.type === TextAreaField ||
@@ -325,6 +417,18 @@ export const Form: React.FC<FormProps> = ({
               handleInputChange(child.props.name, values);
             },
             ref: (el: any) => (fieldRefs.current[child.props.name] = el),
+          });
+        } else if (child.type === RadioField) {
+          return React.cloneElement(child as any, {
+            errorText: (errors && errors[child.props.name]) || undefined,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              if (child.props.onChange) child.props.onChange(e);
+              handleInputChange(child.props.name, e.target.value);
+            },
+            ref: (el: any) => {
+              console.log('Setting ref for RadioField:', child.props.name, el);
+              fieldRefs.current[child.props.name] = el;
+            },
           });
         } else if (
           child.type === InputField ||

@@ -1000,7 +1000,7 @@ export default function BasicInfo2BSPage() {
                       </div>
 
                       <div className="row g-1 mb-3">
-                        <div className="col-12">
+              <div className="col-12">
                           <TextAreaField
                             name={`child${child.id}ParentingPolicy`}
                             label="Parenting Policy / Requests For Sitter"
@@ -1346,12 +1346,12 @@ export default function BasicInfo2BSPage() {
                     className={styles.registerButton}
                     htmlType="submit"
                   />
-                </div>
               </div>
             </div>
+          </div>
           </Form>
         </div>
       </BasicInfo2Tab>
     </InquiryTabLayout>
   );
-}
+} 

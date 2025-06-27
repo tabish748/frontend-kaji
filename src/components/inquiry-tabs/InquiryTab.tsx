@@ -388,6 +388,7 @@ const InquiryTab: React.FC = () => {
                 value={formData.recordId}
                 onChange={(e) => handleInputChange("recordId", e.target.value)}
                 validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
             <div className="col-sm-12 col-lg-6 col-xl-3">
@@ -402,12 +403,14 @@ const InquiryTab: React.FC = () => {
                       handleInputChange("inquiryDate", e.target.value)
                     }
                     validations={[{ type: "required" }]}
+                    tag={[{ value: "required", label: "Required" }]}
                   />
                 </div>
                 <div className={styles.timeField}>
                   <InputField
                     name="inquiryTime"
                     type="time"
+                    label={""}
                     value={formData.inquiryTime}
                     onChange={(e) =>
                       handleInputChange("inquiryTime", e.target.value)
@@ -424,6 +427,7 @@ const InquiryTab: React.FC = () => {
                 value={formData.assignee}
                 onChange={(e) => handleInputChange("assignee", e.target.value)}
                 validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
             <div className="col-sm-12 col-lg-6 col-xl-3">
@@ -434,6 +438,7 @@ const InquiryTab: React.FC = () => {
                 value={formData.channel}
                 onChange={(e) => handleInputChange("channel", e.target.value)}
                 validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
           </div>
@@ -490,6 +495,7 @@ const InquiryTab: React.FC = () => {
                   handleInputChange("fullNameKatakana", e.target.value)
                 }
                 validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
             <div className="col-12 col-sm-6 col-md-6 col-lg-3  ">
@@ -500,6 +506,7 @@ const InquiryTab: React.FC = () => {
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
                 validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
             <div className="col-12 col-sm-12 col-md-12 col-lg-6">
@@ -511,6 +518,8 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("contacterType", e.target.value)
                 }
+                validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
           </div>
@@ -555,6 +564,8 @@ const InquiryTab: React.FC = () => {
                 options={genderOptions}
                 selectedValue={formData.gender}
                 onChange={(e) => handleInputChange("gender", e.target.value)}
+                validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
           </div>
@@ -587,6 +598,7 @@ const InquiryTab: React.FC = () => {
                         handleInputChange("phone1", e.target.value)
                       }
                       validations={[{ type: "required" }]}
+                      tag={[{ value: "required", label: "Required" }]}
                     />
                   </div>
                 </div>
@@ -706,6 +718,7 @@ const InquiryTab: React.FC = () => {
                         handleInputChange("email1", e.target.value)
                       }
                       validations={[{ type: "required" }, { type: "email" }]}
+                      tag={[{ value: "required", label: "Required" }]}
                     />
                   </div>
               </div>
@@ -754,6 +767,7 @@ const InquiryTab: React.FC = () => {
                       handleInputChange("postcode", e.target.value)
                     }
                     validations={[{ type: "required" }]}
+                    tag={[{ value: "required", label: "Required" }]}
                   />
                 </div>
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
@@ -767,6 +781,7 @@ const InquiryTab: React.FC = () => {
                       handleInputChange("prefecture", e.target.value)
                     }
                     validations={[{ type: "required" }]}
+                    tag={[{ value: "required", label: "Required" }]}
                   />
                 </div>
                 <div className="col-12 col-sm-6 col-md-3 col-lg-4">
@@ -779,6 +794,7 @@ const InquiryTab: React.FC = () => {
                       handleInputChange("address1", e.target.value)
                     }
                     validations={[{ type: "required" }]}
+                    tag={[{ value: "required", label: "Required" }]}
                   />
                 </div>
                 <div className="col-12 col-sm-6 col-md-3 col-lg-4">
@@ -912,6 +928,8 @@ const InquiryTab: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("advertisingEmail", e.target.value)
                 }
+                validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
           </div>
@@ -931,6 +949,8 @@ const InquiryTab: React.FC = () => {
                 onChange={(values) =>
                   handleInputChange("preferredServices", values)
                 }
+                validations={[{ type: "required" }]}
+                tag={[{ value: "required", label: "Required" }]}
               />
             </div>
           </div>
@@ -996,6 +1016,7 @@ const InquiryTab: React.FC = () => {
                   <InputField
                     name="responseTime"
                     type="time"
+                    label={t("admin-form.labels.time")}
                     value={formData.responseTime}
                     onChange={(e) =>
                       handleInputChange("responseTime", e.target.value)

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import styles from "../../styles/components/molecules/custom-select.module.scss";
+import inputStyles from "../../styles/components/atoms/input.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
 
 interface SelectFieldProps {
@@ -9,7 +10,7 @@ interface SelectFieldProps {
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
-  errorText?: string;
+  errorText?: string | null;
   placeholder?: string;
   className?: string;
   name?: string;
@@ -40,7 +41,8 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
   onClear,
   shadowPlaceholder,
   loading = false,
-  icon
+  icon,
+  validations
 }, forwardedRef) => {
   const { t } = useLanguage();
 
@@ -149,12 +151,12 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
   const renderTags = () => {
     if (Array.isArray(tag)) {
       return tag.map((item, index) => (
-        <span key={index} className={`${styles.tag} ${getTagClass(item.value)}`}>
+        <span key={index} className={`${inputStyles.tag} ${inputStyles[getTagClass(item.value)]}`}>
           {item.label}
         </span>
       ));
     } else if (typeof tag === 'string') {
-      return <span className={`${styles.tag} ${styles.tagDefault}`}>{tag}</span>;
+      return <span className={`${inputStyles.tag} ${inputStyles.tagDefault}`}>{tag}</span>;
     }
     return null;
   };
@@ -223,11 +225,11 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
 
   return (
     <div
-      className={`${styles.selectWrapper} ${className}`}
+      className={`${inputStyles.inputWrapper} ${styles.selectWrapper} ${className}`}
       hidden={hidden}
       ref={wrapperRef}
     >
-      {label && <label htmlFor={name}>
+      {label && <label htmlFor={name} className={`${label ? "" : "d-none"}`}>
         {label && <>{label}</>}
         {renderTags()}
       </label>}
@@ -272,22 +274,22 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
             onKeyDown={handleKeyDown} // Add keydown event listener
           />
           <div
-      // className={selectedOptionIndex === null ? styles.selectedOption : ''}
-      data-value={''}
-      onClick={(e) => {
-        setSelectedLabel('');
-        setSelectedOptionIndex(null);
-        setIsOpen(false);
-        if (onChange) {
-          const event = {
-            target: { value: "", name: name },
-          };
-          onChange(event as unknown as React.ChangeEvent<HTMLSelectElement>);
-        }  
-      }}
-    >
-      
-    </div>
+            className={selectedOptionIndex === null ? styles.selectedOption : ''}
+            data-value={''}
+            onClick={(e) => {
+              setSelectedLabel('');
+              setSelectedOptionIndex(null);
+              setIsOpen(false);
+              if (onChange) {
+                const event = {
+                  target: { value: "", name: name },
+                };
+                onChange(event as unknown as React.ChangeEvent<HTMLSelectElement>);
+              }  
+            }}
+          >
+            {t('pleaseSelect')}
+          </div>
           {filteredOptions.map((option: any, index: any) => (
             <div
               key={index}
@@ -315,7 +317,7 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
           ))}
         </div>
       )}
-      {(errorText && !disabled) && <div className={styles.errorText}>{errorText}</div>}
+      {(errorText && !disabled) && <div className={inputStyles.errorText}>{errorText}</div>}
     </div>
   );
 });

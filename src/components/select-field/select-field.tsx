@@ -1,5 +1,6 @@
 import React, {forwardRef} from 'react';
 import styles from '../../styles/components/atoms/select.module.scss';
+import inputStyles from '../../styles/components/atoms/input.module.scss';
 
 interface SelectFieldProps {
   label?: string;
@@ -57,13 +58,13 @@ const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(({
   const renderTags = () => {
     if (Array.isArray(tag)) {
       return tag.map((item, index) => (
-        <span key={index} className={`${styles.tag} ${getTagClass(item.value)}`}>
+        <span key={index} className={`${inputStyles.tag} ${inputStyles[getTagClass(item.value)]}`}>
           {item.label}
         </span>
       ));
     } else if (typeof tag === 'string') {
       // Render a simple text tag with a default red color
-      return <span className={`${styles.tag} ${styles.tagDefault}`}>{tag}</span>;
+      return <span className={`${inputStyles.tag} ${inputStyles.tagDefault}`}>{tag}</span>;
     }
     return null; 
   };
@@ -88,9 +89,9 @@ const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(({
   };
 
   return (
-    <div className={`${styles.selectWrapper} ${parentClassName}`} hidden={hidden} ref={ref}>
+    <div className={`${inputStyles.inputWrapper} ${styles.selectWrapper} ${parentClassName}`} hidden={hidden} ref={ref}>
     {
-      label &&   <label htmlFor={name}  className={`${labelClassName ? labelClassName : ''}`} >
+      label &&   <label htmlFor={name}  className={`${label ? "" : "d-none"} ${labelClassName ? labelClassName : ''}`} >
       {label && <>{label}</>}
       {/* {tag && <span className={styles.tag}>{tag}</span>} */}
       {renderTags()}
@@ -119,7 +120,7 @@ const SelectField = forwardRef<HTMLDivElement, SelectFieldProps>(({
           ))}
         </select>
       </div>
-      {errorText && <div className={styles.errorText}>{errorText}</div>}
+      {errorText && <div className={inputStyles.errorText}>{errorText}</div>}
     </div>
   );
 });
