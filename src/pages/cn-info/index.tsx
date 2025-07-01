@@ -143,6 +143,24 @@ export default function CnInfo() {
     building: "",
   });
 
+  // Store different_from_customer data separately
+  const [differentFromCustomerData, setDifferentFromCustomerData] = useState({
+    firstName: "",
+    lastName: "",
+    firstNameKana: "",
+    lastNameKana: "",
+    phone1: "",
+    phone2: "",
+    phone3: "",
+    email1: "",
+    email2: "",
+    postalCode: "",
+    prefecture: "",
+    address1: "",
+    address2: "",
+    building: "",
+  });
+
   // Track which billing fields were pre-filled from API
   const [preFilledBillingFields, setPreFilledBillingFields] = useState<
     Record<string, boolean>
@@ -213,7 +231,7 @@ export default function CnInfo() {
       console.error("Error loading dropdown options:", error);
       setToast({
         message: error.message || "Error loading dropdown options",
-        type: "error",
+        type: "fail",
       });
     }
   };
@@ -386,7 +404,7 @@ export default function CnInfo() {
         console.error("Error loading section data:", error);
         setToast({
           message: "Error loading section data",
-          type: "error",
+          type: "fail",
         });
         setLoadingAccordion(null);
         return;
@@ -437,7 +455,7 @@ export default function CnInfo() {
               case 1:
                 console.log("Loading billing data for next accordion");
                 try {
-                  await fetchBillingDataSilent();
+                  await fetchBillingData(false); // Pass false to hide UI elements
                   setLoadedSections((prev) => ({ ...prev, billing: true }));
                   console.log(
                     "Billing data loaded successfully in openNextAccordion"
@@ -452,7 +470,7 @@ export default function CnInfo() {
                 break;
               case 2:
                 console.log("Loading payment data for next accordion");
-                await fetchPaymentDataSilent();
+                await fetchPaymentData(false); // Pass false to hide UI elements
                 setLoadedSections((prev) => ({ ...prev, payment: true }));
                 break;
             }
@@ -478,7 +496,7 @@ export default function CnInfo() {
           console.error("Error loading next section data:", error);
           setToast({
             message: "Error loading section data",
-            type: "error",
+            type: "fail",
           });
         } finally {
           setLoadingAccordion(null);
@@ -503,7 +521,7 @@ export default function CnInfo() {
   const simulateApiDelay = () =>
     new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const fetchCustomerData = async () => {
+  const fetchCustomerData = async (showUI: boolean = true) => {
     try {
       // Get customer ID from localStorage
       const loggedInUser = localStorage.getItem("loggedInUser");
@@ -519,7 +537,7 @@ export default function CnInfo() {
       }
 
       const response = await ApiHandler.request(
-        `/api/customer/show/${customerId}`,
+        `/api/customer/first-time-info/show`,
         "GET",
         null,
         null,
@@ -552,9 +570,15 @@ export default function CnInfo() {
           language: customerData.language
             ? customerData.language.toString()
             : "",
-          birthYear: customerData.dob_year || "",
-          birthMonth: customerData.dob_month || "",
-          birthDay: customerData.dob_day || "",
+          birthYear: customerData.dob_year
+            ? customerData.dob_year.toString()
+            : "",
+          birthMonth: customerData.dob_month
+            ? customerData.dob_month.toString().padStart(2, "0")
+            : "",
+          birthDay: customerData.dob_day
+            ? customerData.dob_day.toString().padStart(2, "0")
+            : "",
           age: customerData.age ? customerData.age.toString() : "",
           advertising: customerData.newsletter_emails
             ? customerData.newsletter_emails.toString()
@@ -584,42 +608,31 @@ export default function CnInfo() {
         });
         setPreFilledFields(filledFields);
 
-        setToast({
-          message: "Customer data loaded successfully",
-          type: "success",
-        });
+        if (showUI) {
+          setToast({
+            message: "Customer data loaded successfully",
+            type: "success",
+          });
+        }
       } else {
         throw new Error("Invalid API response format");
       }
     } catch (error: any) {
       console.log("Error loading customer data:", error);
-      setToast({
-        message: error.message || "Error loading customer data",
-        type: "error",
-      });
+      if (showUI) {
+        setToast({
+          message: error.message || "Error loading customer data",
+          type: "fail",
+        });
+      }
     }
   };
 
-  const fetchBillingData = async () => {
+  const fetchBillingData = async (showUI: boolean = true) => {
     console.log("fetchBillingData function called");
     try {
-      // Get customer ID from localStorage
-      const loggedInUser = localStorage.getItem("loggedInUser");
-      console.log("loggedInUser from localStorage:", loggedInUser);
-      let customerId;
-
-      if (loggedInUser) {
-        const userData = JSON.parse(loggedInUser);
-        customerId = userData.id;
-        console.log("Customer ID:", customerId);
-      }
-
-      if (!customerId) {
-        throw new Error("Customer ID not found in localStorage");
-      }
-
       const response = await ApiHandler.request(
-        `/api/customer/show-billing-info/${customerId}`,
+        `/api/customer/first-time-billing-info/show`,
         "GET",
         null,
         null,
@@ -630,30 +643,32 @@ export default function CnInfo() {
       if (response.success && response.data) {
         const billingData = response.data;
 
-        // Store billing info ID for update logic
-        setBillingInfoId(billingData.id ? billingData.id.toString() : null);
+        // Set billing type from API response
+        const billingType = billingData.billing_contact_info?.toString() || "1";
+        
+        // Get the appropriate data based on billing type
+        const relevantData = billingType === "1" 
+          ? billingData.same_as_customer 
+          : billingData.different_from_customer;
 
+        if (relevantData) {
         // Map API response to form values
         const mappedData = {
-          firstName: billingData.first_name || "",
-          lastName: billingData.last_name || "",
-          firstNameKana: billingData.first_name_kana || "",
-          lastNameKana: billingData.last_name_kana || "",
-          phone1: billingData.phone1 || "",
-          phone2: billingData.phone2 || "",
-          phone3: billingData.phone3 || "",
-          email1: billingData.email1 || "",
-          email2: billingData.email2 || "",
-          postalCode: billingData.post_code || "",
-          prefecture: billingData.prefecture_id
-            ? billingData.prefecture_id.toString()
-            : "",
-          address1: billingData.address1 || "",
-          address2: billingData.address2 || "",
-          building: billingData.apartment_name || "",
-          billingType: billingData.billing_contact_info
-            ? billingData.billing_contact_info.toString()
-            : "2",
+            firstName: relevantData.first_name || "",
+            lastName: relevantData.last_name || "",
+            firstNameKana: relevantData.first_name_kana || "",
+            lastNameKana: relevantData.last_name_kana || "",
+            phone1: relevantData.phone1 || "",
+            phone2: relevantData.phone2 || "",
+            phone3: relevantData.phone3 || "",
+            email1: relevantData.email1 || "",
+            email2: relevantData.email2 || "",
+            postalCode: relevantData.post_code || "",
+            prefecture: relevantData.prefecture_id ? relevantData.prefecture_id.toString() : "",
+            address1: relevantData.address1 || "",
+            address2: relevantData.address2 || "",
+            building: relevantData.apartment_name || "",
+            billingType: billingType,
         };
 
         setBillingFormValues({
@@ -661,69 +676,86 @@ export default function CnInfo() {
           ...mappedData,
         });
 
-        // Store original billing data (excluding billingType)
-        const originalData = {
-          firstName: mappedData.firstName,
-          lastName: mappedData.lastName,
-          firstNameKana: mappedData.firstNameKana,
-          lastNameKana: mappedData.lastNameKana,
-          phone1: mappedData.phone1,
-          phone2: mappedData.phone2,
-          phone3: mappedData.phone3,
-          email1: mappedData.email1,
-          email2: mappedData.email2,
-          postalCode: mappedData.postalCode,
-          prefecture: mappedData.prefecture,
-          address1: mappedData.address1,
-          address2: mappedData.address2,
-          building: mappedData.building,
-        };
-        setOriginalBillingData(originalData);
-
-        // Track which billing fields were pre-filled from API
-        const filledBillingFields: Record<string, boolean> = {};
-        Object.keys(originalData).forEach((key) => {
-          if (originalData[key as keyof typeof originalData]) {
-            filledBillingFields[key] = true;
+          // Store both same_as_customer and different_from_customer data for switching
+          if (billingData.same_as_customer) {
+            const sameAsCustomerData = {
+              firstName: billingData.same_as_customer.first_name || "",
+              lastName: billingData.same_as_customer.last_name || "",
+              firstNameKana: billingData.same_as_customer.first_name_kana || "",
+              lastNameKana: billingData.same_as_customer.last_name_kana || "",
+              phone1: billingData.same_as_customer.phone1 || "",
+              phone2: billingData.same_as_customer.phone2 || "",
+              phone3: billingData.same_as_customer.phone3 || "",
+              email1: billingData.same_as_customer.email1 || "",
+              email2: billingData.same_as_customer.email2 || "",
+              postalCode: billingData.same_as_customer.post_code || "",
+              prefecture: billingData.same_as_customer.prefecture_id ? billingData.same_as_customer.prefecture_id.toString() : "",
+              address1: billingData.same_as_customer.address1 || "",
+              address2: billingData.same_as_customer.address2 || "",
+              building: billingData.same_as_customer.apartment_name || "",
+            };
+            setOriginalBillingData(sameAsCustomerData);
           }
-        });
 
-        // Also track if billingType was pre-filled from API
-        if (billingData.billing_contact_info) {
-          filledBillingFields.billingType = true;
+          // Store different_from_customer data if available
+          if (billingData.different_from_customer) {
+            const differentFromCustomerData = {
+              firstName: billingData.different_from_customer.first_name || "",
+              lastName: billingData.different_from_customer.last_name || "",
+              firstNameKana: billingData.different_from_customer.first_name_kana || "",
+              lastNameKana: billingData.different_from_customer.last_name_kana || "",
+              phone1: billingData.different_from_customer.phone1 || "",
+              phone2: billingData.different_from_customer.phone2 || "",
+              phone3: billingData.different_from_customer.phone3 || "",
+              email1: billingData.different_from_customer.email1 || "",
+              email2: billingData.different_from_customer.email2 || "",
+              postalCode: billingData.different_from_customer.post_code || "",
+              prefecture: billingData.different_from_customer.prefecture_id ? billingData.different_from_customer.prefecture_id.toString() : "",
+              address1: billingData.different_from_customer.address1 || "",
+              address2: billingData.different_from_customer.address2 || "",
+              building: billingData.different_from_customer.apartment_name || "",
+            };
+            // Store in a separate state for different_from_customer data
+            setDifferentFromCustomerData(differentFromCustomerData);
+          }
+
+          // Store billing info ID for update logic
+          setBillingInfoId(relevantData.id ? relevantData.id.toString() : null);
+
+        if (showUI) {
+          setToast({
+            message: "Billing data loaded successfully",
+            type: "success",
+          });
+          }
         }
-
-        setPreFilledBillingFields(filledBillingFields);
-
-        setToast({
-          message: "Billing data loaded successfully",
-          type: "success",
-        });
       } else {
         // No billing data found - this is normal for new customers
         console.log("No billing data found, using default values");
-        setToast({
-          message: "No existing billing data found",
-          type: "info",
-        });
+        if (showUI) {
+          setToast({
+            message: "No existing billing data found",
+            type: "info",
+          });
+        }
       }
     } catch (error: any) {
       console.log("Error loading billing data:", error);
-      // Don't show error toast for 404/not found cases as this is normal
       if (
+        showUI &&
         error.message &&
         !error.message.includes("404") &&
         !error.message.includes("not found")
       ) {
         setToast({
           message: error.message || "Error loading billing data",
-          type: "error",
+          type: "fail",
         });
       }
     }
   };
 
-  const fetchPaymentData = async () => {
+  const fetchPaymentData = async (showUI: boolean = true) => {
     try {
       // Get customer ID from localStorage
       const loggedInUser = localStorage.getItem("loggedInUser");
@@ -739,7 +771,7 @@ export default function CnInfo() {
       }
 
       const response = await ApiHandler.request(
-        `/api/customer/show-payment-info/${customerId}`,
+        `/api/customer/first-time-payment-info/show`,
         "GET",
         null,
         null,
@@ -769,222 +801,43 @@ export default function CnInfo() {
         }
         setPreFilledFields((prev) => ({ ...prev, ...filledPaymentFields }));
 
-        setToast({
-          message: "Payment data loaded successfully",
-          type: "success",
-        });
+        if (showUI) {
+          setToast({
+            message: "Payment data loaded successfully",
+            type: "success",
+          });
+        }
       } else {
         // No payment data found - use default
         console.log("No payment data found, using default values");
-        setToast({
-          message: "No existing payment data found",
-          type: "info",
-        });
+        if (showUI) {
+          setToast({
+            message: "No existing payment data found",
+            type: "info",
+          });
+        }
       }
     } catch (error: any) {
       console.log("Error loading payment data:", error);
       // Don't show error toast for 404/not found cases as this is normal
       if (
+        showUI &&
         error.message &&
         !error.message.includes("404") &&
         !error.message.includes("not found")
       ) {
         setToast({
           message: error.message || "Error loading payment data",
-          type: "error",
+          type: "fail",
         });
       }
-    }
-  };
-
-  // Silent data fetching functions (without loading state and toasts)
-  const fetchBillingDataSilent = async () => {
-    console.log("fetchBillingDataSilent function called");
-    try {
-      // Get customer ID from localStorage
-      const loggedInUser = localStorage.getItem("loggedInUser");
-      console.log(
-        "Silent fetch - loggedInUser from localStorage:",
-        loggedInUser
-      );
-      let customerId;
-
-      if (loggedInUser) {
-        const userData = JSON.parse(loggedInUser);
-        customerId = userData.id;
-      }
-
-      if (!customerId) {
-        throw new Error("Customer ID not found in localStorage");
-      }
-
-      const response = await ApiHandler.request(
-        `/api/customer/show-billing-info/${customerId}`,
-        "GET",
-        null,
-        null,
-        null,
-        true
-      );
-
-      if (response.success && response.data) {
-        const billingData = response.data;
-
-        // Store billing info ID for update logic
-        setBillingInfoId(billingData.id ? billingData.id.toString() : null);
-
-        // Map API response to form values
-        const mappedData = {
-          firstName: billingData.first_name || "",
-          lastName: billingData.last_name || "",
-          firstNameKana: billingData.first_name_kana || "",
-          lastNameKana: billingData.last_name_kana || "",
-          phone1: billingData.phone1 || "",
-          phone2: billingData.phone2 || "",
-          phone3: billingData.phone3 || "",
-          email1: billingData.email1 || "",
-          email2: billingData.email2 || "",
-          postalCode: billingData.post_code || "",
-          prefecture: billingData.prefecture_id
-            ? billingData.prefecture_id.toString()
-            : "",
-          address1: billingData.address1 || "",
-          address2: billingData.address2 || "",
-          building: billingData.apartment_name || "",
-          billingType: billingData.billing_contact_info
-            ? billingData.billing_contact_info.toString()
-            : "2",
-        };
-
-        setBillingFormValues({
-          ...billingFormValues,
-          ...mappedData,
-        });
-
-        // Store original billing data (excluding billingType)
-        const originalData = {
-          firstName: mappedData.firstName,
-          lastName: mappedData.lastName,
-          firstNameKana: mappedData.firstNameKana,
-          lastNameKana: mappedData.lastNameKana,
-          phone1: mappedData.phone1,
-          phone2: mappedData.phone2,
-          phone3: mappedData.phone3,
-          email1: mappedData.email1,
-          email2: mappedData.email2,
-          postalCode: mappedData.postalCode,
-          prefecture: mappedData.prefecture,
-          address1: mappedData.address1,
-          address2: mappedData.address2,
-          building: mappedData.building,
-        };
-        setOriginalBillingData(originalData);
-
-        // Track which billing fields were pre-filled from API
-        const filledBillingFields: Record<string, boolean> = {};
-        Object.keys(originalData).forEach((key) => {
-          if (originalData[key as keyof typeof originalData]) {
-            filledBillingFields[key] = true;
-          }
-        });
-
-        // Also track if billingType was pre-filled from API
-        if (billingData.billing_contact_info) {
-          filledBillingFields.billingType = true;
-        }
-
-        setPreFilledBillingFields(filledBillingFields);
-      } else {
-        // No billing data found - this is normal for new customers
-        console.log("No billing data found in silent fetch");
-      }
-    } catch (error: any) {
-      console.log("Error loading billing data silently:", error);
-    }
-  };
-
-  const fetchPaymentDataSilent = async () => {
-    try {
-      // Get customer ID from localStorage
-      const loggedInUser = localStorage.getItem("loggedInUser");
-      let customerId;
-
-      if (loggedInUser) {
-        const userData = JSON.parse(loggedInUser);
-        customerId = userData.id;
-      }
-
-      if (!customerId) {
-        throw new Error("Customer ID not found in localStorage");
-      }
-
-      const response = await ApiHandler.request(
-        `/api/customer/show-payment-info/${customerId}`,
-        "GET",
-        null,
-        null,
-        null,
-        true
-      );
-
-      if (response.success && response.data) {
-        const paymentData = response.data;
-
-        // Map API response to form values
-        const mappedData = {
-          paymentMethod: paymentData.payment_method
-            ? paymentData.payment_method.toString()
-            : "", // No default - only set if returned from API
-        };
-
-        setPaymentFormValues({
-          ...paymentFormValues,
-          ...mappedData,
-        });
-
-        // Track which payment fields are pre-filled and should be read-only (for silent fetch)
-        const filledPaymentFields: Record<string, boolean> = {};
-        if (paymentData.payment_method) {
-          filledPaymentFields.paymentMethod = true;
-        }
-        setPreFilledFields((prev) => ({ ...prev, ...filledPaymentFields }));
-      } else {
-        // No payment data found - use default
-        console.log("No payment data found in silent fetch");
-      }
-    } catch (error: any) {
-      console.log("Error loading payment data silently:", error);
     }
   };
 
   const handleSubmit = async (formType: "customer" | "billing" | "payment") => {
     setIsSubmitting(true);
     try {
-      // Validate customer form
       if (formType === "customer") {
-        const newErrors: Record<string, string | null> = {};
-        if (!customerFormValues.gender) {
-          newErrors.gender = "Gender is required";
-        }
-        if (!customerFormValues.railwayCompany1) {
-          newErrors.railwayCompany1 = "Railway company is required";
-        }
-        if (!customerFormValues.trainLine1) {
-          newErrors.trainLine1 = "Train line is required";
-        }
-        if (!customerFormValues.trainStation1) {
-          newErrors.trainStation1 = "Train station is required";
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-          setErrors(newErrors);
-          setToast({
-            message: "Please fill in all required fields",
-            type: "error",
-          });
-          return;
-        }
-
         // Get customer ID from localStorage
         const loggedInUser = localStorage.getItem("loggedInUser");
         let customerId;
@@ -1060,7 +913,7 @@ export default function CnInfo() {
         }
 
         const response = await ApiHandler.request(
-          "/api/customer/first-time-info/update",
+          "/api/customer/first-time-info/save",
           "POST",
           formData,
           null,
@@ -1093,7 +946,6 @@ export default function CnInfo() {
           throw new Error(response.message || "Update failed");
         }
       } else if (formType === "billing") {
-        // Handle billing form submission
         // Get customer ID from localStorage
         const loggedInUser = localStorage.getItem("loggedInUser");
         let customerId;
@@ -1137,7 +989,7 @@ export default function CnInfo() {
         }
 
         const response = await ApiHandler.request(
-          "/api/customer/first-time-billing-info/update",
+          "/api/customer/first-time-billing-info/save",
           "POST",
           formData,
           null,
@@ -1180,7 +1032,6 @@ export default function CnInfo() {
           throw new Error(response.message || "Billing update failed");
         }
       } else if (formType === "payment") {
-        // Handle payment form submission
         // Get customer ID from localStorage
         const loggedInUser = localStorage.getItem("loggedInUser");
         let customerId;
@@ -1200,7 +1051,7 @@ export default function CnInfo() {
         formData.append("payment_method", paymentFormValues.paymentMethod);
 
         const response = await ApiHandler.request(
-          "/api/customer/first-time-payment-info/update",
+          "/api/customer/first-time-payment-info/save",
           "POST",
           formData,
           null,
@@ -1211,6 +1062,24 @@ export default function CnInfo() {
         if (response.success) {
           // Mark payment method as pre-filled after successful submission
           setPreFilledFields((prev) => ({ ...prev, paymentMethod: true }));
+
+          // Update localStorage with new profile completion data if available
+          if (response.data && response.data.profile_completion_steps) {
+            const loggedInUser = localStorage.getItem("loggedInUser");
+            if (loggedInUser) {
+              const userData = JSON.parse(loggedInUser);
+              const updatedUserData = {
+                ...userData,
+                profile_completed: response.data.profile_completed || userData.profile_completed,
+                profile_completion_steps: {
+                  ...userData.profile_completion_steps,
+                  ...response.data.profile_completion_steps
+                }
+              };
+              localStorage.setItem("loggedInUser", JSON.stringify(updatedUserData));
+              console.log("Updated localStorage with new profile completion data:", updatedUserData);
+            }
+          }
 
           setToast({
             message: "Payment information updated successfully",
@@ -1228,7 +1097,7 @@ export default function CnInfo() {
       console.error(`Error submitting ${formType} form:`, error);
       setToast({
         message: error.message || "Submission failed",
-        type: "error",
+        type: "fail",
       });
     } finally {
       setIsSubmitting(false);
@@ -1253,17 +1122,6 @@ export default function CnInfo() {
     }
   };
 
-  // Update billing form when customer form changes if billing type is "same_as_customer"
-  React.useEffect(() => {
-    if (billingFormValues.billingType === "1") {
-      // 1 = same_as_customer
-      setBillingFormValues((prev) => ({
-        ...customerFormValues,
-        billingType: "1",
-      }));
-    }
-  }, [customerFormValues, billingFormValues.billingType]);
-
   const handleBillingInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -1271,28 +1129,21 @@ export default function CnInfo() {
 
     if (name === "billingType") {
       if (value === "1") {
-        // 1 = same_as_customer
-        // Copy customer information to billing form but keep the billingType
+        // 1 = same_as_customer - use same_as_customer data from API
         setBillingFormValues({
-          ...customerFormValues,
+          ...originalBillingData,
           billingType: "1",
         });
       } else {
-        // 2 = different_from_customer - always restore original billing data
-        // Don't use customer data as fallback when switching radio buttons
-        console.log(
-          "Switching to different from customer - restoring original billing data:",
-          originalBillingData
-        );
+        // 2 = different_from_customer - use different_from_customer data from API
         setBillingFormValues({
-          ...originalBillingData,
-          billingType: value,
+          ...differentFromCustomerData,
+          billingType: "2",
         });
       }
     } else {
       // Only allow changes if billingType is "different_from_customer"
       if (billingFormValues.billingType === "2") {
-        // 2 = different_from_customer
         setBillingFormValues((prev) => ({ ...prev, [name]: value }));
       }
     }
@@ -1335,8 +1186,8 @@ export default function CnInfo() {
         />
       )}
 
-      <h1 className={styleHeader.topHeading}>{t("cnInfo.orderForm")}</h1>
       <div className="d-flex flex-column gap-2">
+        <h1 className={styleHeader.topHeading}>{t("cnInfo.orderForm")}</h1>
         <Accordion openIndex={accordionState} onToggle={handleAccordionToggle}>
           {/* Customer Information Accordion */}
           <AccordionItem
@@ -1372,7 +1223,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<FaUser size={12} />}
-                        readOnly={preFilledFields.lastName}
                       />
                       <InputField
                         name="firstName"
@@ -1381,7 +1231,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<FaUser size={12} />}
-                        readOnly={preFilledFields.firstName}
                       />
                     </div>
                     <div className={styles.fieldRow}>
@@ -1394,7 +1243,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<FaUser size={12} />}
-                        readOnly={preFilledFields.lastNameKana}
                       />
                       <InputField
                         name="firstNameKana"
@@ -1405,7 +1253,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<FaUser size={12} />}
-                        readOnly={preFilledFields.firstNameKana}
                       />
                     </div>
                   </div>
@@ -1425,7 +1272,6 @@ export default function CnInfo() {
                       onChange={(e) => handleInputChange("customer", e)}
                       validations={[{ type: "required" }]}
                       icon={<FaPhone size={12} />}
-                      readOnly={preFilledFields.phone1}
                     />
                     <InputField
                       name="phone2"
@@ -1433,7 +1279,6 @@ export default function CnInfo() {
                       value={customerFormValues.phone2}
                       onChange={(e) => handleInputChange("customer", e)}
                       icon={<FaPhone size={12} />}
-                      readOnly={preFilledFields.phone2}
                     />
                     <InputField
                       name="phone3"
@@ -1441,7 +1286,6 @@ export default function CnInfo() {
                       value={customerFormValues.phone3}
                       onChange={(e) => handleInputChange("customer", e)}
                       icon={<FaPhone size={12} />}
-                      readOnly={preFilledFields.phone3}
                     />
                   </div>
                   {/* Email Section */}
@@ -1461,7 +1305,7 @@ export default function CnInfo() {
                       onChange={(e) => handleInputChange("customer", e)}
                       validations={[{ type: "required" }, { type: "email" }]}
                       icon={<MdOutlineAlternateEmail size={12} />}
-                      readOnly={preFilledFields.email1}
+                      disabled={true}
                     />
                     <InputField
                       name="email2"
@@ -1471,7 +1315,6 @@ export default function CnInfo() {
                       onChange={(e) => handleInputChange("customer", e)}
                       validations={[{ type: "email" }]}
                       icon={<MdOutlineAlternateEmail size={12} />}
-                      readOnly={preFilledFields.email2}
                     />
                   </div>
                   {/* Address Section */}
@@ -1491,7 +1334,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<MdOutlineHomeWork size={12} />}
-                        readOnly={preFilledFields.postalCode}
                       />
                       <SelectField
                         name="prefecture"
@@ -1501,7 +1343,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<BiHomeAlt2 size={12} />}
-                        disabled={preFilledFields.prefecture}
                       />
                     </div>
                     <InputField
@@ -1511,7 +1352,6 @@ export default function CnInfo() {
                       onChange={(e) => handleInputChange("customer", e)}
                       validations={[{ type: "required" }]}
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={preFilledFields.address1}
                     />
                     <InputField
                       name="address2"
@@ -1519,7 +1359,6 @@ export default function CnInfo() {
                       value={customerFormValues.address2}
                       onChange={(e) => handleInputChange("customer", e)}
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={preFilledFields.address2}
                     />
                     <InputField
                       name="building"
@@ -1527,7 +1366,6 @@ export default function CnInfo() {
                       value={customerFormValues.building}
                       onChange={(e) => handleInputChange("customer", e)}
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={preFilledFields.building}
                       validations={[{ type: "required" }]}
                     />
                   </div>
@@ -1548,7 +1386,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.railwayCompany1}
                       />
                       <InputField
                         name="trainLine1"
@@ -1557,7 +1394,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.trainLine1}
                       />
                       <InputField
                         name="trainStation1"
@@ -1566,7 +1402,6 @@ export default function CnInfo() {
                         onChange={(e) => handleInputChange("customer", e)}
                         validations={[{ type: "required" }]}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.trainStation1}
                       />
                     </div>
                     <div className={styles.stationGroup}>
@@ -1576,7 +1411,6 @@ export default function CnInfo() {
                         value={customerFormValues.railwayCompany2}
                         onChange={(e) => handleInputChange("customer", e)}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.railwayCompany2}
                       />
                       <InputField
                         name="trainLine2"
@@ -1584,7 +1418,6 @@ export default function CnInfo() {
                         value={customerFormValues.trainLine2}
                         onChange={(e) => handleInputChange("customer", e)}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.trainLine2}
                       />
                       <InputField
                         name="trainStation2"
@@ -1592,7 +1425,6 @@ export default function CnInfo() {
                         value={customerFormValues.trainStation2}
                         onChange={(e) => handleInputChange("customer", e)}
                         icon={<MdOutlineTrain size={12} />}
-                        readOnly={preFilledFields.trainStation2}
                       />
                     </div>
                   </div>
@@ -1617,7 +1449,6 @@ export default function CnInfo() {
                       selectedValue={customerFormValues.gender}
                       onChange={(e) => handleInputChange("customer", e)}
                       className={styles.radioGroup}
-                      disabled={preFilledFields.gender}
                     />
                     {errors.gender && (
                       <div className="text-danger mt-1">{errors.gender}</div>
@@ -1638,7 +1469,6 @@ export default function CnInfo() {
                       value={customerFormValues.birthYear}
                       onChange={handleDateOfBirthChange}
                       icon={<SlCalender size={12} />}
-                      disabled={preFilledFields.birthYear}
                     />
                     <SelectField
                       name="birthMonth"
@@ -1650,7 +1480,6 @@ export default function CnInfo() {
                       value={customerFormValues.birthMonth}
                       onChange={handleDateOfBirthChange}
                       icon={<SlCalender size={12} />}
-                      disabled={preFilledFields.birthMonth}
                     />
                     <SelectField
                       name="birthDay"
@@ -1662,7 +1491,6 @@ export default function CnInfo() {
                       value={customerFormValues.birthDay}
                       onChange={handleDateOfBirthChange}
                       icon={<SlCalender size={12} />}
-                      disabled={preFilledFields.birthDay}
                     />
                     <InputField
                       name="age"
@@ -1671,7 +1499,6 @@ export default function CnInfo() {
                       onChange={(e) => handleInputChange("customer", e)}
                       icon={<SlCalender size={12} />}
                       disabled={true}
-                      readOnly={preFilledFields.age}
                     />
                   </div>
                   {/* Language Section */}
@@ -1684,7 +1511,6 @@ export default function CnInfo() {
                     selectedValue={customerFormValues.language}
                     onChange={(e) => handleInputChange("customer", e)}
                     className={styles.radioGroup}
-                    disabled={preFilledFields.language}
                   />
                   {/* Advertising Email Section */}
                   <div className={styles.label}>
@@ -1709,7 +1535,6 @@ export default function CnInfo() {
                     selectedValue={customerFormValues.advertising}
                     onChange={(e) => handleInputChange("customer", e)}
                     className={styles.radioGroup}
-                    disabled={preFilledFields.advertising}
                   />
                 </div>
                 <div className="d-flex justify-content-center mt-4 mb-2">
@@ -1756,21 +1581,11 @@ export default function CnInfo() {
                       options={
                         dropdownOptions.billingContactType.length > 0
                           ? dropdownOptions.billingContactType
-                          : [
-                              {
-                                label: t("cnInfo.same_as_customer"),
-                                value: "1",
-                              },
-                              {
-                                label: t("cnInfo.different_from_customer"),
-                                value: "2",
-                              },
-                            ]
+                          : []
                       }
                       selectedValue={billingFormValues.billingType}
                       onChange={handleBillingInputChange}
                       className={styles.radioGroup}
-                      disabled={preFilledBillingFields.billingType}
                     />
                   </div>
 
@@ -1795,11 +1610,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<FaUser size={12} />}
-                        readOnly={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.lastName)
-                        }
+                        readOnly={billingFormValues.billingType === "1"}
                       />
                       <InputField
                         name="firstName"
@@ -1812,11 +1623,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<FaUser size={12} />}
-                        readOnly={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.firstName)
-                        }
+                        readOnly={billingFormValues.billingType === "1"}
                       />
                     </div>
                     <div className={styles.fieldRow}>
@@ -1833,11 +1640,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<FaUser size={12} />}
-                        readOnly={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.lastNameKana)
-                        }
+                        readOnly={billingFormValues.billingType === "1"}
                       />
                       <InputField
                         name="firstNameKana"
@@ -1852,11 +1655,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<FaUser size={12} />}
-                        readOnly={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.firstNameKana)
-                        }
+                        readOnly={billingFormValues.billingType === "1"}
                       />
                     </div>
                   </div>
@@ -1880,11 +1679,7 @@ export default function CnInfo() {
                           : undefined
                       }
                       icon={<FaPhone size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.phone1)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                     <InputField
                       name="phone2"
@@ -1892,11 +1687,7 @@ export default function CnInfo() {
                       value={billingFormValues.phone2}
                       onChange={handleBillingInputChange}
                       icon={<FaPhone size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.phone2)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                     <InputField
                       name="phone3"
@@ -1904,11 +1695,7 @@ export default function CnInfo() {
                       value={billingFormValues.phone3}
                       onChange={handleBillingInputChange}
                       icon={<FaPhone size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.phone3)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                   </div>
                   {/* Email Section */}
@@ -1932,11 +1719,6 @@ export default function CnInfo() {
                           : undefined
                       }
                       icon={<MdOutlineAlternateEmail size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.email1)
-                      }
                     />
                     <InputField
                       name="email2"
@@ -1950,11 +1732,7 @@ export default function CnInfo() {
                           : undefined
                       }
                       icon={<MdOutlineAlternateEmail size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.email2)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                   </div>
                   {/* Address Section */}
@@ -1978,11 +1756,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<MdOutlineHomeWork size={12} />}
-                        readOnly={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.postalCode)
-                        }
+                        readOnly={billingFormValues.billingType === "1"}
                       />
                       <SelectField
                         name="prefecture"
@@ -1996,11 +1770,7 @@ export default function CnInfo() {
                             : undefined
                         }
                         icon={<BiHomeAlt2 size={12} />}
-                        disabled={
-                          billingFormValues.billingType === "1" ||
-                          (billingFormValues.billingType === "2" &&
-                            preFilledBillingFields.prefecture)
-                        }
+                        disabled={billingFormValues.billingType === "1"}
                       />
                     </div>
                     <InputField
@@ -2014,11 +1784,7 @@ export default function CnInfo() {
                           : undefined
                       }
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.address1)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                     <InputField
                       name="address2"
@@ -2026,11 +1792,7 @@ export default function CnInfo() {
                       value={billingFormValues.address2}
                       onChange={handleBillingInputChange}
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.address2)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                     />
                     <InputField
                       name="building"
@@ -2038,11 +1800,7 @@ export default function CnInfo() {
                       value={billingFormValues.building}
                       onChange={handleBillingInputChange}
                       icon={<BiHomeAlt2 size={12} />}
-                      readOnly={
-                        billingFormValues.billingType === "1" ||
-                        (billingFormValues.billingType === "2" &&
-                          preFilledBillingFields.building)
-                      }
+                      readOnly={billingFormValues.billingType === "1"}
                       validations={
                         billingFormValues.billingType === "2"
                           ? [{ type: "required" }]
@@ -2100,13 +1858,8 @@ export default function CnInfo() {
                       selectedValue={paymentFormValues.paymentMethod}
                       onChange={(e) => handleInputChange("payment", e)}
                       className={styles.radioGroup}
-                      disabled={preFilledFields.paymentMethod}
+                      validations={[{ type: "required" }]}
                     />
-                    {paymentFormErrors.paymentMethod && (
-                      <div className="text-danger mt-1">
-                        {paymentFormErrors.paymentMethod}
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="d-flex justify-content-center mt-4 mb-2">

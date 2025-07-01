@@ -6,13 +6,32 @@
 // export const FINANCE_EMPLOYEE = "finance_employee"
 
 // Customer public routes (accessible without authentication) - uses customer theme
-export const CUSTOMER_PUBLIC_ROUTES = ["/cn-login", "/cn-contact-form", "/cn-info-child", "/cn-order-acceptance", "/cn-forgot-password","/cn-reset-password", "/sign-up", "/404", "/unauthenticated"];
+export const CUSTOMER_PUBLIC_ROUTES = [
+  "/cn-login",
+  "/cn-contact-form",
+  "/cn-order-acceptance",
+  "/cn-forgot-password",
+  "/cn-reset-password",
+  "/sign-up",
+  "/404",
+  "/unauthenticated",
+];
 
-// Admin public routes (accessible without authentication) - uses admin theme  
-export const ADMIN_PUBLIC_ROUTES = ["/ad-login", "/admin-forgot-password", "/admin-reset-password", "/admin-contact-form", "/404", "/unauthenticated"];
+// Admin public routes (accessible without authentication) - uses admin theme
+export const ADMIN_PUBLIC_ROUTES = [
+  "/ad-login",
+  "/admin-forgot-password",
+  "/admin-reset-password",
+  "/admin-contact-form",
+  "/404",
+  "/unauthenticated",
+];
 
 // All public routes combined (for backward compatibility if needed)
-export const ALL_PUBLIC_ROUTES = [...CUSTOMER_PUBLIC_ROUTES, ...ADMIN_PUBLIC_ROUTES];
+export const ALL_PUBLIC_ROUTES = [
+  ...CUSTOMER_PUBLIC_ROUTES,
+  ...ADMIN_PUBLIC_ROUTES,
+];
 
 export const CUSTOMER_ROUTES = [
   "/",
@@ -29,6 +48,7 @@ export const CUSTOMER_ROUTES = [
   "/cn-request/update-address",
   "/cn-change-password",
   "/cn-info",
+  "/cn-info-child",
 ];
 
 // Backward compatibility

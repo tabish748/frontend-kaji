@@ -105,7 +105,7 @@ export default function CnAbout() {
         console.error("Failed to fetch dropdown options:", error);
         setToast({
           message: "Failed to load form options. Please refresh the page.",
-          type: "error"
+          type: "fail"
         });
       } finally {
         setIsLoadingOptions(false);
@@ -220,12 +220,12 @@ export default function CnAbout() {
         setErrors(error.errors);
         setToast({
           message: Array.isArray(error.errors) ? error.errors : [error.message || "Please check the form for errors"],
-          type: "error"
+          type: "fail"
         });
       } else {
         setToast({
           message: error.message || "An error occurred while submitting the inquiry",
-          type: "error"
+          type: "fail"
         });
       }
     } finally {
@@ -503,10 +503,7 @@ export default function CnAbout() {
                     }))}
                     selectedValues={formValues.selectedServices.map(num => num.toString())}
                     onChange={handleServiceChange}
-                    columnsXl={4}
-                    columnsLg={3}
-                    columnsMd={3}
-                    columnsSm={1}
+                    validations={[{ type: "required" }]}
                   />
                 </div>
               </div>

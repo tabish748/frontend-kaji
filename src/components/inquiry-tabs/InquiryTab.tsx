@@ -361,7 +361,11 @@ const InquiryTab: React.FC = () => {
     dropdownOptions?.represents?.map((item: any) => ({
       value: String(item.value),
       label: item.label,
-    })) || [];
+    })) || [
+      { value: "1", label: "Option 1" },
+      { value: "2", label: "Option 2" },
+      { value: "3", label: "Option 3" },
+    ];
 
   if (loadingDropdowns) return <div>{t("admin-form.loading.options")}</div>;
   if (dropdownError) return <div>{dropdownError}</div>;

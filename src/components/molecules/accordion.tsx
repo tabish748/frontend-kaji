@@ -3,7 +3,7 @@ import styles from "../../styles/components/molecules/accordion.module.scss";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface AccordionItemProps {
-  heading: string;
+  heading: React.ReactNode;
   label: string;
   children: React.ReactNode;
   isOpen?: boolean;
@@ -20,6 +20,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <div className={styles.accordionItem}>
       <button
+        type="button"
         className={styles.accordionLabel}
         onClick={() => {
           console.log("AccordionItem button clicked:", { heading, isOpen });
@@ -28,8 +29,8 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({
         aria-expanded={isOpen}
         aria-controls={`panel-${label}`}
       >
-        <div>
-          {heading}{" "}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {heading}
           {label ? <span className={styles.labelWarn}> {label} </span> : ""}
         </div>
         <span className={styles.accordionIcon}>

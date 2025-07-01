@@ -15,6 +15,7 @@ import bsStyles from "@/styles/components/molecules/bs-tab.module.scss";
 import ApiHandler from "@/app/api-handler";
 import { useLanguage } from "@/localization/LocalContext";
 import { FiPlus, FiMinus } from "react-icons/fi";
+import { calculateAge } from "@/libs/utils";
 
 interface ChildData {
   id: string;
@@ -394,7 +395,7 @@ export default function BasicInfo2BSPage() {
           >
             {/* BASIC SERVICE INFO Section */}
             <div className="form-section mb-4">
-              <h3 className="ad-heading">BASIC SERVICE INFO</h3>
+              <h3 className="ad-heading">{t("bsPage.basicServiceInfo")}</h3>
 
               <div className="row g-1">
                 <div className="col-sm-12 col-lg-6 col-xl-4">
@@ -411,15 +412,15 @@ export default function BasicInfo2BSPage() {
 
             {/* SERVICE DETAILS Section */}
             <div className="form-section mb-4">
-              <h3 className="ad-heading">SERVICE DETAILS</h3>
+              <h3 className="ad-heading">{t("bsPage.serviceDetails")}</h3>
 
               <div className="row g-1 mb-3">
                 <div className="col-sm-12 col-lg-6 col-xl-4">
                   <CustomSelectField
                     name="numBSRequests"
-                    label="No. of BS requests"
+                    label={t('bsPage.noOfBSRequests')}
                     options={[
-                      { value: "", label: "No. of BS requests" },
+                      { value: "", label: t('bsPage.noOfBSRequests') },
                       ...generateGenericOptions(10),
                     ]}
                     value={formData.numBSRequests}
@@ -434,11 +435,11 @@ export default function BasicInfo2BSPage() {
               <div
                 className={`${styles.gridHeader} ${bsStyles.ageTableHeader}`}
               >
-                <div className={bsStyles.centerAlign}>#</div>
-                <div className={bsStyles.centerAlign}>AGE</div>
-                <div className={bsStyles.centerAlign}>GENDER</div>
-                <div className={bsStyles.centerAlign}>NOTE</div>
-                <div className={bsStyles.centerAlign}>ACTION</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.number')}</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.age')}</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.gender')}</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.note')}</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.action')}</div>
               </div>
               {[1, 2].map((index) => (
                 <div
@@ -449,7 +450,7 @@ export default function BasicInfo2BSPage() {
                   <div className="d-flex align-items-center gap-1">
                     <InputField
                       name={`ageDetail${index}Age`}
-                      placeholder="Age"
+                      placeholder={t('bsPage.age')}
                       value=""
                       onChange={() => {}}
                     />
@@ -465,14 +466,14 @@ export default function BasicInfo2BSPage() {
                   <div>
                     <InputField
                       name={`ageDetail${index}Note`}
-                      placeholder="Note"
+                      placeholder={t('bsPage.note')}
                       value=""
                       onChange={() => {}}
                     />
                   </div>
                   <div className="d-flex gap-1">
-                    <Button text="EDIT" type="success" />
-                    <Button text="DELETE" type="danger" />
+                    <Button text={t('bsPage.edit')} type="success" />
+                    <Button text={t('bsPage.delete')} type="danger" />
                   </div>
                 </div>
               ))}
@@ -482,8 +483,8 @@ export default function BasicInfo2BSPage() {
                 <div className="col-md-12">
                   <TextAreaField
                     name="serviceDetailsNote"
-                    label="Note"
-                    placeholder="Note"
+                    label={t('bsPage.note')}
+                    placeholder={t('bsPage.note')}
                     value=""
                     onChange={() => {}}
                     rows={4}
@@ -494,7 +495,7 @@ export default function BasicInfo2BSPage() {
 
             {/* CHILD REGISTRATION FORM Section */}
             <div className="form-section mb-4">
-              <h3 className="ad-heading">CHILD REGISTRATION FORM</h3>
+              <h3 className="ad-heading">{t("bsPage.childRegistrationForm")}</h3>
 
               <div className="row g-1 align-items-center">
                 <div className="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-3">
@@ -502,7 +503,7 @@ export default function BasicInfo2BSPage() {
                     <div className={styles.dateField}>
                       <InputDateField
                         name="childRegistrationSentAt"
-                        label="Child Registration Form Sent At"
+                        label={t('bsPage.childRegistrationFormSentAt')}
                         placeholder={t("admin-form.placeholders.date")}
                         value={formData.childRegistrationSentAt}
                         onChange={(e) =>
@@ -533,7 +534,7 @@ export default function BasicInfo2BSPage() {
                     name="childRegistrationSent"
                     label=""
                     options={[
-                      { value: "sent", label: "Child Registration Form Sent" },
+                      { value: "sent", label: t('bsPage.childRegistrationFormSent') },
                     ]}
                     selectedValues={
                       formData.childRegistrationSent ? ["sent"] : []
@@ -582,10 +583,10 @@ export default function BasicInfo2BSPage() {
               >
                 <div className={bsStyles.centerAlign}>#</div>
                 <div className={bsStyles.centerAlign}>
-                  CHILD REGISTRATION FORM SENT AT
+                  {t('bsPage.childRegistrationFormSentAt')}
                 </div>
-                <div className={bsStyles.centerAlign}>OWNER</div>
-                <div className={bsStyles.centerAlign}>STATUS</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.owner')}</div>
+                <div className={bsStyles.centerAlign}>{t('bsPage.status')}</div>
                 <div className={bsStyles.centerAlign}></div>
               </div>
 
@@ -607,7 +608,7 @@ export default function BasicInfo2BSPage() {
                   <div>
                     <InputField
                       name={`childRegFormOwner${index}`}
-                      placeholder="Owner"
+                      placeholder={t('bsPage.owner')}
                       value=""
                       onChange={() => {}}
                     />
@@ -615,7 +616,7 @@ export default function BasicInfo2BSPage() {
                   <div>
                     <InputField
                       name={`childRegFormStatus${index}`}
-                      placeholder="Status"
+                      placeholder={t('bsPage.status')}
                       value=""
                       onChange={() => {}}
                     />
@@ -650,8 +651,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <InputField
                             name={`child${child.id}FullNameKatakana`}
-                            label="Full name in Katakana"
-                            placeholder="Full name in Katakana"
+                            label={t('bsPage.fullNameKatakana')}
+                            placeholder={t('bsPage.fullNameKatakana')}
                             value={child.fullNameKatakana}
                             onChange={(e) =>
                               handleChildChange(
@@ -665,8 +666,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <InputField
                             name={`child${child.id}FullName`}
-                            label="Full name"
-                            placeholder="Full name"
+                            label={t('bsPage.fullName')}
+                            placeholder={t('bsPage.fullName')}
                             value={child.fullName}
                             onChange={(e) =>
                               handleChildChange(
@@ -682,8 +683,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <InputField
                             name={`child${child.id}NickName`}
-                            label="Nick Name"
-                            placeholder="Nick Name"
+                            label={t('bsPage.nickName')}
+                            placeholder={t('bsPage.nickName')}
                             value={child.nickName}
                             onChange={(e) =>
                               handleChildChange(
@@ -699,60 +700,39 @@ export default function BasicInfo2BSPage() {
                       {/* Date of Birth, Gender, Language Row */}
                       <div className="row g-1 mb-3">
                         <div className="col-12 col-sm-4">
-                          <label className="form-label">Date Of Birth</label>
-                          <div className="d-flex gap-1">
-                            <CustomSelectField
-                              name={`child${child.id}Year`}
-                              options={[
-                                { value: "", label: "Year" },
-                                ...Array.from({ length: 30 }, (_, i) => ({
-                                  value: (
-                                    new Date().getFullYear() - i
-                                  ).toString(),
-                                  label: (
-                                    new Date().getFullYear() - i
-                                  ).toString(),
-                                })),
-                              ]}
-                              value=""
-                              onChange={() => {}}
-                            />
-                            <CustomSelectField
-                              name={`child${child.id}Month`}
-                              options={[
-                                { value: "", label: "Month" },
-                                ...Array.from({ length: 12 }, (_, i) => ({
-                                  value: (i + 1).toString(),
-                                  label: (i + 1).toString(),
-                                })),
-                              ]}
-                              value=""
-                              onChange={() => {}}
-                            />
-                            <CustomSelectField
-                              name={`child${child.id}Day`}
-                              options={[
-                                { value: "", label: "Day" },
-                                ...Array.from({ length: 31 }, (_, i) => ({
-                                  value: (i + 1).toString(),
-                                  label: (i + 1).toString(),
-                                })),
-                              ]}
-                              value=""
-                              onChange={() => {}}
-                            />
-                            <InputField
-                              name={`child${child.id}Age`}
-                              placeholder="Age"
-                              value={child.age}
-                              readOnly
-                            />
+                          <div className="d-flex gap-2 align-items-end">
+                            <div style={{ flex: 1 }}>
+                              <InputDateField
+                                name={`child${child.id}DateOfBirth`}
+                                label={t('bsPage.dateOfBirth')}
+                                placeholder={t('bsPage.dateOfBirth')}
+                                value={child.dateOfBirth}
+                                onChange={(e) => {
+                                  handleChildChange(child.id, "dateOfBirth", e.target.value);
+                                  handleChildChange(
+                                    child.id,
+                                    "age",
+                                    e.target.value ? calculateAge(e.target.value).toString() : ""
+                                  );
+                                }}
+                              />
+                            </div>
+                            <div style={{ width: "80px" }}>
+                              <InputField
+                                name={`child${child.id}Age`}
+                                label={t('bsPage.age')}
+                                placeholder={t('bsPage.age')}
+                                value={child.age}
+                                readOnly
+                                disabled
+                              />
+                            </div>
                           </div>
                         </div>
                         <div className="col-12 col-sm-4">
                           <RadioField
                             name={`child${child.id}Gender`}
-                            label="Gender"
+                            label={t('bsPage.gender')}
                             options={genderOptions}
                             selectedValue={child.gender}
                             onChange={(e) =>
@@ -767,7 +747,7 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <CustomSelectField
                             name={`child${child.id}Language`}
-                            label="Language"
+                            label={t('bsPage.language')}
                             options={languageOptions}
                             value={child.language}
                             onChange={(e) =>
@@ -787,8 +767,8 @@ export default function BasicInfo2BSPage() {
                           <div className="d-flex align-items-end gap-1">
                             <InputField
                               name={`child${child.id}BodyTemperature`}
-                              label="Body Temperature"
-                              placeholder="36.5"
+                              label={t('bsPage.bodyTemperature')}
+                              placeholder={t('bsPage.bodyTemperature')}
                               value={child.bodyTemperature}
                               onChange={(e) =>
                                 handleChildChange(
@@ -812,7 +792,7 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <RadioField
                             name={`child${child.id}Allergies`}
-                            label="Allergies"
+                            label={t('bsPage.allergies')}
                             options={[
                               { value: "yes", label: "Yes (Has Allergies)" },
                               { value: "no", label: "No (Has No Allergies)" },
@@ -830,7 +810,7 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-4">
                           <CustomSelectField
                             name={`child${child.id}AtHomeStatus`}
-                            label="At-home Status"
+                            label={t('bsPage.atHomeStatus')}
                             options={
                               dropdownOptions?.at_home_status?.map(
                                 (item: any) => ({
@@ -850,7 +830,7 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12 col-sm-6">
                           <CustomSelectField
                             name={`child${child.id}HealthStatus`}
-                            label="Health Status"
+                            label={t('bsPage.healthStatus')}
                             options={healthStatusOptions}
                             value={child.healthStatus}
                             onChange={(e) =>
@@ -870,8 +850,8 @@ export default function BasicInfo2BSPage() {
                           <div className="col-12">
                             <TextAreaField
                               name={`child${child.id}AllergiesDetails`}
-                              label="Allergies Details"
-                              placeholder="Allergies Details"
+                              label={t('bsPage.allergiesDetails')}
+                              placeholder={t('bsPage.allergiesDetails')}
                               value={child.allergiesDetails}
                               onChange={(e) =>
                                 handleChildChange(
@@ -891,7 +871,7 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12">
                           <CheckboxField
                             name={`child${child.id}Character`}
-                            label="Character"
+                            label={t('bsPage.character')}
                             options={characterOptions}
                             selectedValues={child.character}
                             onChange={(values) =>
@@ -908,7 +888,7 @@ export default function BasicInfo2BSPage() {
                                   >
                                     <InputField
                                       name={`child${child.id}CharacterOther${index}`}
-                                      placeholder="Other"
+                                      placeholder={t('bsPage.other')}
                                       value={item}
                                       onChange={(e) =>
                                         handleCharacterOtherChange(
@@ -946,8 +926,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12">
                           <TextAreaField
                             name={`child${child.id}FavoriteActivity`}
-                            label="Favorite Activity"
-                            placeholder="Favorite Activity"
+                            label={t('bsPage.favoriteActivity')}
+                            placeholder={t('bsPage.favoriteActivity')}
                             value={child.favoriteActivity}
                             onChange={(e) =>
                               handleChildChange(
@@ -965,8 +945,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12">
                           <TextAreaField
                             name={`child${child.id}AllowedRooms`}
-                            label="Allowed Rooms For Sitting"
-                            placeholder="Allowed Rooms for Sitting"
+                            label={t('bsPage.allowedRoomsForSitting')}
+                            placeholder={t('bsPage.allowedRoomsForSitting')}
                             value={child.allowedRooms}
                             onChange={(e) =>
                               handleChildChange(
@@ -984,8 +964,8 @@ export default function BasicInfo2BSPage() {
                         <div className="col-12">
                           <TextAreaField
                             name={`child${child.id}FirstAidLocation`}
-                            label="First Aid Kit Location (Meds, Thermometer)"
-                            placeholder="First Aid Kit Location (meds, thermometer)"
+                            label={t('bsPage.firstAidKitLocation')}
+                            placeholder={t('bsPage.firstAidKitLocation')}
                             value={child.firstAidLocation}
                             onChange={(e) =>
                               handleChildChange(
@@ -1003,8 +983,8 @@ export default function BasicInfo2BSPage() {
               <div className="col-12">
                           <TextAreaField
                             name={`child${child.id}ParentingPolicy`}
-                            label="Parenting Policy / Requests For Sitter"
-                            placeholder="Parenting Policy / Requests for Sitter"
+                            label={t('bsPage.parentingPolicy')}
+                            placeholder={t('bsPage.parentingPolicy')}
                             value={child.parentingPolicy}
                             onChange={(e) =>
                               handleChildChange(
@@ -1023,18 +1003,12 @@ export default function BasicInfo2BSPage() {
                         <div
                           className={`${styles.gridHeader} ${bsStyles.familyDoctorHeader}`}
                         >
-                          <div className={bsStyles.centerAlign}>#</div>
-                          <div className={bsStyles.centerAlign}>
-                            FAMILY DOCTOR
-                          </div>
-                          <div className={bsStyles.centerAlign}>PHONE</div>
-                          <div className={bsStyles.centerAlign}>
-                            PRIMARY DOCTOR
-                          </div>
-                          <div className={bsStyles.centerAlign}>
-                            HOSPITAL VISITS
-                          </div>
-                          <div className={bsStyles.centerAlign}>ACTION</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.number')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.familyDoctor')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.phone')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.primaryDoctor')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.hospitalVisits')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.action')}</div>
                         </div>
                         {child.familyDoctors.map((doctor, doctorIndex) => (
                           <div
@@ -1047,7 +1021,7 @@ export default function BasicInfo2BSPage() {
                             <div>
                               <InputField
                                 name={`child${child.id}FamilyDoctor${doctorIndex}`}
-                                placeholder="Family doctor"
+                                placeholder={t('bsPage.familyDoctor')}
                                 value={doctor.familyDoctor}
                                 onChange={(e) => {
                                   const newDoctors = [...child.familyDoctors];
@@ -1064,7 +1038,7 @@ export default function BasicInfo2BSPage() {
                             <div>
                               <InputField
                                 name={`child${child.id}DoctorPhone${doctorIndex}`}
-                                placeholder="Phone"
+                                placeholder={t('bsPage.phone')}
                                 value={doctor.phone}
                                 onChange={(e) => {
                                   const newDoctors = [...child.familyDoctors];
@@ -1081,7 +1055,7 @@ export default function BasicInfo2BSPage() {
                             <div>
                               <InputField
                                 name={`child${child.id}PrimaryDoctor${doctorIndex}`}
-                                placeholder="Primary doctor"
+                                placeholder={t('bsPage.primaryDoctor')}
                                 value={doctor.primaryDoctor}
                                 onChange={(e) => {
                                   const newDoctors = [...child.familyDoctors];
@@ -1113,7 +1087,7 @@ export default function BasicInfo2BSPage() {
                             </div>
                             <div className={bsStyles.centerAlign}>
                               <Button
-                                text="DELETE"
+                                text={t('bsPage.delete')}
                                 type="danger"
                                 disabled={child.familyDoctors.length === 1}
                                 onClick={() =>
@@ -1125,7 +1099,7 @@ export default function BasicInfo2BSPage() {
                         ))}
                         <div className={bsStyles.buttonContainer}>
                           <Button
-                            text="Add Primary Doctor Information"
+                            text={t('bsPage.addPrimaryDoctorInformation')}
                             onClick={() => addFamilyDoctor(child.id)}
                             className={styles.registerButton}
                           />
@@ -1137,15 +1111,11 @@ export default function BasicInfo2BSPage() {
                         <div
                           className={`${styles.gridHeader} ${bsStyles.schoolInfoHeader}`}
                         >
-                          <div className={bsStyles.centerAlign}>#</div>
-                          <div className={bsStyles.centerAlign}>
-                            KINDERGARTEN, SCHOOL, AND CRAM SCHOOL INFORMATION
-                          </div>
-                          <div className={bsStyles.centerAlign}>PHONE</div>
-                          <div className={bsStyles.centerAlign}>
-                            SCHOOL COMMUTE
-                          </div>
-                          <div className={bsStyles.centerAlign}>ACTION</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.number')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.kindergartenSchoolCram')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.phone')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.schoolCommute')}</div>
+                          <div className={bsStyles.centerAlign}>{t('bsPage.action')}</div>
                         </div>
                         {child.schoolInfo.map((school, schoolIndex) => (
                           <div key={schoolIndex}>
@@ -1158,7 +1128,7 @@ export default function BasicInfo2BSPage() {
                               <div>
                                 <InputField
                                   name={`child${child.id}SchoolName${schoolIndex}`}
-                                  placeholder="Kindergarten, School, and Cram School Information"
+                                  placeholder={t('bsPage.schoolName')}
                                   value={school.schoolName}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1175,7 +1145,7 @@ export default function BasicInfo2BSPage() {
                               <div>
                                 <InputField
                                   name={`child${child.id}SchoolPhone${schoolIndex}`}
-                                  placeholder="Phone"
+                                  placeholder={t('bsPage.phone')}
                                   value={school.phone}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1189,41 +1159,10 @@ export default function BasicInfo2BSPage() {
                                   }}
                                 />
                               </div>
-                              <div className={bsStyles.centerAlign}>
-                                <input
-                                  type="checkbox"
-                                  checked={school.schoolCommute}
-                                  onChange={(e) => {
-                                    const newSchools = [...child.schoolInfo];
-                                    newSchools[schoolIndex].schoolCommute =
-                                      e.target.checked;
-                                    handleChildChange(
-                                      child.id,
-                                      "schoolInfo",
-                                      newSchools
-                                    );
-                                  }}
-                                />
-                              </div>
-                              <div className={bsStyles.centerAlign}>
-                                <Button
-                                  text="DELETE"
-                                  type="danger"
-                                  disabled={child.schoolInfo.length === 1}
-                                  onClick={() =>
-                                    removeSchoolInfo(child.id, schoolIndex)
-                                  }
-                                />
-                              </div>
-                            </div>
-                            <div
-                              className={`${styles.gridRow} ${bsStyles.schoolInfoAddressRow}`}
-                            >
-                              <div></div>
                               <div>
                                 <InputField
                                   name={`child${child.id}SchoolAddress${schoolIndex}`}
-                                  placeholder="Address"
+                                  placeholder={t('bsPage.address')}
                                   value={school.address}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1237,15 +1176,10 @@ export default function BasicInfo2BSPage() {
                                   }}
                                 />
                               </div>
-                            </div>
-                            <div
-                              className={`${styles.gridRow} ${bsStyles.schoolInfoDetailsRow}`}
-                            >
-                              <div></div>
                               <div>
                                 <InputField
-                                  name={`child${child.id}ClassTeacher${schoolIndex}`}
-                                  placeholder="Class Teacher"
+                                  name={`child${child.id}SchoolClassTeacher${schoolIndex}`}
+                                  placeholder={t('bsPage.classTeacher')}
                                   value={school.classTeacher}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1261,8 +1195,8 @@ export default function BasicInfo2BSPage() {
                               </div>
                               <div>
                                 <InputField
-                                  name={`child${child.id}Grade${schoolIndex}`}
-                                  placeholder="学年年"
+                                  name={`child${child.id}SchoolGrade${schoolIndex}`}
+                                  placeholder={t('bsPage.grade')}
                                   value={school.grade}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1278,8 +1212,8 @@ export default function BasicInfo2BSPage() {
                               </div>
                               <div>
                                 <InputField
-                                  name={`child${child.id}Class${schoolIndex}`}
-                                  placeholder="Class"
+                                  name={`child${child.id}SchoolClass${schoolIndex}`}
+                                  placeholder={t('bsPage.class')}
                                   value={school.class}
                                   onChange={(e) => {
                                     const newSchools = [...child.schoolInfo];
@@ -1293,12 +1227,39 @@ export default function BasicInfo2BSPage() {
                                   }}
                                 />
                               </div>
+                              <div>
+                                <InputField
+                                  name={`child${child.id}SchoolCommute${schoolIndex}`}
+                                  placeholder={t('bsPage.schoolCommute')}
+                                  value={school.schoolCommute ? "Yes" : "No"}
+                                  onChange={(e) => {
+                                    const newSchools = [...child.schoolInfo];
+                                    newSchools[schoolIndex].schoolCommute =
+                                      e.target.value === "Yes";
+                                    handleChildChange(
+                                      child.id,
+                                      "schoolInfo",
+                                      newSchools
+                                    );
+                                  }}
+                                />
+                              </div>
+                              <div className={bsStyles.centerAlign}>
+                                <Button
+                                  text={t('bsPage.delete')}
+                                  type="danger"
+                                  disabled={child.schoolInfo.length === 1}
+                                  onClick={() =>
+                                    removeSchoolInfo(child.id, schoolIndex)
+                                  }
+                                />
+                              </div>
                             </div>
                           </div>
                         ))}
                         <div className={bsStyles.buttonContainer}>
                           <Button
-                            text="Add school information"
+                            text={t('bsPage.addSchoolInformation')}
                             onClick={() => addSchoolInfo(child.id)}
                             className={styles.registerButton}
                           />
@@ -1308,47 +1269,25 @@ export default function BasicInfo2BSPage() {
                   </AccordionItem>
                 ))}
               </Accordion>
-
-              {/* Add Child Button */}
               <div className={bsStyles.addChildButtonContainer}>
                 <Button
-                  text="ADD CHILD"
+                  text={t('bsPage.addChild')}
                   onClick={addChild}
                   className={styles.registerButton}
                 />
               </div>
-            </div>
-
-            {/* NOTE Section */}
-            <div className="form-section mb-4">
-              <h3 className="ad-heading">NOTE</h3>
-
-              <div className="row g-1">
-                <div className="col-md-12">
-                  <TextAreaField
-                    name="note"
-                    label="Note"
-                    placeholder="Note"
-                    value={formData.note}
-                    onChange={(e) => handleInputChange("note", e.target.value)}
-                    rows={6}
-                  />
+              <div className="form-section mb-4">
+                <div className="row">
+                  <div className="col-12 d-flex justify-content-center">
+                    <Button
+                      text={t('bsPage.register')}
+                      className={styles.registerButton}
+                      htmlType="submit"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Submit Button */}
-            <div className="form-section mb-4">
-              <div className="row">
-                <div className="col-12 d-flex justify-content-center">
-                  <Button
-                    text={t("buttons.register")}
-                    className={styles.registerButton}
-                    htmlType="submit"
-                  />
-              </div>
-            </div>
-          </div>
           </Form>
         </div>
       </BasicInfo2Tab>

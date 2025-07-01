@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useRef } from "react";
+import React, { useState, ReactNode, useRef, useEffect } from "react";
 import { Validators } from "../generic-form/validators";
 import InputField from "../input-field/input-field";
 import Button from "../button/button";
@@ -68,6 +68,109 @@ export const Form: React.FC<FormProps> = ({
 
   // Ref to store references to each field
   const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // Helper function to scroll to element and focus
+  const scrollToElement = (element: HTMLElement) => {
+    if (!element) return;
+    
+    try {
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - 100;
+
+      console.log('Scrolling to position:', offsetPosition);
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+      
+      // Focus on the element after a short delay
+      setTimeout(() => {
+        if (typeof element.focus === 'function') {
+          element.focus();
+        } else {
+          // For elements that can't be focused directly, try to focus the first input
+          const focusableElement = element.querySelector('input:not([type="hidden"]), select, textarea, button') as HTMLElement;
+          if (focusableElement && typeof focusableElement.focus === 'function') {
+            focusableElement.focus();
+          }
+        }
+      }, 500);
+    } catch (error) {
+      console.error('Error scrolling to element:', error);
+    }
+  };
+
+  // Auto-scroll to first error when errors are updated externally
+  useEffect(() => {
+    if (errors && Object.keys(errors).length > 0) {
+      const firstErrorField = Object.keys(errors).find(key => errors[key]);
+      
+      if (firstErrorField) {
+        console.log('Errors updated externally, scrolling to first error:', firstErrorField);
+        
+        // Use setTimeout to ensure the errors are rendered first
+        setTimeout(() => {
+          const fieldElement = fieldRefs.current[firstErrorField];
+          
+          if (fieldElement && typeof fieldElement.getBoundingClientRect === 'function') {
+            console.log('Scrolling to field via ref (external error):', firstErrorField);
+            scrollToElement(fieldElement);
+          } else {
+            // Try to find the field by querying the DOM directly
+            const domElement = document.querySelector(
+              `[name="${firstErrorField}"], ` +
+              `input[name="${firstErrorField}"], ` +
+              `select[name="${firstErrorField}"], ` +
+              `textarea[name="${firstErrorField}"], ` +
+              `[data-name="${firstErrorField}"]`
+            ) as HTMLElement;
+            
+            if (domElement) {
+              console.log('Found field via DOM query (external error):', domElement);
+              
+              // Check if the field is inside a collapsed accordion
+              const accordionPanel = domElement.closest('[class*="accordionPanel"]');
+              
+              if (accordionPanel) {
+                console.log('Field is inside accordion panel:', accordionPanel);
+                
+                // Check if the accordion is closed (has panelClosed class)
+                const isAccordionClosed = accordionPanel.classList.contains('panelClosed') ||
+                                         accordionPanel.className.includes('panelClosed');
+                
+                if (isAccordionClosed) {
+                  console.log('Accordion is closed, trying to open it...');
+                  
+                  // Find the accordion item container
+                  const accordionItem = accordionPanel.closest('[class*="accordionItem"]');
+                  
+                  if (accordionItem) {
+                    // Look for the accordion trigger button
+                    const accordionTrigger = accordionItem.querySelector('[class*="accordionLabel"]') as HTMLElement;
+                    
+                    if (accordionTrigger && typeof accordionTrigger.click === 'function') {
+                      console.log('Found accordion trigger, clicking to open:', accordionTrigger);
+                      accordionTrigger.click();
+                      
+                      // Wait for accordion animation to complete before scrolling
+                      setTimeout(() => {
+                        scrollToElement(domElement);
+                      }, 400);
+                      return;
+                    }
+                  }
+                }
+              }
+              
+              // Scroll to element if not in accordion or accordion is already open
+              scrollToElement(domElement);
+            }
+          }
+        }, 150);
+      }
+    }
+  }, [errors]);
 
   const validateField = (
     name: string,
@@ -165,7 +268,7 @@ export const Form: React.FC<FormProps> = ({
     const traverseAndValidate = (elements: React.ReactNode) => {
       React.Children.forEach(elements, (child) => {
         if (React.isValidElement(child)) {
-          const { name, value, validations, placeholder, label, selectedValues, type, isRange, fileValue } = child.props;
+          const { name, value, validations, placeholder, label, selectedValues, selectedValue, type, isRange, fileValue } = child.props;
 
           if (
             child.type === InputField ||
@@ -185,9 +288,21 @@ export const Form: React.FC<FormProps> = ({
                 checkValue = selectedValues || [];
               }
               
-              // Special handling for RadioField
+              // Special handling for RadioField - use selectedValue prop
               if (child.type === RadioField) {
-                checkValue = value || '';
+                checkValue = selectedValue || '';
+                console.log('RadioField validation:', name, 'selectedValue:', selectedValue, 'checkValue:', checkValue);
+                
+                // Additional validation for RadioField - check if value exists in options
+                if (checkValue && validations.some((v: any) => v.type === 'required')) {
+                  const options = child.props.options || [];
+                  const hasValidOption = options.some((opt: any) => String(opt.value) === String(checkValue));
+                  if (!hasValidOption && options.length > 0) {
+                    console.log('RadioField value not in options:', name, 'value:', checkValue, 'options:', options);
+                    // Don't fail validation if options are still loading (empty array)
+                    // This prevents validation errors during API loading states
+                  }
+                }
               }
 
               // Special handling for date fields
@@ -236,94 +351,82 @@ export const Form: React.FC<FormProps> = ({
       setErrors(newErrors);
     }
 
-    // Debug logging for field refs and validation
-    console.log('firstInvalidField:', firstInvalidField);
-    console.log('fieldRefs.current:', fieldRefs.current);
-    console.log('Available field refs:', Object.keys(fieldRefs.current));
+    // Auto-scroll to first invalid field
+    if (firstInvalidField && !formValid) {
+      console.log('firstInvalidField:', firstInvalidField);
+      console.log('fieldRefs.current:', fieldRefs.current);
+      console.log('Available field refs:', Object.keys(fieldRefs.current));
 
-    if (firstInvalidField) {
-      const fieldElement = fieldRefs.current[firstInvalidField];
-      console.log(`Field element for ${firstInvalidField}:`, fieldElement);
-      
-      if (fieldElement) {
-        // Check if the element has getBoundingClientRect method
-        if (typeof fieldElement.getBoundingClientRect === 'function') {
-          console.log('Scrolling to field:', firstInvalidField);
-          const elementPosition = fieldElement.getBoundingClientRect().top + window.pageYOffset;
-
-          window.scrollTo({
-            top: elementPosition - 100,
-            behavior: "smooth",
-          });
-          
-          // Try to focus on the element or its first focusable child
-          if (typeof fieldElement.focus === 'function') {
-            fieldElement.focus();
-          } else {
-            // For elements that can't be focused directly (like divs), try to focus the first input
-            const firstInput = fieldElement.querySelector('input, select, textarea') as HTMLElement;
-            if (firstInput && typeof firstInput.focus === 'function') {
-              firstInput.focus();
-            }
-          }
-        } else {
-          console.warn(`Field element for ${firstInvalidField} doesn't have getBoundingClientRect method`, fieldElement);
-        }
-      } else {
-        console.warn(`No field element found for ${firstInvalidField}. Available refs:`, Object.keys(fieldRefs.current));
+      // Use setTimeout to ensure the errors are rendered first
+      setTimeout(() => {
+        const fieldElement = fieldRefs.current[firstInvalidField];
+        console.log(`Field element for ${firstInvalidField}:`, fieldElement);
         
-        // Try to find the field by querying the DOM directly
-        const domElement = document.querySelector(`[name="${firstInvalidField}"], [data-testid*="${firstInvalidField}"], input[name="${firstInvalidField}"]`) as HTMLElement;
-        if (domElement) {
-          console.log('Found field via DOM query:', domElement);
-          
-          // Check if the field is inside a collapsed accordion
-          const accordionPanel = domElement.closest('[class*="accordionPanel"]');
-          if (accordionPanel) {
-            console.log('Field is inside accordion panel:', accordionPanel);
-            
-            // Check if the accordion panel is closed
-            const isClosed = accordionPanel.classList.contains('panelClosed') || 
-                           accordionPanel.className.includes('panelClosed') ||
-                           !accordionPanel.classList.contains('panelOpen');
-            
-            if (isClosed) {
-              // Try to find and click the accordion header to open it
-              const accordionItem = accordionPanel.parentElement;
-              const accordionHeader = accordionItem?.querySelector('[class*="accordionLabel"]');
-              
-                              if (accordionHeader && accordionHeader instanceof HTMLElement) {
-                  console.log('Found accordion header, clicking to open:', accordionHeader);
-                  accordionHeader.click();
-                  
-                  // Wait a bit for accordion animation to complete before scrolling
-                  setTimeout(() => {
-                    const elementPosition = domElement.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({
-                      top: elementPosition - 100,
-                      behavior: "smooth",
-                    });
-                    if (domElement.focus) {
-                      domElement.focus();
-                    }
-                  }, 300);
-                  return;
-                }
-              }
-            }
-          
-          const elementPosition = domElement.getBoundingClientRect().top + window.pageYOffset;
-          window.scrollTo({
-            top: elementPosition - 100,
-            behavior: "smooth",
-          });
-          if (domElement.focus) {
-            domElement.focus();
-          }
+        if (fieldElement && typeof fieldElement.getBoundingClientRect === 'function') {
+          console.log('Scrolling to field via ref:', firstInvalidField);
+          scrollToElement(fieldElement);
         } else {
-          console.warn(`Could not find field ${firstInvalidField} in DOM either`);
+          console.warn(`No field element found for ${firstInvalidField}. Trying DOM query...`);
+          
+          // Try to find the field by querying the DOM directly
+          const domElement = document.querySelector(
+            `[name="${firstInvalidField}"], ` +
+            `input[name="${firstInvalidField}"], ` +
+            `select[name="${firstInvalidField}"], ` +
+            `textarea[name="${firstInvalidField}"], ` +
+            `[data-name="${firstInvalidField}"]`
+          ) as HTMLElement;
+          
+          if (domElement) {
+            console.log('Found field via DOM query:', domElement);
+            
+                        // Check if the field is inside a collapsed accordion
+             const accordionPanel = domElement.closest('[class*="accordionPanel"]');
+             
+             if (accordionPanel) {
+               console.log('Field is inside accordion panel:', accordionPanel);
+               
+               // Check if the accordion is closed (has panelClosed class)
+               const isAccordionClosed = accordionPanel.classList.contains('panelClosed') ||
+                                        accordionPanel.className.includes('panelClosed');
+               
+               if (isAccordionClosed) {
+                 console.log('Accordion is closed, trying to open it...');
+                 
+                 // Find the accordion item container
+                 const accordionItem = accordionPanel.closest('[class*="accordionItem"]');
+                 
+                 if (accordionItem) {
+                   // Look for the accordion trigger button
+                   const accordionTrigger = accordionItem.querySelector('[class*="accordionLabel"]') as HTMLElement;
+                   
+                   if (accordionTrigger && typeof accordionTrigger.click === 'function') {
+                     console.log('Found accordion trigger, clicking to open:', accordionTrigger);
+                     accordionTrigger.click();
+                     
+                     // Wait for accordion animation to complete before scrolling
+                     setTimeout(() => {
+                       scrollToElement(domElement);
+                     }, 400);
+                     return;
+                   } else {
+                     console.warn('Could not find accordion trigger button');
+                   }
+                 } else {
+                   console.warn('Could not find accordion item container');
+                 }
+               } else {
+                 console.log('Accordion is already open');
+               }
+             }
+            
+            // Scroll to element if not in accordion or accordion is already open
+            scrollToElement(domElement);
+          } else {
+            console.warn(`Could not find field ${firstInvalidField} in DOM`);
+          }
         }
-      }
+      }, 100);
     }
 
     return formValid;
@@ -349,6 +452,7 @@ export const Form: React.FC<FormProps> = ({
         if (child.type === CheckboxField && child.props.name === name) {
           validateInput(child.props);
         } else if (child.type === RadioField && child.props.name === name) {
+          console.log('RadioField real-time validation:', name, 'value:', value);
           validateInput(child.props);
         } else if (
           (child.type === InputField ||
@@ -388,6 +492,7 @@ export const Form: React.FC<FormProps> = ({
         if (child.type === CheckboxField && child.props.name === name) {
           validateInput(child.props);
         } else if (child.type === RadioField && child.props.name === name) {
+          console.log('RadioField nested real-time validation:', name, 'value:', value);
           validateInput(child.props);
         } else if (
           (child.type === InputField ||

@@ -601,5 +601,30 @@
     "inspectionArea": "INSPECTION AREA",
     "other": "OTHER",
     "note": "NOTE"
+  },
+  "adIntroducedTalentPage": {
+    "basicServiceInfo": "BASIC SERVICE INFO",
+    "consultantContractInfo": "CONSULTANT CONTRACT INFO",
+    "contractPeriod": "Contract Period",
+    "jobDetails": "JOB DETAILS",
+    "staffInfo": "STAFF INFO",
+    "interviewDetails": "INTERVIEW DETAILS",
+    "registrationDate": "REGISTRATION DATE",
+    "interviewDate": "INTERVIEW DATE",
+    "registrant": "REGISTRANT",
+    "companion": "COMPANION",
+    "interviewResult": "INTERVIEW RESULT",
+    "status": "STATUS",
+    "hiringInfo": "HIRING INFO",
+    "hiringStaffName": "Hiring Staff Name",
+    "referralFee": "Referral Fee (Excl. Tax)",
+    "firstDayEscort": "First Day Escort (Post-Contract)",
+    "attachments": "ATTACHMENTS",
+    "note": "NOTE",
+    "addContract": "ADD CONTRACT",
+    "search": "SEARCH",
+    "delete": "DELETE",
+    "staff": "Staff",
+    "searchStaff": "Search staff..."
   }
 }

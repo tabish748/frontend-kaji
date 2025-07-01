@@ -82,7 +82,7 @@ export default function CnAbout() {
       console.error("Terms submission error:", error);
       setToast({
         message: error.message || t("cnTermsAndConditions.errorMessage"),
-        type: "error",
+        type: "fail",
       });
     }
   };

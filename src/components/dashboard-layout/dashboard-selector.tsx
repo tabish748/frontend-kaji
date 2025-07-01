@@ -49,7 +49,7 @@ const LayoutSelector = ({ children }: LayoutSelectorProps) => {
 
   const shouldHideHeader = CUSTOMER_ROUTES.some((route) =>
     currentPath.startsWith(route + "/")
-  ) || currentPath === "/cn-info";
+  ) || currentPath.startsWith("/cn-info");
 
   return (
     <AuthMiddleware>

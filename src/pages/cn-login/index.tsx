@@ -33,7 +33,7 @@ export default function Login() {
 
   const { loading, isAuthenticated, message } = useSelector(
     (state: RootState) => state.auth
-  );
+  ) || { loading: false, isAuthenticated: false, message: null };
 
   const userRole = localStorage.getItem("loggedInUser")
     ? JSON.parse(localStorage.getItem("loggedInUser")!).userRole
