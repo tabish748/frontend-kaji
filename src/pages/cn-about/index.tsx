@@ -8,7 +8,12 @@ import InputField from "@/components/input-field/input-field";
 import RadioField from "@/components/radio-field/radio-field";
 import SelectField from "@/components/select-field/select-field";
 import { useLanguage } from "@/localization/LocalContext";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCustomerBasicInfo } from '@/app/customer/getCustomerBasicInfoSlice';
+import { fetchDropdowns } from '@/app/features/dropdowns/getDropdownsSlice';
+import { RootState, AppDispatch } from '@/app/store';
+import ApiLoadingWrapper from "@/components/api-loading-wrapper/api-loading-wrapper";
 import { SlCalender } from "react-icons/sl";
 import {
   FaUser,
@@ -43,6 +48,9 @@ interface Contract {
 
 export default function CnAbout() {
   const { t } = useLanguage();
+  const dispatch = useDispatch<AppDispatch>();
+  const { customer, loading, error } = useSelector((state: RootState) => state.customerBasicInfo);
+  const { dropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.dropdowns);
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
   const [billingFormErrors, setBillingFormErrors] = React.useState<
@@ -70,14 +78,53 @@ export default function CnAbout() {
     railwayCompany2: "",
     trainLine2: "",
     trainStation2: "",
-    gender: "male",
+    gender: "1",
     birthYear: "",
     birthMonth: "",
     birthDay: "",
     age: "",
-    language: "japanese",
-    advertising: "subscribe",
+    language: "1",
+    advertising: "0",
   });
+
+  // Fetch customer data and dropdowns on component mount
+  useEffect(() => {
+    dispatch(fetchCustomerBasicInfo());
+    dispatch(fetchDropdowns());
+  }, [dispatch]);
+
+  // Update form values when customer data is loaded
+  useEffect(() => {
+    if (customer) {
+      setFormValues({
+        firstName: `${customer.first_name} ${customer.last_name}`,
+        fullNameKatakana: `${customer.first_name_kana} ${customer.last_name_kana}`,
+        phone1: customer.phone1 || "",
+        phone2: customer.phone2 || "",
+        phone3: customer.phone3 || "",
+        email1: customer.email1 || "",
+        email2: customer.email2 || "",
+        postalCode: customer.post_code || "",
+        prefecture: customer.prefecture_id.toString() || "",
+        address1: customer.address1 || "",
+        address2: customer.address2 || "",
+        building: customer.apartment_name || "",
+        railwayCompany1: customer.customer_routes[0]?.company || "",
+        trainLine1: customer.customer_routes[0]?.route_name || "",
+        trainStation1: customer.customer_routes[0]?.nearest_station || "",
+        railwayCompany2: customer.customer_routes[1]?.company || "",
+        trainLine2: customer.customer_routes[1]?.route_name || "",
+        trainStation2: customer.customer_routes[1]?.nearest_station || "",
+        gender: customer.gender.toString() || "1",
+        birthYear: customer.dob_year || "",
+        birthMonth: customer.dob_month || "",
+        birthDay: customer.dob_day || "",
+        age: customer.age.toString() || "",
+        language: customer.language.toString() || "1",
+        advertising: customer.newsletter_emails.toString() || "0",
+      });
+    }
+  }, [customer]);
 
   const [contractFormValues, setContractFormValues] = useState({
     contractType: "general",
@@ -90,6 +137,31 @@ export default function CnAbout() {
     endTime: "",
     weekdays: ["monday"] as string[],
   });
+
+  // Update contract form values when customer data is loaded
+  useEffect(() => {
+    if (customer && customer.customer_contracts.length > 0) {
+      const contract = customer.customer_contracts[0];
+      const contractPlan = contract.customer_contract_plans[0];
+      
+      if (contract && contractPlan) {
+        setContractFormValues(prev => ({
+          ...prev,
+          contractType: contract.contract_type || "general",
+          service: contractPlan.service_id.toString() || "",
+          plan: contractPlan.contract_plan_id?.toString() || "",
+          timeRange: contractPlan.time_range ? "with" : "without",
+          timeExtension: contractPlan.extended_time ? "with" : "without",
+          contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
+            ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
+            : "2025-04-14 to 2025-04-19",
+          startTime: contractPlan.service_hours_start || "",
+          endTime: contractPlan.service_hours_end || "",
+          weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : ["monday"],
+        }));
+      }
+    }
+  }, [customer]);
 
   const [billingFormValues, setBillingFormValues] = useState({
     firstName: "",
@@ -106,9 +178,44 @@ export default function CnAbout() {
     building: "",
   });
 
+  // Update billing form values when customer data is loaded
+  useEffect(() => {
+    if (customer && customer.customer_contracts.length > 0) {
+      const billingInfo = customer.customer_contracts[0]?.customer_contract_plans[0]?.contract_plan_billing_info;
+      if (billingInfo) {
+        setBillingFormValues({
+          firstName: billingInfo.name || "",
+          fullNameKatakana: billingInfo.name_kana || "",
+          phone1: billingInfo.phone1 || "",
+          phone2: billingInfo.phone2 || "",
+          phone3: billingInfo.phone3 || "",
+          email1: billingInfo.email1 || "",
+          email2: billingInfo.email2 || "",
+          postalCode: billingInfo.post_code || "",
+          prefecture: billingInfo.prefecture_id || "",
+          address1: billingInfo.address1 || "",
+          address2: billingInfo.address2 || "",
+          building: billingInfo.apartment_name || "",
+        });
+      }
+    }
+  }, [customer]);
+
   const [paymentFormValues, setPaymentFormValues] = useState({
-    paymentMethod: "credit",
+    paymentMethod: "2",
   });
+
+  // Update payment form values when customer data is loaded
+  useEffect(() => {
+    if (customer && customer.customer_contracts.length > 0) {
+      const contractPlan = customer.customer_contracts[0]?.customer_contract_plans[0];
+      if (contractPlan) {
+        setPaymentFormValues({
+          paymentMethod: contractPlan.payment_method.toString() || "1",
+        });
+      }
+    }
+  }, [customer]);
 
   const POSSESSION = [
     {
@@ -134,76 +241,45 @@ export default function CnAbout() {
     },
   ];
 
-  // Contract and plan data
-  const contracts: Contract[] = [
-    {
-      id: 1,
-      name: "Contract 1",
-      plans: [
+  // Contract and plan data - now using customer data or fallback to default
+  const contracts: Contract[] = customer && customer.customer_contracts && customer.customer_contracts.length > 0 
+    ? customer.customer_contracts.map((contract, contractIndex) => ({
+        id: contract.id,
+        name: `Contract ${contractIndex + 1}`,
+        plans: contract.customer_contract_plans ? contract.customer_contract_plans.map((plan, planIndex) => ({
+          id: plan.id,
+          name: `Plan ${planIndex + 1}`,
+          content: `Service ID: ${plan.service_id}, Payment Method: ${plan.payment_method}`,
+        })) : []
+      }))
+    : [
         {
           id: 1,
-          name: "Plan 1",
-          content: "This is the content for Contract 1, Plan 1",
+          name: "Contract 1",
+          plans: [
+            {
+              id: 1,
+              name: "Plan 1",
+              content: "This is the content for Contract 1, Plan 1",
+            },
+          ],
         },
-        {
-          id: 2,
-          name: "Plan 2",
-          content: "This is the content for Contract 1, Plan 2",
-        },
-        {
-          id: 3,
-          name: "Plan 3",
-          content: "This is the content for Contract 1, Plan 3",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Contract 2",
-      plans: [
-        {
-          id: 1,
-          name: "Plan 1",
-          content: "This is the content for Contract 2, Plan 1",
-        },
-        {
-          id: 2,
-          name: "Plan 2",
-          content: "This is the content for Contract 2, Plan 2",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Contract 3",
-      plans: [
-        {
-          id: 1,
-          name: "Plan 1",
-          content: "This is the content for Contract 3, Plan 1",
-        },
-        {
-          id: 2,
-          name: "Plan 2",
-          content: "This is the content for Contract 3, Plan 2",
-        },
-        {
-          id: 3,
-          name: "Plan 3",
-          content: "This is the content for Contract 3, Plan 3",
-        },
-        {
-          id: 4,
-          name: "Plan 4",
-          content: "This is the content for Contract 3, Plan 4",
-        },
-      ],
-    },
-  ];
+      ];
 
   // State for active contract and plan
   const [activeContractId, setActiveContractId] = useState(1);
   const [activePlanId, setActivePlanId] = useState(1);
+
+  // Update active contract and plan when customer data loads
+  useEffect(() => {
+    if (customer && customer.customer_contracts && customer.customer_contracts.length > 0) {
+      const firstContract = customer.customer_contracts[0];
+      setActiveContractId(firstContract.id);
+      if (firstContract.customer_contract_plans && firstContract.customer_contract_plans.length > 0) {
+        setActivePlanId(firstContract.customer_contract_plans[0].id);
+      }
+    }
+  }, [customer]);
 
   // Get the active contract
   const activeContract =
@@ -295,7 +371,16 @@ export default function CnAbout() {
   };
 
   return (
-    <div className="d-flex flex-column gap-2">
+    <ApiLoadingWrapper
+      loading={loading || dropdownsLoading}
+      error={error || dropdownsError}
+      onRetry={() => {
+        dispatch(fetchCustomerBasicInfo());
+        dispatch(fetchDropdowns());
+      }}
+      errorTitle="Error loading customer data"
+    >
+      <div className="d-flex flex-column gap-2">
       <ClientSection heading={t("aboutPage.customerInfo")}>
         <Form
           onSubmit={handleSubmit}
@@ -406,12 +491,7 @@ export default function CnAbout() {
                 <SelectField
                   name="prefecture"
                   placeholder={t("aboutPage.prefecturePlaceholder")}
-                  options={[
-                    { label: "Hokkaido", value: "hokkaido" },
-                    { label: "Aomori", value: "aomori" },
-                    { label: "Iwate", value: "iwate" },
-                    { label: "Miyagi", value: "miyagi" },
-                  ]}
+                  options={dropdowns?.prefectures || []}
                   value={formValues.prefecture}
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
@@ -511,11 +591,10 @@ export default function CnAbout() {
             <div className={styles.label}>{t("aboutPage.genderLabel")}</div>
             <RadioField
               name="gender"
-              options={[
-                { label: t("aboutPage.male"), value: "male" },
-                { label: t("aboutPage.female"), value: "female" },
-                { label: t("aboutPage.other"), value: "other" },
-              ]}
+              options={dropdowns?.gender?.map(option => ({
+                label: option.label,
+                value: option.value.toString()
+              })) || []}
               selectedValue={formValues.gender}
               onChange={handleInputChange}
               className={styles.radioGroup}
@@ -583,11 +662,10 @@ export default function CnAbout() {
             <div className={styles.label}>{t("aboutPage.languageLabel")}</div>
             <RadioField
               name="language"
-              options={[
-                { label: t("aboutPage.japanese"), value: "japanese" },
-                { label: t("aboutPage.english"), value: "english" },
-                { label: t("aboutPage.both"), value: "both" },
-              ]}
+              options={dropdowns?.language?.map(option => ({
+                label: option.label,
+                value: option.value.toString()
+              })) || []}
               selectedValue={formValues.language}
               onChange={handleInputChange}
               className={styles.radioGroup}
@@ -600,10 +678,10 @@ export default function CnAbout() {
             </div>
             <RadioField
               name="advertising"
-              options={[
-                { label: t("aboutPage.subscribe"), value: "subscribe" },
-                { label: t("aboutPage.unsubscribe"), value: "unsubscribe" },
-              ]}
+              options={dropdowns?.newsletter?.map(option => ({
+                label: option.label,
+                value: option.value.toString()
+              })) || []}
               selectedValue={formValues.advertising}
               onChange={handleInputChange}
               className={styles.radioGroup}
@@ -694,17 +772,7 @@ export default function CnAbout() {
                           <CustomSelectField
                             name="service"
                             placeholder={t("aboutPage.servicePlaceholder")}
-                            options={[
-                              { label: t("aboutPage.basic"), value: "basic" },
-                              {
-                                label: t("aboutPage.premium"),
-                                value: "premium",
-                              },
-                              {
-                                label: t("aboutPage.enterprise"),
-                                value: "enterprise",
-                              },
-                            ]}
+                            options={dropdowns?.services || []}
                             icon={<BsFileEarmarkText size={12} />}
                             value={contractFormValues.service}
                             onChange={handleContractInputChange}
@@ -739,14 +807,8 @@ export default function CnAbout() {
                       <RadioField
                         name="timeRange"
                         options={[
-                          {
-                            label: t("aboutPage.withTimeRange"),
-                            value: "with",
-                          },
-                          {
-                            label: t("aboutPage.withoutTimeRange"),
-                            value: "without",
-                          },
+                          { label: "with", value: "with" },
+                          { label: "without", value: "without" },
                         ]}
                         selectedValue={contractFormValues.timeRange}
                         onChange={handleContractInputChange}
@@ -761,14 +823,8 @@ export default function CnAbout() {
                       <RadioField
                         name="timeExtension"
                         options={[
-                          {
-                            label: t("aboutPage.withTimeExtension"),
-                            value: "with",
-                          },
-                          {
-                            label: t("aboutPage.withoutTimeExtension"),
-                            value: "without",
-                          },
+                          { label: "with", value: "with" },
+                          { label: "without", value: "without" },
                         ]}
                         selectedValue={contractFormValues.timeExtension}
                         onChange={handleContractInputChange}
@@ -801,25 +857,13 @@ export default function CnAbout() {
                           <CheckboxField
                             name="weekdays"
                             options={[
-                              { value: "monday", label: t("aboutPage.monday") },
-                              {
-                                value: "tuesday",
-                                label: t("aboutPage.tuesday"),
-                              },
-                              {
-                                value: "wednesday",
-                                label: t("aboutPage.wednesday"),
-                              },
-                              {
-                                value: "thursday",
-                                label: t("aboutPage.thursday"),
-                              },
-                              { value: "friday", label: t("aboutPage.friday") },
-                              {
-                                value: "saturday",
-                                label: t("aboutPage.saturday"),
-                              },
-                              { value: "sunday", label: t("aboutPage.sunday") },
+                              { value: "monday", label: "monday" },
+                              { value: "tuesday", label: "tuesday" },
+                              { value: "wednesday", label: "wednesday" },
+                              { value: "thursday", label: "thursday" },
+                              { value: "friday", label: "friday" },
+                              { value: "saturday", label: "saturday" },
+                              { value: "sunday", label: "sunday" },
                             ]}
                             selectedValues={contractFormValues.weekdays}
                             onChange={(values) =>
@@ -1000,12 +1044,7 @@ export default function CnAbout() {
                           <SelectField
                             name="prefecture"
                             placeholder={t("aboutPage.prefecturePlaceholder")}
-                            options={[
-                              { label: "Hokkaido", value: "hokkaido" },
-                              { label: "Aomori", value: "aomori" },
-                              { label: "Iwate", value: "iwate" },
-                              { label: "Miyagi", value: "miyagi" },
-                            ]}
+                            options={dropdowns?.prefectures || []}
                             value={billingFormValues.prefecture}
                             onChange={handleBillingInputChange}
                             validations={[{ type: "required" }]}
@@ -1068,15 +1107,10 @@ export default function CnAbout() {
                       </div>
                       <RadioField
                         name="paymentMethod"
-                        options={[
-                          { label: t("aboutPage.bank"), value: "bank" },
-                          { label: t("aboutPage.credit"), value: "credit" },
-                          { label: t("aboutPage.invoice"), value: "invoice" },
-                          {
-                            label: t("aboutPage.convenience"),
-                            value: "convenience",
-                          },
-                        ]}
+                        options={dropdowns?.payment_method?.map(option => ({
+                          label: option.label,
+                          value: option.value.toString()
+                        })) || []}
                         selectedValue={paymentFormValues.paymentMethod}
                         onChange={handlePaymentInputChange}
                         className={styles.radioGroup}
@@ -1145,5 +1179,6 @@ export default function CnAbout() {
         </div>
       </ClientSection>
     </div>
+    </ApiLoadingWrapper>
   );
 }

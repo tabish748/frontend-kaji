@@ -1,9 +1,13 @@
 import ClientSection from "@/components/client-section/client-section";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import styles from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { USER_TYPE } from "@/libs/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDropdowns } from "@/app/features/dropdowns/getDropdownsSlice";
+import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSlice";
+import { RootState, AppDispatch } from "@/app/store";
 
 interface PaymentFormValues {
   paymentMethod: string;
@@ -22,59 +26,68 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
   const isClient = userRole === USER_TYPE.customer;
+  const dispatch = useDispatch<AppDispatch>();
+  const { dropdowns } = useSelector((state: RootState) => state.dropdowns);
+  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
 
-  // Contracts data including previous & updated payment methods for each contract
-  const initialContracts: Contract[] = [
-    {
-      id: 1,
-      name: "Contract 1",
-      prevPaymentValues: { paymentMethod: "credit" },
-      updatedPaymentValues: { paymentMethod: "credit" },
-    },
-    {
-      id: 2,
-      name: "Contract 2",
-      prevPaymentValues: { paymentMethod: "bank" },
-      updatedPaymentValues: { paymentMethod: "bank" },
-    },
-    {
-      id: 3,
-      name: "Contract 3",
-      prevPaymentValues: { paymentMethod: "invoice" },
-      updatedPaymentValues: { paymentMethod: "invoice" },
-    },
-  ];
+  useEffect(() => {
+    if (!dropdowns) {
+      dispatch(fetchDropdowns());
+    }
+    if (!customer) dispatch(fetchCustomerBasicInfo());
+  }, [dispatch, dropdowns, customer]);
 
-  const [contracts, setContracts] = useState<Contract[]>(initialContracts);
+  const contracts = customer?.customer_contracts || [];
 
-  // Get initial active contract from URL params, default to 1 if not present
-  const contractIdFromUrl = searchParams?.get("contractid");
-  const initialActiveContractId = contractIdFromUrl
-    ? parseInt(contractIdFromUrl)
-    : 1;
-  const [activeContractId, setActiveContractId] = useState<number>(
-    initialActiveContractId
-  );
+  // Use array indices for contract and plan selection
+  const contractIdxFromUrl = searchParams?.get("contractIdx");
+  const planIdxFromUrl = searchParams?.get("planIdx");
+  const initialActiveContractIdx = contractIdxFromUrl ? parseInt(contractIdxFromUrl) : 0;
+  const [activeContractIdx, setActiveContractIdx] = useState<number>(initialActiveContractIdx);
+
+  const activeContract = contracts[activeContractIdx];
+  const plans = activeContract?.customer_contract_plans || [];
+  const initialActivePlanIdx = planIdxFromUrl ? parseInt(planIdxFromUrl) : 0;
+  const [activePlanIdx, setActivePlanIdx] = useState<number>(initialActivePlanIdx);
+
+  // Keep contract and plan indices in sync with array length
+  useEffect(() => {
+    if (contracts.length > 0 && (activeContractIdx < 0 || activeContractIdx >= contracts.length)) {
+      setActiveContractIdx(0);
+    }
+  }, [contracts, activeContractIdx]);
+
+  useEffect(() => {
+    if (plans.length > 0 && (activePlanIdx < 0 || activePlanIdx >= plans.length)) {
+      setActivePlanIdx(0);
+    }
+  }, [plans, activePlanIdx]);
 
   // Handle contract change - update both state and URL
-  const handleContractChange = (contractId: number) => {
-    setActiveContractId(contractId);
+  const handleContractChange = (contractIdx: number) => {
+    setActiveContractIdx(contractIdx);
+    setActivePlanIdx(0); // Always select first plan on contract change
     const params = new URLSearchParams(searchParams?.toString() || "");
-    params.set("contractid", contractId.toString());
-    router.push(`?${params.toString()}`);
+    params.set("contractIdx", contractIdx.toString());
+    params.set("planIdx", "0");
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // Get currently active contract object
-  const activeContract = contracts.find(
-    (contract) => contract.id === activeContractId
-  )!;
+  // Handle plan tab click - update state and URL
+  const handlePlanTabClick = (planIdx: number) => {
+    setActivePlanIdx(planIdx);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("contractIdx", activeContractIdx.toString());
+    params.set("planIdx", planIdx.toString());
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <>
       <h1 className={styles.topHeading}> {t("request")} </h1>
 
       <div className="d-flex flex-column gap-2">
-        {isClient && (
+        {isClient && contracts.length > 0 && (
           <ClientSection heading={t("changePaymentMethodPage.contractInfo")}>
             {/* Contract Info Section */}
             <h3 className={styles.subHeading}>
@@ -82,21 +95,25 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
             </h3>
             {/* Contract Tabs */}
             <div className={styles.tabContainer}>
-              {contracts.map((contract) => (
+              {contracts.map((contract, idx) => (
                 <button
                   key={contract.id}
-                  className={`${styles.tabButtonContract} ${
-                    activeContractId === contract.id ? styles.active : ""
-                  }`}
-                  onClick={() => handleContractChange(contract.id)}
+                  className={`${styles.tabButtonContract} ${activeContractIdx === idx ? styles.active : ""}`}
+                  onClick={() => handleContractChange(idx)}
                 >
-                  {contract.name}
+                  {`Contract ${idx + 1}`}
                 </button>
               ))}
             </div>
           </ClientSection>
         )}
-        <main>{children}</main>
+        <main>
+          {React.cloneElement(children as React.ReactElement, {
+            activeContractIdx,
+            activePlanIdx,
+            onPlanTabClick: handlePlanTabClick,
+          })}
+        </main>
       </div>
     </>
   );

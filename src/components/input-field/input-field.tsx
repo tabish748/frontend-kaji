@@ -117,7 +117,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
         );
       } else {
         // Handle text icon (emoji or text)
-        return <span className={styles.iconWrapper} style={{ fontSize: '16px' }}>{icon}</span>;
+        return <span className={styles.iconWrapper} style={{ fontSize: '12px' }}>{icon}</span>;
       }
     }
     return <span className={styles.iconWrapper}>{icon}</span>;
