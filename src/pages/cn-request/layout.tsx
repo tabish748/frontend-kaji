@@ -2,10 +2,10 @@ import ClientSection from "@/components/client-section/client-section";
 import React, { ReactNode, useState, useEffect } from "react";
 import styles from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
-import { useRouter, useSearchParams } from "next/navigation";
-import { USER_TYPE } from "@/libs/constants";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Request_layout, USER_TYPE } from "@/libs/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDropdowns } from "@/app/features/dropdowns/getDropdownsSlice";
+import { fetchCustomerDropdowns } from "@/app/features/dropdowns/getCustomerDropdownsSlice";
 import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSlice";
 import { RootState, AppDispatch } from "@/app/store";
 
@@ -23,19 +23,21 @@ interface Contract {
 export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const userRole = JSON.parse(localStorage.getItem("loggedInUser")!).userRole;
-  const isClient = userRole === USER_TYPE.customer;
   const dispatch = useDispatch<AppDispatch>();
-  const { dropdowns } = useSelector((state: RootState) => state.dropdowns);
+  const { customerDropdowns } = useSelector((state: RootState) => state.customerDropdowns);
   const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
 
+  // Check if current path indicates client user using Request_layout array
+  const isClient = pathname ? Request_layout.includes(pathname) : false;
+
   useEffect(() => {
-    if (!dropdowns) {
-      dispatch(fetchDropdowns());
+    if (!customerDropdowns) {
+      dispatch(fetchCustomerDropdowns());
     }
     if (!customer) dispatch(fetchCustomerBasicInfo());
-  }, [dispatch, dropdowns, customer]);
+  }, [dispatch, customerDropdowns, customer]);
 
   const contracts = customer?.customer_contracts || [];
 
@@ -87,7 +89,7 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
       <h1 className={styles.topHeading}> {t("request")} </h1>
 
       <div className="d-flex flex-column gap-2">
-        {isClient && contracts.length > 0 && (
+        {!isClient && contracts.length > 0 && (
           <ClientSection heading={t("changePaymentMethodPage.contractInfo")}>
             {/* Contract Info Section */}
             <h3 className={styles.subHeading}>

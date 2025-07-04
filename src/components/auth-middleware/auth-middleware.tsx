@@ -130,7 +130,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
       }
 
       // Check if profile is completed but child_info is not completed
-      if (loggedInUser?.profile_completed === 1 && 
+      if (loggedInUser?.profile_completed === 0 && 
           loggedInUser?.profile_completion_steps?.child_info === false &&
           currentPath !== "/cn-info-child") {
         router.push("/cn-info-child");

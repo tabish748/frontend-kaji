@@ -81,3 +81,7 @@ export const USER_TYPE = {
   customer: "end-user",
   admin: "super-admin",
 };
+
+export const Request_layout = [
+  "/cn-request/update-address",
+];

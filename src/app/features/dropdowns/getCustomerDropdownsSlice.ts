@@ -1,4 +1,3 @@
-// getDropdownsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import ApiHandler from '@/app/api-handler';
 
@@ -7,7 +6,8 @@ interface DropdownOption {
     label: string;
 }
 
-interface ApiDropdownsResponse {
+interface ApiCustomerDropdownsResponse {
+    represents: DropdownOption[];
     language: DropdownOption[];
     gender: DropdownOption[];
     phone_types: DropdownOption[];
@@ -18,38 +18,43 @@ interface ApiDropdownsResponse {
     billing_contact_info: DropdownOption[];
     personalities: DropdownOption[];
     health_statuses: DropdownOption[];
+    customer_contract_types: DropdownOption[];
+    contract_plans: DropdownOption[];
+    matching_list_hk: DropdownOption[];
+    matching_list_bs: DropdownOption[];
+    customer_status: DropdownOption[];
 }
 
-interface DropdownsState {
-    dropdowns: ApiDropdownsResponse | null;
+interface CustomerDropdownsState {
+    customerDropdowns: ApiCustomerDropdownsResponse | null;
     loading: boolean;
     error: string | null;
     message: string | null;
     success: boolean | null;
 }
 
-const initialState: DropdownsState = {
-    dropdowns: null,
+const initialState: CustomerDropdownsState = {
+    customerDropdowns: null,
     loading: false,
     error: null,
     message: '',
     success: null,
 };
 
-export const fetchDropdowns = createAsyncThunk(
-    'dropdowns/fetchDropdowns',
+export const fetchCustomerDropdowns = createAsyncThunk(
+    'customerDropdowns/fetchCustomerDropdowns',
     async () => {
-        const endpoint = `/api/public-inquiry-form-dropdowns`;
+        const endpoint = `/api/customer-basic-info-options`;
         return await ApiHandler.request(endpoint, 'GET');
     }
 );
 
-const getDropdownsSlice = createSlice({
-    name: 'dropdowns',
+const getCustomerDropdownsSlice = createSlice({
+    name: 'customerDropdowns',
     initialState,
     reducers: {
-        resetDropdowns: (state) => {
-            state.dropdowns = null;
+        resetCustomerDropdowns: (state) => {
+            state.customerDropdowns = null;
             state.loading = false;
             state.error = null;
             state.message = '';
@@ -58,24 +63,24 @@ const getDropdownsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchDropdowns.pending, (state) => {
+            .addCase(fetchCustomerDropdowns.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchDropdowns.fulfilled, (state, action: PayloadAction<{ data: ApiDropdownsResponse, message: string, success: boolean }>) => {
-                state.dropdowns = action.payload.data;
+            .addCase(fetchCustomerDropdowns.fulfilled, (state, action: PayloadAction<{ data: ApiCustomerDropdownsResponse, message: string, success: boolean }>) => {
+                state.customerDropdowns = action.payload.data;
                 state.loading = false;
                 state.message = action.payload.message;
                 state.success = true;
             })
-            .addCase(fetchDropdowns.rejected, (state, action) => {
+            .addCase(fetchCustomerDropdowns.rejected, (state, action) => {
                 state.loading = false;
                 state.success = false;
-                state.dropdowns = null;
+                state.customerDropdowns = null;
                 state.error = action.error.message || null;
             });
     },
 });
 
-export default getDropdownsSlice.reducer;
-export const { resetDropdowns } = getDropdownsSlice.actions; 
+export default getCustomerDropdownsSlice.reducer;
+export const { resetCustomerDropdowns } = getCustomerDropdownsSlice.actions; 

@@ -11,7 +11,7 @@ import { useLanguage } from "@/localization/LocalContext";
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomerBasicInfo } from '@/app/customer/getCustomerBasicInfoSlice';
-import { fetchDropdowns } from '@/app/features/dropdowns/getDropdownsSlice';
+import { fetchCustomerDropdowns } from '@/app/features/dropdowns/getCustomerDropdownsSlice';
 import { RootState, AppDispatch } from '@/app/store';
 import ApiLoadingWrapper from "@/components/api-loading-wrapper/api-loading-wrapper";
 import { SlCalender } from "react-icons/sl";
@@ -50,7 +50,7 @@ export default function CnAbout() {
   const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const { customer, loading, error } = useSelector((state: RootState) => state.customerBasicInfo);
-  const { dropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.dropdowns);
+  const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
   const [billingFormErrors, setBillingFormErrors] = React.useState<
@@ -90,7 +90,7 @@ export default function CnAbout() {
   // Fetch customer data and dropdowns on component mount
   useEffect(() => {
     dispatch(fetchCustomerBasicInfo());
-    dispatch(fetchDropdowns());
+    dispatch(fetchCustomerDropdowns());
   }, [dispatch]);
 
   // Update form values when customer data is loaded
@@ -376,7 +376,7 @@ export default function CnAbout() {
       error={error || dropdownsError}
       onRetry={() => {
         dispatch(fetchCustomerBasicInfo());
-        dispatch(fetchDropdowns());
+        dispatch(fetchCustomerDropdowns());
       }}
       errorTitle="Error loading customer data"
     >
@@ -491,7 +491,7 @@ export default function CnAbout() {
                 <SelectField
                   name="prefecture"
                   placeholder={t("aboutPage.prefecturePlaceholder")}
-                  options={dropdowns?.prefectures || []}
+                  options={customerDropdowns?.prefectures || []}
                   value={formValues.prefecture}
                   onChange={handleInputChange}
                   validations={[{ type: "required" }]}
@@ -591,7 +591,7 @@ export default function CnAbout() {
             <div className={styles.label}>{t("aboutPage.genderLabel")}</div>
             <RadioField
               name="gender"
-              options={dropdowns?.gender?.map(option => ({
+              options={customerDropdowns?.gender?.map(option => ({
                 label: option.label,
                 value: option.value.toString()
               })) || []}
@@ -662,7 +662,7 @@ export default function CnAbout() {
             <div className={styles.label}>{t("aboutPage.languageLabel")}</div>
             <RadioField
               name="language"
-              options={dropdowns?.language?.map(option => ({
+              options={customerDropdowns?.language?.map(option => ({
                 label: option.label,
                 value: option.value.toString()
               })) || []}
@@ -678,7 +678,7 @@ export default function CnAbout() {
             </div>
             <RadioField
               name="advertising"
-              options={dropdowns?.newsletter?.map(option => ({
+              options={customerDropdowns?.newsletter?.map(option => ({
                 label: option.label,
                 value: option.value.toString()
               })) || []}
@@ -750,13 +750,10 @@ export default function CnAbout() {
                       </div>
                       <RadioField
                         name="contractType"
-                        options={[
-                          { label: t("aboutPage.general"), value: "general" },
-                          {
-                            label: t("aboutPage.affiliated"),
-                            value: "affiliated",
-                          },
-                        ]}
+                        options={customerDropdowns?.customer_contract_types?.map(option => ({
+                          label: option.label,
+                          value: option.value.toString()
+                        })) || []}
                         selectedValue={contractFormValues.contractType}
                         onChange={handleContractInputChange}
                         className={styles.radioGroup}
@@ -772,7 +769,7 @@ export default function CnAbout() {
                           <CustomSelectField
                             name="service"
                             placeholder={t("aboutPage.servicePlaceholder")}
-                            options={dropdowns?.services || []}
+                            options={customerDropdowns?.services || []}
                             icon={<BsFileEarmarkText size={12} />}
                             value={contractFormValues.service}
                             onChange={handleContractInputChange}
@@ -781,17 +778,7 @@ export default function CnAbout() {
                           <CustomSelectField
                             name="plan"
                             placeholder={t("aboutPage.planPlaceholder")}
-                            options={[
-                              {
-                                label: t("aboutPage.monthly"),
-                                value: "monthly",
-                              },
-                              {
-                                label: t("aboutPage.quarterly"),
-                                value: "quarterly",
-                              },
-                              { label: t("aboutPage.annual"), value: "annual" },
-                            ]}
+                            options={customerDropdowns?.contract_plans || []}
                             icon={<BsFileEarmarkText size={12} />}
                             value={contractFormValues.plan}
                             onChange={handleContractInputChange}
@@ -807,8 +794,8 @@ export default function CnAbout() {
                       <RadioField
                         name="timeRange"
                         options={[
-                          { label: "with", value: "with" },
-                          { label: "without", value: "without" },
+                          { label: t("aboutPage.withTimeRange"), value: "with" },
+                          { label: t("aboutPage.withoutTimeRange"), value: "without" },
                         ]}
                         selectedValue={contractFormValues.timeRange}
                         onChange={handleContractInputChange}
@@ -823,8 +810,8 @@ export default function CnAbout() {
                       <RadioField
                         name="timeExtension"
                         options={[
-                          { label: "with", value: "with" },
-                          { label: "without", value: "without" },
+                          { label: t("aboutPage.withTimeExtension"), value: "with" },
+                          { label: t("aboutPage.withoutTimeExtension"), value: "without" },
                         ]}
                         selectedValue={contractFormValues.timeExtension}
                         onChange={handleContractInputChange}
@@ -857,13 +844,13 @@ export default function CnAbout() {
                           <CheckboxField
                             name="weekdays"
                             options={[
-                              { value: "monday", label: "monday" },
-                              { value: "tuesday", label: "tuesday" },
-                              { value: "wednesday", label: "wednesday" },
-                              { value: "thursday", label: "thursday" },
-                              { value: "friday", label: "friday" },
-                              { value: "saturday", label: "saturday" },
-                              { value: "sunday", label: "sunday" },
+                              { value: "monday", label: t("aboutPage.monday") },
+                              { value: "tuesday", label: t("aboutPage.tuesday") },
+                              { value: "wednesday", label: t("aboutPage.wednesday") },
+                              { value: "thursday", label: t("aboutPage.thursday") },
+                              { value: "friday", label: t("aboutPage.friday") },
+                              { value: "saturday", label: t("aboutPage.saturday") },
+                              { value: "sunday", label: t("aboutPage.sunday") },
                             ]}
                             selectedValues={contractFormValues.weekdays}
                             onChange={(values) =>
@@ -1044,7 +1031,7 @@ export default function CnAbout() {
                           <SelectField
                             name="prefecture"
                             placeholder={t("aboutPage.prefecturePlaceholder")}
-                            options={dropdowns?.prefectures || []}
+                            options={customerDropdowns?.prefectures || []}
                             value={billingFormValues.prefecture}
                             onChange={handleBillingInputChange}
                             validations={[{ type: "required" }]}
@@ -1107,7 +1094,7 @@ export default function CnAbout() {
                       </div>
                       <RadioField
                         name="paymentMethod"
-                        options={dropdowns?.payment_method?.map(option => ({
+                        options={customerDropdowns?.payment_method?.map(option => ({
                           label: option.label,
                           value: option.value.toString()
                         })) || []}
