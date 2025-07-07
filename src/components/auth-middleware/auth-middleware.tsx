@@ -116,25 +116,54 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
 
     // Handle client routes
     if (userRole === USER_TYPE.customer) {
-      // Check if current path is in client routes
-      if (loggedInUser?.profile_completed === 0 && 
-          currentPath !== "/cn-info" && 
-          currentPath !== "/cn-info-child") {
-        if (loggedInUser?.profile_completion_steps?.customer_order_form === false) {
-          router.push(`/cn-info/?section=customer${router.query.lang ? `&lang=${router.query.lang}` : ''}`);
-          return;
-        } else {
-          router.push("/cn-info-child");
+      // If profile is completed, redirect away from profile completion pages
+      if (loggedInUser?.profile_completed === 1) {
+        if (currentPath === "/cn-info" || currentPath === "/cn-info-child") {
+          router.push("/"); // Redirect to home or dashboard
           return;
         }
       }
 
-      // Check if profile is completed but child_info is not completed
-      if (loggedInUser?.profile_completed === 0 && 
-          loggedInUser?.profile_completion_steps?.child_info === false &&
-          currentPath !== "/cn-info-child") {
-        router.push("/cn-info-child");
-        return;
+      // Handle profile completion redirects
+      if (loggedInUser?.profile_completed === 0) {
+        const { customer_info, customer_order_form, child_info, redirect_to_child_page, child_order_form } = 
+          loggedInUser?.profile_completion_steps || {};
+
+        // Prevent access to child info page if customer info is not completed
+        if (!customer_info && currentPath === "/cn-info-child") {
+          router.push(
+            `/cn-info/?section=customer${
+              router.query.lang ? `&lang=${router.query.lang}` : ""
+            }`
+          );
+          return;
+        }
+
+        // If redirect_to_child_page is true and child_order_form is false, redirect to cn-info-child
+        // This applies even if currently on cn-info page
+        if (redirect_to_child_page && !child_order_form && currentPath !== "/cn-info-child") {
+          router.push("/cn-info-child");
+          return;
+        }
+
+        // Handle redirects for other routes (not cn-info or cn-info-child)
+        if (currentPath !== "/cn-info" && currentPath !== "/cn-info-child") {
+          // If customer info and order form are both incomplete, redirect to cn-info
+          if (!customer_info && !customer_order_form) {
+            router.push(
+              `/cn-info/?section=customer${
+                router.query.lang ? `&lang=${router.query.lang}` : ""
+              }`
+            );
+            return;
+          }
+          
+          // If child info is incomplete, redirect to cn-info-child
+          if (!child_info) {
+            router.push("/cn-info-child");
+            return;
+          }
+        }
       }
 
       const isClientRoute = CLIENT_ROUTES.some((route) =>

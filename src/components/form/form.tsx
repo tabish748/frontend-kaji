@@ -76,8 +76,6 @@ export const Form: React.FC<FormProps> = ({
     try {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       const offsetPosition = elementPosition - 100;
-
-      console.log('Scrolling to position:', offsetPosition);
       
       window.scrollTo({
         top: offsetPosition,
@@ -97,7 +95,7 @@ export const Form: React.FC<FormProps> = ({
         }
       }, 500);
     } catch (error) {
-      console.error('Error scrolling to element:', error);
+      // Error handling without console
     }
   };
 
@@ -107,14 +105,11 @@ export const Form: React.FC<FormProps> = ({
       const firstErrorField = Object.keys(errors).find(key => errors[key]);
       
       if (firstErrorField) {
-        console.log('Errors updated externally, scrolling to first error:', firstErrorField);
-        
         // Use setTimeout to ensure the errors are rendered first
         setTimeout(() => {
           const fieldElement = fieldRefs.current[firstErrorField];
           
           if (fieldElement && typeof fieldElement.getBoundingClientRect === 'function') {
-            console.log('Scrolling to field via ref (external error):', firstErrorField);
             scrollToElement(fieldElement);
           } else {
             // Try to find the field by querying the DOM directly
@@ -127,21 +122,15 @@ export const Form: React.FC<FormProps> = ({
             ) as HTMLElement;
             
             if (domElement) {
-              console.log('Found field via DOM query (external error):', domElement);
-              
               // Check if the field is inside a collapsed accordion
               const accordionPanel = domElement.closest('[class*="accordionPanel"]');
               
               if (accordionPanel) {
-                console.log('Field is inside accordion panel:', accordionPanel);
-                
                 // Check if the accordion is closed (has panelClosed class)
                 const isAccordionClosed = accordionPanel.classList.contains('panelClosed') ||
                                          accordionPanel.className.includes('panelClosed');
                 
                 if (isAccordionClosed) {
-                  console.log('Accordion is closed, trying to open it...');
-                  
                   // Find the accordion item container
                   const accordionItem = accordionPanel.closest('[class*="accordionItem"]');
                   
@@ -150,7 +139,6 @@ export const Form: React.FC<FormProps> = ({
                     const accordionTrigger = accordionItem.querySelector('[class*="accordionLabel"]') as HTMLElement;
                     
                     if (accordionTrigger && typeof accordionTrigger.click === 'function') {
-                      console.log('Found accordion trigger, clicking to open:', accordionTrigger);
                       accordionTrigger.click();
                       
                       // Wait for accordion animation to complete before scrolling
@@ -179,14 +167,11 @@ export const Form: React.FC<FormProps> = ({
     placeholder: string,
     label?: string
   ) => {
-    console.log('validateField called for:', name, 'with value:', value);
-
     for (let validation of validations) {
       if (validation.type === "required") {
         // Special handling for checkbox arrays
         if (Array.isArray(value)) {
           if (!value.length) {
-            console.log('Checkbox validation failed for:', name);
             return Validators.required(
               { value: "" },
               label || placeholder || name
@@ -202,7 +187,6 @@ export const Form: React.FC<FormProps> = ({
             const dates = value.split(' to ');
             // For date range, both dates must be present
             if (dates.length !== 2 || !dates[0].trim() || !dates[1].trim()) {
-              console.log('Date range validation failed for:', name);
               return Validators.required(
                 { value: "" },
                 label || placeholder || name
@@ -211,7 +195,6 @@ export const Form: React.FC<FormProps> = ({
           } else {
             // For single date, check if the value is empty or invalid
             if (!value || !value.trim() || !value.match(/^\d{4}-\d{2}-\d{2}$/)) {
-              console.log('Single date validation failed for:', name);
               return Validators.required(
                 { value: "" },
                 label || placeholder || name
@@ -225,7 +208,6 @@ export const Form: React.FC<FormProps> = ({
         if (name.toLowerCase().includes('file') || name.toLowerCase().includes('upload') || name.toLowerCase().includes('attachment')) {
           // For file inputs, check if File object exists
           if (!value || (value instanceof File && value === null)) {
-            console.log('File validation failed for:', name);
             return Validators.required(
               { value: "" },
               label || placeholder || name
@@ -236,7 +218,6 @@ export const Form: React.FC<FormProps> = ({
 
         // Handle empty string or undefined/null values
         if (value === undefined || value === null || value === '') {
-          console.log('Required validation failed for:', name);
           return Validators.required(
             { value },
             label || placeholder || name
@@ -252,7 +233,6 @@ export const Form: React.FC<FormProps> = ({
       if (Validators[validation.type]) {
         const error = Validators[validation.type]({ value }, label || placeholder || name);
         if (error) {
-          console.log('Validation failed for:', name, 'with error:', error);
           return error;
         }
       }
@@ -291,14 +271,12 @@ export const Form: React.FC<FormProps> = ({
               // Special handling for RadioField - use selectedValue prop
               if (child.type === RadioField) {
                 checkValue = selectedValue || '';
-                console.log('RadioField validation:', name, 'selectedValue:', selectedValue, 'checkValue:', checkValue);
                 
                 // Additional validation for RadioField - check if value exists in options
                 if (checkValue && validations.some((v: any) => v.type === 'required')) {
                   const options = child.props.options || [];
                   const hasValidOption = options.some((opt: any) => String(opt.value) === String(checkValue));
                   if (!hasValidOption && options.length > 0) {
-                    console.log('RadioField value not in options:', name, 'value:', checkValue, 'options:', options);
                     // Don't fail validation if options are still loading (empty array)
                     // This prevents validation errors during API loading states
                   }
@@ -308,13 +286,11 @@ export const Form: React.FC<FormProps> = ({
               // Special handling for date fields
               if ((child.type === InputDateField || child.type === CustomDateField)) {
                 checkValue = value || '';
-                console.log('Date field validation:', name, checkValue, isRange);
               }
 
               // Special handling for file fields - use fileValue if available
               if (child.type === InputField && type === 'file' && fileValue !== undefined) {
                 checkValue = fileValue;
-                console.log('File field validation:', name, checkValue);
               }
 
               const error = validateField(
@@ -326,15 +302,11 @@ export const Form: React.FC<FormProps> = ({
               );
 
               if (error) {
-                console.log('Validation error for field:', name, 'error:', error, 'value:', checkValue, 'type:', child.type?.name);
                 newErrors[name] = error;
                 formValid = false;
                 if (!firstInvalidField) {
                   firstInvalidField = name;
-                  console.log('Setting firstInvalidField to:', name);
                 }
-              } else {
-                console.log('Field passed validation:', name, 'value:', checkValue);
               }
             }
           } else if (child.props && child.props.children) {
@@ -345,7 +317,6 @@ export const Form: React.FC<FormProps> = ({
     };
 
     traverseAndValidate(children);
-    console.log('Final validation result:', { formValid, errors: newErrors });
     
     if (setErrors) {
       setErrors(newErrors);
@@ -353,21 +324,13 @@ export const Form: React.FC<FormProps> = ({
 
     // Auto-scroll to first invalid field
     if (firstInvalidField && !formValid) {
-      console.log('firstInvalidField:', firstInvalidField);
-      console.log('fieldRefs.current:', fieldRefs.current);
-      console.log('Available field refs:', Object.keys(fieldRefs.current));
-
       // Use setTimeout to ensure the errors are rendered first
       setTimeout(() => {
         const fieldElement = fieldRefs.current[firstInvalidField];
-        console.log(`Field element for ${firstInvalidField}:`, fieldElement);
         
         if (fieldElement && typeof fieldElement.getBoundingClientRect === 'function') {
-          console.log('Scrolling to field via ref:', firstInvalidField);
           scrollToElement(fieldElement);
         } else {
-          console.warn(`No field element found for ${firstInvalidField}. Trying DOM query...`);
-          
           // Try to find the field by querying the DOM directly
           const domElement = document.querySelector(
             `[name="${firstInvalidField}"], ` +
@@ -378,21 +341,15 @@ export const Form: React.FC<FormProps> = ({
           ) as HTMLElement;
           
           if (domElement) {
-            console.log('Found field via DOM query:', domElement);
-            
-                        // Check if the field is inside a collapsed accordion
+            // Check if the field is inside a collapsed accordion
              const accordionPanel = domElement.closest('[class*="accordionPanel"]');
              
              if (accordionPanel) {
-               console.log('Field is inside accordion panel:', accordionPanel);
-               
                // Check if the accordion is closed (has panelClosed class)
                const isAccordionClosed = accordionPanel.classList.contains('panelClosed') ||
                                         accordionPanel.className.includes('panelClosed');
                
                if (isAccordionClosed) {
-                 console.log('Accordion is closed, trying to open it...');
-                 
                  // Find the accordion item container
                  const accordionItem = accordionPanel.closest('[class*="accordionItem"]');
                  
@@ -401,7 +358,6 @@ export const Form: React.FC<FormProps> = ({
                    const accordionTrigger = accordionItem.querySelector('[class*="accordionLabel"]') as HTMLElement;
                    
                    if (accordionTrigger && typeof accordionTrigger.click === 'function') {
-                     console.log('Found accordion trigger, clicking to open:', accordionTrigger);
                      accordionTrigger.click();
                      
                      // Wait for accordion animation to complete before scrolling
@@ -409,21 +365,13 @@ export const Form: React.FC<FormProps> = ({
                        scrollToElement(domElement);
                      }, 400);
                      return;
-                   } else {
-                     console.warn('Could not find accordion trigger button');
                    }
-                 } else {
-                   console.warn('Could not find accordion item container');
                  }
-               } else {
-                 console.log('Accordion is already open');
                }
              }
             
             // Scroll to element if not in accordion or accordion is already open
             scrollToElement(domElement);
-          } else {
-            console.warn(`Could not find field ${firstInvalidField} in DOM`);
           }
         }
       }, 100);
@@ -433,9 +381,6 @@ export const Form: React.FC<FormProps> = ({
   };
 
   const handleInputChange = (name: string, value: any) => {
-    console.log("Form handleInputChange - name:", name);
-    console.log("Form handleInputChange - value:", value);
-    
     setTouched((prevTouched) => ({ ...prevTouched, [name]: true }));
     const newErrors = { ...errors };
     
@@ -452,7 +397,6 @@ export const Form: React.FC<FormProps> = ({
         if (child.type === CheckboxField && child.props.name === name) {
           validateInput(child.props);
         } else if (child.type === RadioField && child.props.name === name) {
-          console.log('RadioField real-time validation:', name, 'value:', value);
           validateInput(child.props);
         } else if (
           (child.type === InputField ||
@@ -492,7 +436,6 @@ export const Form: React.FC<FormProps> = ({
         if (child.type === CheckboxField && child.props.name === name) {
           validateInput(child.props);
         } else if (child.type === RadioField && child.props.name === name) {
-          console.log('RadioField nested real-time validation:', name, 'value:', value);
           validateInput(child.props);
         } else if (
           (child.type === InputField ||
@@ -531,7 +474,6 @@ export const Form: React.FC<FormProps> = ({
               handleInputChange(child.props.name, e.target.value);
             },
             ref: (el: any) => {
-              console.log('Setting ref for RadioField:', child.props.name, el);
               fieldRefs.current[child.props.name] = el;
             },
           });
@@ -546,7 +488,6 @@ export const Form: React.FC<FormProps> = ({
           return React.cloneElement(child as any, {
             errorText: (errors && errors[child.props.name]) || undefined,
             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-              console.log('Form onChange for field:', child.props.name, 'value:', e.target.value); // Debug log
               if (child.props.onChange) child.props.onChange(e);
               handleInputChange(child.props.name, e.target.value);
             },
@@ -566,10 +507,8 @@ export const Form: React.FC<FormProps> = ({
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submission started'); // Debug log
     
     if (!validateForm()) {
-      console.log('Form validation failed'); // Debug log
       return;
     }
 
@@ -584,7 +523,7 @@ export const Form: React.FC<FormProps> = ({
     try {
       await onSubmit();
     } catch (error) {
-      console.error(error);
+      // Error handling without console
     } finally {
       setShowConfirmBox(false);
     }
