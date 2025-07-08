@@ -256,8 +256,10 @@
     "saving": "Saving",
     "edit": "EDIT",
     "delete": "DELETE",
-    "register": "REGISTER"
+    "register": "REGISTER",
+    "close": "Close"
   },
+
   "error": {
     "invalidEmail": "Invalid email address",
     "minLength": "Input must be at least {min} characters long.",
@@ -280,7 +282,8 @@
       "planChange": "Plan Change Request",
       "planAddition": "Plan Addition Request",
       "paymentMethodChange": "Payment Method Change Request",
-      "serviceStatus": "Service Suspension / Reactivation Request"
+      "serviceStatus": "Service Suspension / Reactivation Request",
+      "billingChange": "Billing Change Request"
     }
   },
   "pleaseSelect": "Please Select",
@@ -307,6 +310,19 @@
     "submit": "Submit Request",
     "prev": "Previous Information",
     "update": "Updated Information"
+  },
+  "billingChangeRequest": {
+    "heading": "BILLING CHANGE REQUEST",
+    "subHeading": "Please confirm your current billing information and specify the changes you would like to make",
+    "submit": "Submit Request",
+    "prev": "Previous Information",
+    "update": "Updated Information",
+    "addressMode": "Address Mode",
+    "selectExisting": "Select Existing Address",
+    "addNew": "Add New Address",
+    "selectAddress": "Select Address",
+    "selectAddressPlaceholder": "Choose an existing address",
+    "noExistingAddresses": "No existing billing addresses found. Please add a new address."
   },
   "cncontactform": {
     "contactForm": "CONTACT FORM",
@@ -384,7 +400,12 @@
     "addSchool": "Add school information",
     "addChild": "Add children",
     "personalityOtherPlaceholder": "Please specify other personality traits",
-    "addPrimaryDoctor": "Add Primary Doctor Information"
+    "addPrimaryDoctor": "Add Primary Doctor Information",
+    "modal": {
+      "submittedSuccessfully": "Submitted Successfully",
+      "thankYouForSubmission": "Thank you for your submission.",
+      "editRegistrationDetails": "Edit Registration Details"
+    }
   },
   "adDashboardSidebar": {
     "menu": "MENU",

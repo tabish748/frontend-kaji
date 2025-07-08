@@ -50,6 +50,9 @@ $warning: #ffc542;
 $danger: #EC8290;
 $danger-dark: darken($danger, 10%);
 $danger-light: #fcdddd;
+
+// Primary light color as direct SCSS variable
+$primary-light-color: #e0f6f3;
 $disabled: #dfdfdf;
 // Background colors
 $background: #f8fafa;

@@ -23,6 +23,7 @@ import Image from "next/image";
 import ApiHandler from "@/app/api-handler";
 import { calculateAge } from "@/libs/utils";
 import { useRouter } from "next/router";
+import Modal from "@/components/modal/modal";
 
 // Define contract and plan structure
 interface Plan {
@@ -40,6 +41,9 @@ export default function CnInfo() {
     message: string | string[];
     type: string;
   } | null>(null);
+  
+  // Modal state - only show after payment submission
+  const [showModal, setShowModal] = useState(false);
 
   // Accordion state management
   const [accordionState, setAccordionState] = useState<number | null>(null);
@@ -834,8 +838,7 @@ export default function CnInfo() {
     }
   };
 
-  const handleSubmit = async (formType: "customer" | "billing" | "payment") => {
-    setIsSubmitting(true);
+  const processSubmission = async (formType: "customer" | "billing" | "payment") => {
     try {
       if (formType === "customer") {
         // Get customer ID from localStorage
@@ -942,6 +945,9 @@ export default function CnInfo() {
           // Auto-open next accordion after successful save
           const currentIndex = 0;
           openNextAccordion(currentIndex);
+          
+          // Return success indicator
+          return { success: true };
         } else {
           throw new Error(response.message || "Update failed");
         }
@@ -1028,6 +1034,9 @@ export default function CnInfo() {
           // Auto-open next accordion after successful save
           const currentIndex = 1;
           openNextAccordion(currentIndex);
+          
+          // Return success indicator
+          return { success: true };
         } else {
           throw new Error(response.message || "Billing update failed");
         }
@@ -1081,14 +1090,13 @@ export default function CnInfo() {
             }
           }
 
-          setToast({
-            message: "Payment information updated successfully",
-            type: "success",
-          });
-
+          // Don't show success toast for payment - modal will be shown instead
           // Auto-open next accordion after successful save (or close if last)
           const currentIndex = 2;
           openNextAccordion(currentIndex);
+          
+          // Return success indicator for payment form
+          return { success: true };
         } else {
           throw new Error(response.message || "Payment update failed");
         }
@@ -1102,6 +1110,33 @@ export default function CnInfo() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = async (formType: "customer" | "billing" | "payment") => {
+    setIsSubmitting(true);
+    
+    try {
+      // Process the submission immediately
+      const result = await processSubmission(formType);
+      
+      // Show modal only after successful payment submission (last step)
+      if (formType === "payment" && result?.success) {
+        setShowModal(true);
+      }
+      
+    } catch (error: any) {
+      console.error(`Error submitting ${formType} form:`, error);
+      setToast({
+        message: error.message || "Submission failed",
+        type: "fail",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
   };
 
   const handleInputChange = (
@@ -1186,14 +1221,23 @@ export default function CnInfo() {
         />
       )}
 
-      <div className="d-flex flex-column gap-2">
+            <div className="d-flex flex-column gap-2">
         <h1 className={styleHeader.topHeading}>{t("cnInfo.orderForm")}</h1>
-        <Accordion openIndex={accordionState} onToggle={handleAccordionToggle}>
-          {/* Customer Information Accordion */}
-          <AccordionItem
-            heading={t("aboutPage.customerInfo")}
-            label={t("cnInfo.required")}
+        <Modal
+          isVisible={showModal}
+          onClose={handleModalClose}
+          onEditClick={handleModalClose}
+          type="success"
+        >
+          <Accordion 
+            openIndex={accordionState} 
+            onToggle={handleAccordionToggle}
           >
+            {/* Customer Information Accordion */}
+            <AccordionItem
+              heading={t("aboutPage.customerInfo")}
+              label={t("cnInfo.required")}
+            >
             {loadingAccordion === 0 ? (
               <div className="d-flex justify-content-center py-4">
                 Loading customer data...
@@ -1879,6 +1923,7 @@ export default function CnInfo() {
             )}
           </AccordionItem>
         </Accordion>
+        </Modal>
       </div>
     </>
   );

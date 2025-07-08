@@ -7,6 +7,8 @@ import changePaymentMethodReducer from './customer/changePaymentMethodSlice';
 import changePlanRequestReducer from './customer/changePlanRequestSlice';
 import reactivateRequestReducer from './customer/reactivateRequestSlice';
 import changeAddressRequestReducer from './customer/changeAddressRequestSlice';
+import changeBillingInfoReducer from './customer/changeBillingInfoSlice';
+import addContractPlanReducer from './customer/addContractPlanSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     changePlanRequest: changePlanRequestReducer,
     reactivateRequest: reactivateRequestReducer,
     changeAddressRequest: changeAddressRequestReducer,
+    changeBillingInfo: changeBillingInfoReducer,
+    addContractPlan: addContractPlanReducer,
   },
 });
 

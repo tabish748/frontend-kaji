@@ -82,7 +82,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
       }, 2000);
     } else if (changePlanState.success === false && changePlanState.error) {
       setToastMessage(changePlanState.error);
-      setToastType("error");
+      setToastType("fail");
       setShowToast(true);
     }
   }, [changePlanState.success, changePlanState.error, changePlanState.message, router, t]);
@@ -117,15 +117,15 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
   // Current editable contract values
   const [contractFormValues, setContractFormValues] = useState<ContractFormValues>({
     contractType: "",
-    service: "",
-    plan: "",
+      service: "",
+      plan: "",
     timeRange: "",
     timeExtension: "",
-    contractPeriod: "",
+      contractPeriod: "",
     weekdays: [],
-    startTime: "",
-    endTime: "",
-  });
+      startTime: "",
+      endTime: "",
+    });
 
 
 
@@ -180,7 +180,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
   const handleContractSubmit = () => {
     if (!activeContract || !activePlan) {
       setToastMessage("Contract or plan data is missing.");
-      setToastType("error");
+      setToastType("fail");
       setShowToast(true);
       return;
     }
@@ -226,7 +226,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       setToastMessage("Please fix the validation errors.");
-      setToastType("error");
+      setToastType("fail");
       setShowToast(true);
       return;
     }

@@ -161,8 +161,8 @@ export default function UpdateAddress() {
         />
       )}
 
-      <ClientSection heading={t("updateAddressPage.heading")}>
-        <h3 className={styles.subHeading}>{t("updateAddressPage.subHeading")}</h3>
+    <ClientSection heading={t("updateAddressPage.heading")}>
+      <h3 className={styles.subHeading}>{t("updateAddressPage.subHeading")}</h3>
 
         {/* Show success message */}
         {changeAddressState.success && (
@@ -179,256 +179,256 @@ export default function UpdateAddress() {
         {/* Only show form if not successful */}
         {!changeAddressState.success && (
           <>
-            {/* --- Read-Only Section --- */}
+      {/* --- Read-Only Section --- */}
             <h1 className="cn-seperator-heading primary">{t("changePaymentMethodPage.prev")}</h1>
-            <Form
-              onSubmit={() => {}}
-              errors={{}}
-              setErrors={() => {}}
-            >
-              <div className={style.formGrid}>
-                <div className={style.label}>{t("aboutPage.addressLabel")}</div>
-                <div className={style.fieldGroup}>
-                  <div className={style.fieldRow}>
-                    <InputField
+      <Form
+        onSubmit={() => {}}
+        errors={{}}
+        setErrors={() => {}}
+      >
+        <div className={style.formGrid}>
+          <div className={style.label}>{t("aboutPage.addressLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.fieldRow}>
+              <InputField
                       name="prev_postalCode"
-                      placeholder={t("aboutPage.postalCodePlaceholder")}
+                placeholder={t("aboutPage.postalCodePlaceholder")}
                       value={prevAddressValues.postalCode}
-                      onChange={() => {}}
-                      icon={<MdOutlineHomeWork size={12} />}
-                      disabled
-                    />
-                    <SelectField
+                onChange={() => {}}
+                icon={<MdOutlineHomeWork size={12} />}
+                disabled
+              />
+              <SelectField
                       name="prev_prefecture"
                       placeholder={t("aboutPage.prefecturePlaceholder")}
                       options={customerDropdowns?.prefectures || []}
                       value={prevAddressValues.prefecture}
-                      onChange={() => {}}
-                      icon={<BiHomeAlt2 size={12} />}
-                      disabled
-                    />
-                  </div>
-                  <InputField
+                onChange={() => {}}
+                icon={<BiHomeAlt2 size={12} />}
+                disabled
+              />
+            </div>
+            <InputField
                     name="prev_address1"
                     placeholder={t("aboutPage.address1Placeholder")}
                     value={prevAddressValues.address1}
-                    onChange={() => {}}
-                    icon={<BiHomeAlt2 size={12} />}
-                    disabled
-                  />
-                  <InputField
+              onChange={() => {}}
+              icon={<BiHomeAlt2 size={12} />}
+              disabled
+            />
+            <InputField
                     name="prev_address2"
                     placeholder={t("aboutPage.address2Placeholder")}
                     value={prevAddressValues.address2}
-                    onChange={() => {}}
-                    icon={<BiHomeAlt2 size={12} />}
-                    disabled
-                  />
-                  <InputField
+              onChange={() => {}}
+              icon={<BiHomeAlt2 size={12} />}
+              disabled
+            />
+            <InputField
                     name="prev_building"
                     placeholder={t("aboutPage.buildingPlaceholder")}
                     value={prevAddressValues.building}
-                    onChange={() => {}}
-                    icon={<BiHomeAlt2 size={12} />}
-                    disabled
-                  />
-                </div>
+              onChange={() => {}}
+              icon={<BiHomeAlt2 size={12} />}
+              disabled
+            />
+          </div>
 
-                <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
-                <div className={style.fieldGroup}>
-                  <div className={style.stationGroup}>
-                    <InputField
+          <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.stationGroup}>
+              <InputField
                       name="prev_railwayCompany1"
                       placeholder={t("aboutPage.railwayCompany1Placeholder")}
                       value={prevAddressValues.railwayCompany1}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                    <InputField
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
                       name="prev_trainLine1"
                       placeholder={t("aboutPage.trainLine1Placeholder")}
                       value={prevAddressValues.trainLine1}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                    <InputField
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
                       name="prev_trainStation1"
                       placeholder={t("aboutPage.trainStation1Placeholder")}
                       value={prevAddressValues.trainStation1}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                  </div>
-                  <div className={style.stationGroup}>
-                    <InputField
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+            </div>
+            <div className={style.stationGroup}>
+              <InputField
                       name="prev_railwayCompany2"
                       placeholder={t("aboutPage.railwayCompany2Placeholder")}
                       value={prevAddressValues.railwayCompany2}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                    <InputField
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
                       name="prev_trainLine2"
                       placeholder={t("aboutPage.trainLine2Placeholder")}
                       value={prevAddressValues.trainLine2}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                    <InputField
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+              <InputField
                       name="prev_trainStation2"
                       placeholder={t("aboutPage.trainStation2Placeholder")}
                       value={prevAddressValues.trainStation2}
-                      onChange={() => {}}
-                      icon={<MdOutlineTrain size={12} />}
-                      disabled
-                    />
-                  </div>
-                </div>
-              </div>
-            </Form>
+                onChange={() => {}}
+                icon={<MdOutlineTrain size={12} />}
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+      </Form>
 
-            {/* --- Editable Section --- */}
-            <h1 className="cn-seperator-heading danger mt-3">
+      {/* --- Editable Section --- */}
+      <h1 className="cn-seperator-heading danger mt-3">
               {t("changePaymentMethodPage.update")}
-            </h1>
-            <Form
-              onSubmit={handleSubmit}
-              errors={errors}
-              setErrors={setErrors}
-            >
-              <div className={style.formGrid}>
-                <div className={style.label}>{t("aboutPage.addressLabel")}</div>
-                <div className={style.fieldGroup}>
-                  <div className={style.fieldRow}>
-                    <InputField
-                      name="postalCode"
+      </h1>
+      <Form
+        onSubmit={handleSubmit}
+        errors={errors}
+        setErrors={setErrors}
+      >
+        <div className={style.formGrid}>
+          <div className={style.label}>{t("aboutPage.addressLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.fieldRow}>
+              <InputField
+                name="postalCode"
                       placeholder={t("aboutPage.postalCodePlaceholder")}
-                      value={updatedValues.postalCode}
-                      onChange={handleInputChange}
+                value={updatedValues.postalCode}
+                onChange={handleInputChange}
                       validations={[{ type: "required" }]}
                       errorText={errors["postalCode"] || undefined}
-                      icon={<MdOutlineHomeWork size={12} />}
+                icon={<MdOutlineHomeWork size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                    <SelectField
-                      name="prefecture"
+              />
+              <SelectField
+                name="prefecture"
                       placeholder={t("aboutPage.prefecturePlaceholder")}
                       options={customerDropdowns?.prefectures || []}
-                      value={updatedValues.prefecture}
-                      onChange={handleInputChange}
+                value={updatedValues.prefecture}
+                onChange={handleInputChange}
                       validations={[{ type: "required" }]}
                       errorText={errors["prefecture"] || undefined}
-                      icon={<BiHomeAlt2 size={12} />}
+                icon={<BiHomeAlt2 size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                  </div>
-                  <InputField
-                    name="address1"
+              />
+            </div>
+            <InputField
+              name="address1"
                     placeholder={t("aboutPage.address1Placeholder")}
-                    value={updatedValues.address1}
-                    onChange={handleInputChange}
+              value={updatedValues.address1}
+              onChange={handleInputChange}
                     validations={[{ type: "required" }]}
                     errorText={errors["address1"] || undefined}
-                    icon={<BiHomeAlt2 size={12} />}
+              icon={<BiHomeAlt2 size={12} />}
                     disabled={changeAddressState.loading}
-                  />
-                  <InputField
-                    name="address2"
+            />
+            <InputField
+              name="address2"
                     placeholder={t("aboutPage.address2Placeholder")}
-                    value={updatedValues.address2}
-                    onChange={handleInputChange}
-                    icon={<BiHomeAlt2 size={12} />}
+              value={updatedValues.address2}
+              onChange={handleInputChange}
+              icon={<BiHomeAlt2 size={12} />}
                     disabled={changeAddressState.loading}
-                  />
-                  <InputField
-                    name="building"
+            />
+            <InputField
+              name="building"
                     placeholder={t("aboutPage.buildingPlaceholder")}
-                    value={updatedValues.building}
-                    onChange={handleInputChange}
-                    icon={<BiHomeAlt2 size={12} />}
+              value={updatedValues.building}
+              onChange={handleInputChange}
+              icon={<BiHomeAlt2 size={12} />}
                     disabled={changeAddressState.loading}
-                  />
-                </div>
+            />
+          </div>
 
-                <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
-                <div className={style.fieldGroup}>
-                  <div className={style.stationGroup}>
-                    <InputField
-                      name="railwayCompany1"
+          <div className={style.label}>{t("aboutPage.trainStationLabel")}</div>
+          <div className={style.fieldGroup}>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany1"
                       placeholder={t("aboutPage.railwayCompany1Placeholder")}
-                      value={updatedValues.railwayCompany1}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.railwayCompany1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                    <InputField
-                      name="trainLine1"
+              />
+              <InputField
+                name="trainLine1"
                       placeholder={t("aboutPage.trainLine1Placeholder")}
-                      value={updatedValues.trainLine1}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.trainLine1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                    <InputField
-                      name="trainStation1"
+              />
+              <InputField
+                name="trainStation1"
                       placeholder={t("aboutPage.trainStation1Placeholder")}
-                      value={updatedValues.trainStation1}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.trainStation1}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                  </div>
-                  <div className={style.stationGroup}>
-                    <InputField
-                      name="railwayCompany2"
+              />
+            </div>
+            <div className={style.stationGroup}>
+              <InputField
+                name="railwayCompany2"
                       placeholder={t("aboutPage.railwayCompany2Placeholder")}
-                      value={updatedValues.railwayCompany2}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.railwayCompany2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                    <InputField
-                      name="trainLine2"
+              />
+              <InputField
+                name="trainLine2"
                       placeholder={t("aboutPage.trainLine2Placeholder")}
-                      value={updatedValues.trainLine2}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.trainLine2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                    <InputField
-                      name="trainStation2"
+              />
+              <InputField
+                name="trainStation2"
                       placeholder={t("aboutPage.trainStation2Placeholder")}
-                      value={updatedValues.trainStation2}
-                      onChange={handleInputChange}
-                      icon={<MdOutlineTrain size={12} />}
+                value={updatedValues.trainStation2}
+                onChange={handleInputChange}
+                icon={<MdOutlineTrain size={12} />}
                       disabled={changeAddressState.loading}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="d-flex justify-content-between mt-2 gap-1 false">
-                <span></span>
-                <div className="d-flex justify-content-between gap-1">
-                  <Button
-                    className="px-10"
-                    htmlType="submit"
-                    type="primary"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="d-flex justify-content-between mt-2 gap-1 false">
+          <span></span>
+          <div className="d-flex justify-content-between gap-1">
+            <Button
+              className="px-10"
+              htmlType="submit"
+              type="primary"
                     text={changeAddressState.loading ? t("Loading...") : t("buttons.submit")}
                     disabled={changeAddressState.loading}
-                  />
-                </div>
-                <span></span>
-              </div>
-            </Form>
+            />
+          </div>
+          <span></span>
+        </div>
+      </Form>
           </>
         )}
-      </ClientSection>
+    </ClientSection>
     </ApiLoadingWrapper>
   );
 }

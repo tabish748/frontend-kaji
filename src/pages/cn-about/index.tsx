@@ -1,4 +1,4 @@
-import Button from "@/components/button/button";
+// import Button from "@/components/button/button";
 import CheckboxField from "@/components/checkbox-field/checkbox-field";
 import ClientSection from "@/components/client-section/client-section";
 import CustomSelectField from "@/components/custom-select/custom-select";
@@ -44,6 +44,26 @@ interface Contract {
   id: number;
   name: string;
   plans: Plan[];
+}
+
+// Add interface for key information
+interface KeyInformation {
+  status: string;
+  receipt: string[];
+  user_id: string;
+  date_added: string;
+  date_returned: string;
+}
+
+// Add interface for possession item
+interface PossessionItem {
+  head: string;
+  dateOfRecieved: string;
+  dateOfReturn: string;
+  nameStaff: string;
+  receiptOfCustody: React.ReactNode;
+  status?: string;
+  receipt?: string[];
 }
 
 export default function CnAbout() {
@@ -217,29 +237,84 @@ export default function CnAbout() {
     }
   }, [customer]);
 
-  const POSSESSION = [
-    {
-      head: "key 1",
-      dateOfRecieved: "2025-04-14",
-      dateOfReturn: "2025-04-19",
-      nameStaff: "John Doe",
-      receiptOfCustody: <BsPaperclip size={16} />,
-    },
-    {
-      head: "key 2",
-      dateOfRecieved: "2025-04-14",
-      dateOfReturn: "2025-04-19",
-      nameStaff: "Jane Smith",
-      receiptOfCustody: <BsPaperclip size={16} />,
-    },
-    {
-      head: "key 3",
-      dateOfRecieved: "2025-04-14",
-      dateOfReturn: "2025-04-19",
-      nameStaff: "Alice Johnson",
-      receiptOfCustody: <BsPaperclip size={16} />,
-    },
-  ];
+  // Handle receipt download
+  const handleReceiptDownload = (receipt: string[]) => {
+    if (receipt && receipt.length > 0) {
+      // Download the first receipt file
+      const link = document.createElement('a');
+      link.href = receipt[0]; // Use first receipt file
+      link.download = receipt[0].split('/').pop() || 'receipt.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Use real key information from customer data instead of hardcoded data
+  const POSSESSION: PossessionItem[] = (() => {
+    if (!customer?.key_information) return [
+      {
+        head: "key 0",
+        dateOfRecieved: "2025-04-14",
+        dateOfReturn: "2025-04-19",
+        nameStaff: "John Doe",
+        receiptOfCustody: <BsPaperclip size={16} />,
+      },
+      {
+        head: "key 1",
+        dateOfRecieved: "2025-04-14",
+        dateOfReturn: "2025-04-19",
+        nameStaff: "Jane Smith",
+        receiptOfCustody: <BsPaperclip size={16} />,
+      },
+      {
+        head: "key 2",
+        dateOfRecieved: "2025-04-14",
+        dateOfReturn: "2025-04-19",
+        nameStaff: "Alice Johnson",
+        receiptOfCustody: <BsPaperclip size={16} />,
+      },
+    ];
+
+    // Handle both string and array cases
+    let keyInfoArray: KeyInformation[] = [];
+    try {
+      if (typeof customer.key_information === 'string') {
+        keyInfoArray = JSON.parse(customer.key_information);
+      } else {
+        keyInfoArray = customer.key_information as KeyInformation[];
+      }
+    } catch (error) {
+      console.error('Error parsing key_information:', error);
+      return [
+        {
+          head: "key 0",
+          dateOfRecieved: "2025-04-14",
+          dateOfReturn: "2025-04-19",
+          nameStaff: "John Doe",
+          receiptOfCustody: <BsPaperclip size={16} />,
+        },
+      ];
+    }
+
+    return keyInfoArray.map((keyInfo: KeyInformation, index: number) => ({
+      head: `key ${index}`, // Use 0-based indexing
+      dateOfRecieved: keyInfo.date_added,
+      dateOfReturn: keyInfo.date_returned,
+      nameStaff: keyInfo.user_id,
+      receiptOfCustody: (
+        <button 
+          onClick={() => handleReceiptDownload(keyInfo.receipt)}
+          className={styles.receiptButton}
+          title="Download receipt"
+        >
+          <BsPaperclip size={16} />
+        </button>
+      ),
+      status: keyInfo.status,
+      receipt: keyInfo.receipt,
+    }));
+  })();
 
   // Contract and plan data - now using customer data or fallback to default
   const contracts: Contract[] = customer && customer.customer_contracts && customer.customer_contracts.length > 0 
@@ -1122,7 +1197,7 @@ export default function CnAbout() {
       <ClientSection heading={t("aboutPage.keyPossession")}>
         <div className={styles.announcementContainer}>
           <Accordion page={1} totalPages={1} onPageChange={() => {}}>
-            {POSSESSION.map((item, idx) => (
+            {POSSESSION.map((item: PossessionItem, idx: number) => (
               <AccordionItem key={idx} heading={item.head} label="">
                 <div className={styles.accordionContent}>
                   <ImageLabel

@@ -162,10 +162,10 @@ export default function ReactivateRequest({ activeContractIdx, activePlanIdx, on
         />
       )}
 
-      <ClientSection heading={t("reactivateRequestPage.heading")}>
-        <h3 className={styles.subHeading}>
-          {t("reactivateRequestPage.subHeading")}
-        </h3>
+    <ClientSection heading={t("reactivateRequestPage.heading")}>
+      <h3 className={styles.subHeading}>
+        {t("reactivateRequestPage.subHeading")}
+      </h3>
 
         {/* Show success message */}
         {reactivateState.success && (
@@ -182,66 +182,66 @@ export default function ReactivateRequest({ activeContractIdx, activePlanIdx, on
         {/* Only show form if not successful */}
         {!reactivateState.success && (
           <>
-            {/* Previous Info */}
-            <h1 className="cn-seperator-heading primary">
-              {t("changePaymentMethodPage.prev")}
-            </h1>
-            <Form
-              className={styles.customerForm}
-              onSubmit={() => {}}
-              errors={{}}
-              setErrors={() => {}}
-            >
-              <div className={styles.formGrid}>
-                <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
-                <RadioField
+      {/* Previous Info */}
+      <h1 className="cn-seperator-heading primary">
+        {t("changePaymentMethodPage.prev")}
+      </h1>
+      <Form
+        className={styles.customerForm}
+        onSubmit={() => {}}
+        errors={{}}
+        setErrors={() => {}}
+      >
+        <div className={styles.formGrid}>
+          <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
+          <RadioField
                   name="prev_contractStatus"
                   options={statusOptions}
                   selectedValue={prevContractStatus}
-                  onChange={() => {}}
-                  className={styles.radioGroup}
-                  disabled
-                />
-              </div>
-            </Form>
+            onChange={() => {}}
+            className={styles.radioGroup}
+            disabled
+          />
+        </div>
+      </Form>
 
-            {/* Updated Info */}
-            <h1 className="cn-seperator-heading danger mt-3">
-              {t("changePaymentMethodPage.update")}
-            </h1>
-            <Form
-              className={styles.customerForm}
-              onSubmit={handleSubmit}
-              errors={formErrors}
-              setErrors={setFormErrors}
-            >
-              <div className={styles.formGrid}>
-                <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
-                <RadioField
+      {/* Updated Info */}
+      <h1 className="cn-seperator-heading danger mt-3">
+        {t("changePaymentMethodPage.update")}
+      </h1>
+      <Form
+        className={styles.customerForm}
+        onSubmit={handleSubmit}
+        errors={formErrors}
+        setErrors={setFormErrors}
+      >
+        <div className={styles.formGrid}>
+          <div className={styles.label}>{t("reactivateRequestPage.label")}</div>
+          <RadioField
                   name="contractStatus"
                   options={statusOptions}
                   selectedValue={formValues.contractStatus}
-                  onChange={handleChange}
-                  className={styles.radioGroup}
+            onChange={handleChange}
+            className={styles.radioGroup}
                   disabled={reactivateState.loading}
                   validations={[{ type: "required" }]}
                   errorText={formErrors["contractStatus"] || undefined}
-                />
-              </div>
+          />
+        </div>
 
-              <div className="mt-2 d-flex justify-content-center align-items-center">
-                <Button
-                  className="px-10"
-                  htmlType="submit"
-                  type="primary"
+        <div className="mt-2 d-flex justify-content-center align-items-center">
+          <Button
+            className="px-10"
+            htmlType="submit"
+            type="primary"
                   text={reactivateState.loading ? t("Loading...") : t("Submit")}
                   disabled={reactivateState.loading}
-                />
-              </div>
-            </Form>
+          />
+        </div>
+      </Form>
           </>
         )}
-      </ClientSection>
+    </ClientSection>
     </>
   );
 }

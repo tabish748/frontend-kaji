@@ -287,6 +287,19 @@
     "prev": "Previous Information",
     "update": "Updated Information"
   },
+  "billingChangeRequest": {
+    "heading": "請求情報変更申請",
+    "subHeading": "現在の請求情報を確認し、変更したい内容を指定してください",
+    "submit": "申請を送信",
+    "prev": "変更前情報",
+    "update": "変更後情報",
+    "addressMode": "住所モード",
+    "selectExisting": "既存住所を選択",
+    "addNew": "新しい住所を追加",
+    "selectAddress": "住所を選択",
+    "selectAddressPlaceholder": "既存の住所を選択してください",
+    "noExistingAddresses": "既存の請求先住所が見つかりません。新しい住所を追加してください。"
+  },
 
   "cncontactform": {
     "contactForm": "CONTACT FORM",
@@ -331,8 +344,10 @@
     "submit": "送信",
     "edit": "編集",
     "delete": "削除",
-    "register": "登録"
+    "register": "登録",
+    "close": "閉じる"
   },
+
 
   "pleaseSelect": "選択してください",
 
@@ -578,6 +593,17 @@
     "parentingPolicy": "育児方針・シッターへの要望",
     "schoolName": "園・学校・塾名",
     "address": "住所"
+  },
+
+  "cnInfo": {
+    "orderForm": "注文フォーム",
+    "required": "必須",
+    "billingContact": "請求先連絡先情報",
+    "modal": {
+      "submittedSuccessfully": "送信完了",
+      "thankYouForSubmission": "送信ありがとうございました。",
+      "editRegistrationDetails": "登録内容の編集"
+    }
   },
 
   "adIntroducedTalentPage": {

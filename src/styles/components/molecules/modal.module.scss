@@ -1,0 +1,165 @@
+@import "../../base/colors.scss";
+@import "../../base/mixins.scss";
+@import "../../base/variables.scss";
+
+.overlay {
+  @include flex-center;
+  width: 100%;
+}
+.modal {
+  background: $primary;
+  border-radius: $border-radius-base;
+  width: 80%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  border: 2px solid $border;
+
+  &.success {
+    .header {
+      background-color: $primary;
+      color: white;
+    }
+         .content {
+       padding: 30px;
+       background-color: $primary-light-color;
+       flex: 1;
+       display: flex;
+       flex-direction: column;
+
+      .message {
+        color: $primary;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .editSection {
+        margin-top: 0;
+
+        .editButton {
+          background: none;
+          border: none;
+          color: $black;
+          text-decoration: underline;
+          cursor: pointer;
+          font-size: 12px;
+          padding: 0;
+          font-weight: 500;
+
+          &:hover {
+            color: #31b0d5;
+          }
+        }
+      }
+    }
+  }
+
+  &.fail {
+    .header {
+      background-color: $danger;
+      color: white;
+    }
+    .content {
+      padding: 30px;
+      background-color: $danger-light;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .message {
+        color: #5bc0de;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .editSection {
+        margin-top: 0;
+
+        .editButton {
+          background: none;
+          border: none;
+          color: #5bc0de;
+          text-decoration: underline;
+          cursor: pointer;
+          font-size: 12px;
+          padding: 0;
+          font-weight: 500;
+
+          &:hover {
+            color: #31b0d5;
+          }
+        }
+      }
+    }
+  }
+}
+
+.header {
+  padding: 20px 30px;
+  text-align: left;
+
+  .title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: $white;
+  }
+}
+
+.content {
+  padding: 30px;
+  background-color: #f8f9fa;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .message {
+    color: #5bc0de;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .editSection {
+    margin-top: 0;
+
+    .editButton {
+      background: none;
+      border: none;
+      color: #5bc0de;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0;
+      font-weight: 500;
+
+      &:hover {
+        color: #31b0d5;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .overlay {
+    padding-top: 50px;
+  }
+
+  .modal {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .header {
+    padding: 15px 20px;
+
+    .title {
+      font-size: 14px;
+    }
+  }
+
+  .content {
+    padding: 20px;
+  }
+}

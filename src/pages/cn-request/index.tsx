@@ -26,6 +26,10 @@ const requestData = [
     requestKey: "serviceStatus",
     route: "/cn-request/reactivate-request",
   },
+  {
+    requestKey: "billingChange",
+    route: "/cn-request/billing-change-request",
+  },
 ];
 
 export default function CnRequest() {

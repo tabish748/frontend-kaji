@@ -150,8 +150,8 @@ export default function UpdatePaymentMethod({ activeContractIdx, activePlanIdx, 
         />
       )}
       
-      <ClientSection heading={t("changePaymentMethodPage.heading")}> 
-        <h3 className={styles.subHeading}>{t("changePaymentMethodPage.subHeading")}</h3>
+    <ClientSection heading={t("changePaymentMethodPage.heading")}>
+      <h3 className={styles.subHeading}>{t("changePaymentMethodPage.subHeading")}</h3>
         
         {/* Show success message */}
         {changePayMethodState.success && (
@@ -190,54 +190,54 @@ export default function UpdatePaymentMethod({ activeContractIdx, activePlanIdx, 
             <Form className={styles.customerForm} onSubmit={() => {}} errors={{}} setErrors={() => {}}>
               <div className={styles.formGrid}>
                 <div className={styles.label}>{t("aboutPage.paymentMethodLabel")}</div>
-                <RadioField
-                  name="paymentMethodReadOnly"
+          <RadioField
+            name="paymentMethodReadOnly"
                   options={customerDropdowns?.payment_method?.map(option => ({
                     label: option.label,
                     value: option.value.toString(),
                   })) || []}
                   selectedValue={activePlan?.payment_method?.toString() || ""}
-                  onChange={() => {}}
-                  className={styles.radioGroup}
-                  disabled
-                />
-              </div>
-            </Form>
-            {/* Updated Info */}
+            onChange={() => {}}
+            className={styles.radioGroup}
+            disabled
+          />
+        </div>
+      </Form>
+      {/* Updated Info */}
             <h1 className="cn-seperator-heading danger mt-3">{t("changePaymentMethodPage.update")}</h1>
-            <Form
-              className={styles.customerForm}
-              onSubmit={handleSubmit}
-              errors={formErrors}
-              setErrors={setFormErrors}
-            >
-              <div className={styles.formGrid}>
+      <Form
+        className={styles.customerForm}
+        onSubmit={handleSubmit}
+        errors={formErrors}
+        setErrors={setFormErrors}
+      >
+        <div className={styles.formGrid}>
                 <div className={styles.label}>{t("aboutPage.paymentMethodLabel")}</div>
-                <RadioField
-                  name="paymentMethod"
+          <RadioField
+            name="paymentMethod"
                   options={customerDropdowns?.payment_method?.map(option => ({
                     label: option.label,
                     value: option.value.toString(),
                   })) || []}
-                  selectedValue={formValues.paymentMethod}
-                  onChange={handleChange}
-                  className={styles.radioGroup}
+            selectedValue={formValues.paymentMethod}
+            onChange={handleChange}
+            className={styles.radioGroup}
                   disabled={changePayMethodState.loading}
-                />
-              </div>
-              <div className="mt-2 d-flex justify-content-center align-items-center">
-                <Button 
-                  className="px-10" 
-                  htmlType="submit" 
-                  type="primary" 
+          />
+        </div>
+        <div className="mt-2 d-flex justify-content-center align-items-center">
+          <Button
+            className="px-10"
+            htmlType="submit"
+            type="primary"
                   text={changePayMethodState.loading ? t("Loading...") : t("Submit")}
                   disabled={changePayMethodState.loading}
-                />
-              </div>
-            </Form>
+          />
+        </div>
+      </Form>
           </>
         )}
-      </ClientSection>
+    </ClientSection>
     </ApiLoadingWrapper>
   );
 }

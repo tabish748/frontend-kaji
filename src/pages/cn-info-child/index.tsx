@@ -9,6 +9,7 @@ import RadioField from "@/components/radio-field/radio-field";
 import SelectField from "@/components/select-field/select-field";
 import Button from "@/components/button/button";
 import Toast from "@/components/toast/toast";
+import Modal from "@/components/modal/modal";
 import Accordion, { AccordionItem } from "@/components/molecules/accordion";
 import styles from "@/styles/pages/cnabout.module.scss";
 import styleHeader from "@/styles/pages/cnChangePaymentMethod.module.scss";
@@ -102,6 +103,9 @@ export default function CnInfoChild() {
     message: string | string[];
     type: string;
   } | null>(null);
+
+  // Modal state - only show after final submission
+  const [showModal, setShowModal] = useState(false);
 
   // Form errors state
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
@@ -972,15 +976,8 @@ export default function CnInfoChild() {
           }
         }
 
-        setToast({
-          message: "Profile completion submitted successfully",
-          type: "success",
-        });
-
-        // Redirect to home page after successful completion
-        setTimeout(() => {
-          router.push("/");
-        }, 1000);
+        // Show modal instead of toast and redirect
+        setShowModal(true);
       } else {
         throw new Error(response.message || "Profile completion failed");
       }
@@ -992,6 +989,13 @@ export default function CnInfoChild() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setShowModal(false);
+    // Redirect to home page after closing modal
+    router.push("/");
   };
 
   // Add remove handlers
@@ -1058,6 +1062,13 @@ export default function CnInfoChild() {
           <h1 className={styleHeader.topHeading}>
             {t("cnInfo.childInfoForm")}
           </h1>
+          <Modal
+            isVisible={showModal}
+            onClose={handleModalClose}
+            onEditClick={handleModalClose}
+            type="success"
+            // editText={t('cnInfo.modal.editRegistrationDetails')}
+          >
 
           {children.map((child, childIndex) => (
             <React.Fragment key={childIndex}>
@@ -1871,6 +1882,7 @@ export default function CnInfoChild() {
               />
             </div>
           </div>
+          </Modal>
         </div>
     </>
   );
