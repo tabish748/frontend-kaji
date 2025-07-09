@@ -27,6 +27,7 @@ interface InputFieldProps {
   accept?: string; // File types allowed
   onFileChange?: (file: File | null) => void; // Custom file change handler
   fileValue?: File | null; // Actual file object for validation
+  existingFileName?: string; // Existing file name to display
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
@@ -49,7 +50,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
   labelClassName,
   icon,
   accept,
-  onFileChange
+  onFileChange,
+  existingFileName
 }, ref) => { 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileDisplayName, setFileDisplayName] = useState<string>("");
@@ -217,13 +219,13 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
           <label 
             htmlFor={id || name} 
             className={`${styles.fileIconButton} ${disabled ? styles.disabled : ''} ${errorText ? styles.error : ''}`}
-            title={selectedFile ? `Selected: ${selectedFile.name}` : placeholder || "Click to choose file"}
+            title={selectedFile ? `Selected: ${selectedFile.name}` : existingFileName ? `Current: ${existingFileName}` : placeholder || "Click to choose file"}
           >
             <FiPaperclip style={{ fontSize: '22px' }} />
           </label>
           
-          {/* Selected file display */}
-          {selectedFile && (
+          {/* Selected file display or existing file display */}
+          {selectedFile ? (
             <div className={styles.selectedFileDisplay}>
               <span className={styles.fileName}>{selectedFile.name}</span>
               <button 
@@ -236,7 +238,11 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
                 <IoClose />
               </button>
             </div>
-          )}
+          ) : existingFileName ? (
+            <div className={styles.selectedFileDisplay}>
+              <span className={styles.fileName} >{existingFileName}</span>
+            </div>
+          ) : null}
         </div>
         
         {errorText && <div className={styles.errorText}>{errorText}</div>}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form } from "../form/form";
 import InputField from "../input-field/input-field";
@@ -10,31 +10,35 @@ import TextAreaField from "../text-area/text-area";
 import CheckboxField from "../checkbox-field/checkbox-field";
 import RadioField from "../radio-field/radio-field";
 import styles from "../../styles/components/molecules/inquiry-tab.module.scss";
-import { calculateAge, parseDateForAPI } from "../../libs/utils";
+import { calculateAge, parseDateForAPI, extractDateFromISO } from "../../libs/utils";
 import Button from "../button/button";
 import { useLanguage } from "../../localization/LocalContext";
-import { FiPaperclip } from "react-icons/fi";
 import { AppDispatch, RootState } from '../../app/store';
 import { fetchAdminDropdowns } from '../../app/features/dropdowns/getAdminDropdownsSlice';
-import { createCustomerBasicInfo, resetCreateCustomerBasicInfo } from '../../app/customer/createCustomerBasicInfoSlice';
+import { getCustomerBasicInfo, resetGetCustomerBasicInfo } from '../../app/customer/getCustomerBasicInfoSlice';
+import { updateCustomerBasicInfo, resetUpdateCustomerBasicInfo } from '../../app/customer/updateCustomerBasicInfoSlice';
 import Toast from "../toast/toast";
 import ApiLoadingWrapper from "../api-loading-wrapper/api-loading-wrapper";
 
-const BasicInfo1Tab: React.FC = () => {
+const BasicInfo1TabEdit: React.FC = () => {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { id } = router.query;
   const dispatch = useDispatch<AppDispatch>();
   
   // Redux state
   const adminDropdownsState = useSelector((state: RootState) => state.adminDropdowns) || {};
-  const createCustomerState = useSelector((state: RootState) => state.createCustomerBasicInfo) || {};
+  const getCustomerState = useSelector((state: RootState) => state.customerBasicInfo) || {};
+  const updateCustomerState = useSelector((state: RootState) => state.updateCustomerBasicInfo) || {};
   
   const { adminDropdowns, loading: dropdownsLoading = false, error: dropdownsError = null } = adminDropdownsState;
-  const { loading: createLoading = false, success: createSuccess = false, error: createError = null } = createCustomerState;
-  
+  const { customerData, loading: getLoading = false, error: getError = null } = getCustomerState;
+  const { loading: updateLoading = false, success: updateSuccess = false, error: updateError = null } = updateCustomerState;
+
   // Toast state
   const [toast, setToast] = useState<{ message: string | string[]; type: string } | null>(null);
   const [dropdownsLoaded, setDropdownsLoaded] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     // Order Info
     orderDate: "",
@@ -68,18 +72,25 @@ const BasicInfo1Tab: React.FC = () => {
     primaryPhone: "phone1",
     primaryEmail: "email1",
     advertisingEmail: "subscribe",
-    preferredServices: [],
+    preferredServices: [] as string[],
     proxyCheckIn: "1", // Default to "required"
-    matchingListHK: [],
-    matchingListBS: [],
+    matchingListHK: [] as string[],
+    matchingListBS: [] as string[],
     note1: "",
     note2: "",
     note3: ""
   });
 
   // Train stations data - start with one empty row
-  const [trainStations, setTrainStations] = useState([
+  const [trainStations, setTrainStations] = useState<Array<{
+    id?: number;
+    date: string;
+    railwayCompany: string;
+    trainLine: string;
+    trainStation: string;
+  }>>([
     {
+      id: undefined,
       date: "",
       railwayCompany: "",
       trainLine: "",
@@ -87,14 +98,23 @@ const BasicInfo1Tab: React.FC = () => {
     },
   ]);
 
-  // Key possession records data - start with one empty row
+  // Key possession records data
   const [keyPossessionRecords, setKeyPossessionRecords] = useState([
     {
       dateReceived: "",
       dateReturned: "",
       staffName: "",
       status: "",
-      receipt: "",
+      existingReceipt: [] as string[], // Array of existing file URLs/paths
+      newReceipt: null as File | null, // Single new file
+    },
+    {
+      dateReceived: "",
+      dateReturned: "",
+      staffName: "",
+      status: "",
+      existingReceipt: [] as string[],
+      newReceipt: null as File | null,
     },
   ]);
 
@@ -147,6 +167,7 @@ const BasicInfo1Tab: React.FC = () => {
     // Reset train stations to single empty row
     setTrainStations([
       {
+        id: undefined,
         date: "",
         railwayCompany: "",
         trainLine: "",
@@ -156,18 +177,138 @@ const BasicInfo1Tab: React.FC = () => {
 
     // Reset key possession records to single empty row
     setKeyPossessionRecords([
-    {
-      dateReceived: "",
-      dateReturned: "",
-      staffName: "",
-      status: "",
-      receipt: "",
-    },
-  ]);
+      {
+        dateReceived: "",
+        dateReturned: "",
+        staffName: "",
+        status: "",
+        existingReceipt: [],
+        newReceipt: null,
+      },
+    ]);
 
     // Clear any form errors
     setErrors({});
   };
+
+  // Load existing data for edit mode
+  useEffect(() => {
+    if (id && typeof id === 'string') {
+      dispatch(getCustomerBasicInfo(id));
+    }
+  }, [id, dispatch]);
+
+  // Handle customer data when loaded
+  useEffect(() => {
+    if (customerData) {
+      // Log the fresh customer data (query) after successful update
+      console.log('Customer data loaded/refreshed:', customerData);
+      
+      // Convert API data to HTML date input format (YYYY-MM-DD)
+      const formattedDob = customerData.dob ? extractDateFromISO(customerData.dob) : "";
+      
+      // Convert services array to checkbox format
+      const servicesArray = Array.isArray(customerData.services) ? customerData.services.map(String) : [];
+      
+      // Convert match lists to checkbox format
+      const matchListHK = Array.isArray(customerData.match_list_hk) ? customerData.match_list_hk.map(String) : [];
+      const matchListBS = Array.isArray(customerData.match_list_bs) ? customerData.match_list_bs.map(String) : [];
+      
+      // Set form data
+      setFormData({
+        // Order Info
+        orderDate: customerData.first_inquiry_date || "",
+        orderTime: customerData.first_inquiry_hour && customerData.first_inquiry_minute ? 
+          `${String(customerData.first_inquiry_hour).padStart(2, '0')}:${String(customerData.first_inquiry_minute).padStart(2, '0')}` : "",
+        customerStatus: String(customerData.customer_status || ""),
+        
+        // Inquiry Info
+        customerId: String(customerData.id || ""),
+        fullNameKatakana: customerData.name_kana || "",
+        fullName: customerData.name || "",
+        customerType: String(customerData.represents_id || "1"),
+        dateOfBirth: formattedDob,
+        age: String(customerData.age || ""),
+        gender: String(customerData.gender || "1"),
+        phone1: customerData.phone1 || "",
+        phone1Type: String(customerData.phone1_type || ""),
+        phone2: customerData.phone2 || "",
+        phone2Type: String(customerData.phone2_type || ""),
+        phone3: customerData.phone3 || "",
+        phone3Type: String(customerData.phone3_type || ""),
+        email1: customerData.email1 || "",
+        email1Type: "", // Not in API response
+        email2: customerData.email2 || "",
+        email2Type: "", // Not in API response
+        postcode: customerData.post_code || "",
+        prefecture: String(customerData.prefecture_id || ""),
+        address1: customerData.address1 || "",
+        address2: customerData.address2 || "",
+        building: customerData.apartment_name || "",
+        language: String(customerData.language || ""),
+        primaryPhone: customerData.primary_contact_phone || "phone1",
+        primaryEmail: customerData.primary_contact_email || "email1",
+        advertisingEmail: String(customerData.newsletter_emails || "1"),
+        preferredServices: servicesArray,
+        proxyCheckIn: String(customerData.deputy_checkin || "1"),
+        matchingListHK: matchListHK,
+        matchingListBS: matchListBS,
+        note1: customerData.deputy_remarks || "",
+        note2: customerData.match_list_remarks || "",
+        note3: customerData.remarks || ""
+      });
+
+      // Set train stations from customer_routes
+      if (customerData.customer_routes && Array.isArray(customerData.customer_routes)) {
+        const stations = customerData.customer_routes.map((route: any) => ({
+          id: route.id, // Keep track of existing record IDs
+          date: route.date_added || "",
+          railwayCompany: route.company || "",
+          trainLine: route.route_name || "",
+          trainStation: route.nearest_station || "",
+        }));
+        
+        // Always ensure at least one empty row
+        if (stations.length === 0) {
+          stations.push({
+            id: undefined,
+            date: "",
+            railwayCompany: "",
+            trainLine: "",
+            trainStation: "",
+          });
+        }
+        
+        setTrainStations(stations);
+      }
+
+      // Set key possession records from key_information
+      if (customerData.key_information && Array.isArray(customerData.key_information)) {
+        const records = customerData.key_information.map((info: any) => ({
+          dateReceived: info.date_added || "",
+          dateReturned: info.date_returned || "",
+          staffName: String(info.user_id || ""),
+          status: String(info.status || ""),
+          existingReceipt: info.existing_receipt || [], // Handle existing receipts as array
+          newReceipt: null, // No new file for existing records
+        }));
+        
+        // Always ensure at least one empty row
+        if (records.length === 0) {
+          records.push({
+            dateReceived: "",
+            dateReturned: "",
+            staffName: "",
+            status: "",
+            existingReceipt: [],
+            newReceipt: null,
+          });
+        }
+        
+        setKeyPossessionRecords(records);
+      }
+    }
+  }, [customerData]);
 
   // Fetch dropdowns on component mount - allow retry on errors
   useEffect(() => {
@@ -177,32 +318,29 @@ const BasicInfo1Tab: React.FC = () => {
     }
   }, [dispatch, dropdownsLoaded, dropdownsLoading, dropdownsError]);
 
-  // Reset create state on component mount
-  useEffect(() => {
-    dispatch(resetCreateCustomerBasicInfo());
-  }, [dispatch]);
-
   // Handle success state
   useEffect(() => {
-    if (createSuccess) {
-      setToast({ message: 'Customer created successfully!', type: 'success' });
-      // Reset form after successful save
-      resetForm();
-      dispatch(resetCreateCustomerBasicInfo());
+    if (updateSuccess) {
+      setToast({ message: 'Customer updated successfully!', type: 'success' });
+      // Refresh customer data to show updated information instead of resetting form
+      if (id && typeof id === 'string') {
+        dispatch(getCustomerBasicInfo(id));
+      }
+      dispatch(resetUpdateCustomerBasicInfo());
     }
-  }, [createSuccess, dispatch]);
+  }, [updateSuccess, dispatch, id]);
 
   // Handle error state
   useEffect(() => {
-    if (createError) {
-      let errorMessage: string | string[] = 'Failed to create customer. Please try again.';
+    if (updateError) {
+      let errorMessage: string | string[] = 'Failed to update customer. Please try again.';
       
-      // Check if createError contains validation errors in the expected format
-      if (createError && typeof createError === 'object') {
+      // Check if updateError contains validation errors in the expected format
+      if (updateError && typeof updateError === 'object') {
         const errorMessages: string[] = [];
         
         // Iterate through each field's errors
-        Object.entries(createError).forEach(([field, messages]) => {
+        Object.entries(updateError).forEach(([field, messages]) => {
           if (Array.isArray(messages)) {
             // Add each error message for this field
             messages.forEach((message: string) => {
@@ -218,20 +356,27 @@ const BasicInfo1Tab: React.FC = () => {
         if (errorMessages.length > 0) {
           errorMessage = errorMessages;
         }
-      } else if (typeof createError === 'string') {
+      } else if (typeof updateError === 'string') {
         // If error is just a string, use it directly
-        errorMessage = createError;
+        errorMessage = updateError;
       }
       
       setToast({ message: errorMessage, type: 'fail' });
       // Clear error state after toast duration + small buffer
       setTimeout(() => {
-        if (createError) {
-          dispatch(resetCreateCustomerBasicInfo());
+        if (updateError) {
+          dispatch(resetUpdateCustomerBasicInfo());
         }
       }, 4500); // Toast duration (4000ms) + 500ms buffer
     }
-  }, [createError, dispatch]);
+  }, [updateError, dispatch]);
+
+  // Handle get customer error
+  useEffect(() => {
+    if (getError) {
+      setToast({ message: 'Failed to load customer data. Please try again.', type: 'fail' });
+    }
+  }, [getError]);
 
   const handleInputChange = (name: string, value: any) => {
     // Skip updating file fields through regular onChange - they should only be updated via handleFileChange
@@ -259,8 +404,6 @@ const BasicInfo1Tab: React.FC = () => {
     }));
   };
 
-  // Removed complex train station validation - now using required validation on first row fields only
-
   const removeTrainStation = (index: number) => {
     if (trainStations.length > 1) {
       const newStations = trainStations.filter((_, i) => i !== index);
@@ -275,75 +418,222 @@ const BasicInfo1Tab: React.FC = () => {
     }
   };
 
+  // Helper function to update train station - simplified to avoid interference with input
+  const updateTrainStation = (index: number, field: string, value: string) => {
+    const newStations = [...trainStations];
+    newStations[index] = { ...newStations[index], [field]: value };
+    setTrainStations(newStations);
+  };
+
+  // Helper function to remove existing file
+  const removeExistingFile = (recordIndex: number, fileIndex: number) => {
+    const newRecords = [...keyPossessionRecords];
+    newRecords[recordIndex] = {
+      ...newRecords[recordIndex],
+      existingReceipt: newRecords[recordIndex].existingReceipt.filter((_, index) => index !== fileIndex)
+    };
+    setKeyPossessionRecords(newRecords);
+    console.log(`Existing file removed from record ${recordIndex} at index ${fileIndex}`);
+  };
+
+  // Helper function to remove new file
+  const removeNewFile = (recordIndex: number) => {
+    const newRecords = [...keyPossessionRecords];
+    newRecords[recordIndex] = {
+      ...newRecords[recordIndex],
+      newReceipt: null
+    };
+    setKeyPossessionRecords(newRecords);
+    console.log(`New file removed from record ${recordIndex}`);
+  };
+
+  // Helper function to update key record - simplified to avoid interference with input
+  const updateKeyRecord = (index: number, field: string, value: string | File) => {
+    const newRecords = [...keyPossessionRecords];
+    if (field === 'newReceipt' && value instanceof File) {
+      // When adding a new file, clear existing files (only one file allowed per record)
+      newRecords[index] = { 
+        ...newRecords[index], 
+        existingReceipt: [], // Clear existing files
+        newReceipt: value 
+      };
+      console.log(`New file added to record ${index}: ${value.name} (${value.size} bytes) - existing files cleared`);
+    } else {
+      newRecords[index] = { ...newRecords[index], [field]: value };
+    }
+    setKeyPossessionRecords(newRecords);
+  };
+
+  // Use useEffect to handle dynamic row addition after state updates
+  useEffect(() => {
+    // Check if we need to add empty train station row
+    const lastTrainStation = trainStations[trainStations.length - 1];
+    const hasContentInLastRow = lastTrainStation.date || lastTrainStation.railwayCompany || 
+                               lastTrainStation.trainLine || lastTrainStation.trainStation;
+    
+    if (hasContentInLastRow && trainStations.length < 10) { // Limit to prevent infinite rows
+      setTrainStations(prev => [...prev, {
+        id: undefined,
+        date: "",
+        railwayCompany: "",
+        trainLine: "",
+        trainStation: "",
+      }]);
+    }
+  }, [trainStations]);
+
+  // Use useEffect to handle dynamic key record addition after state updates
+  useEffect(() => {
+    // Check if we need to add empty key record row
+    const lastKeyRecord = keyPossessionRecords[keyPossessionRecords.length - 1];
+    const hasContentInLastRow = lastKeyRecord.dateReceived || lastKeyRecord.dateReturned || 
+                               lastKeyRecord.staffName || lastKeyRecord.status || 
+                               lastKeyRecord.existingReceipt.length > 0 || lastKeyRecord.newReceipt;
+    
+    if (hasContentInLastRow && keyPossessionRecords.length < 10) { // Limit to prevent infinite rows
+      setKeyPossessionRecords(prev => [...prev, {
+        dateReceived: "",
+        dateReturned: "",
+        staffName: "",
+        status: "",
+        existingReceipt: [],
+        newReceipt: null,
+      }]);
+    }
+  }, [keyPossessionRecords]);
+
+  // Removed complex train station validation - now using required validation on first row fields only
+
+  // Helper function to debug FormData contents
+  const logFormDataContents = (formData: FormData) => {
+    console.log('FormData contents:');
+    const entries = Array.from(formData.entries());
+    entries.forEach(([key, value]) => {
+      if (value instanceof File) {
+        console.log(`${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    });
+  };
+
   const handleSubmit = async () => {
-    // Transform form data to API format
+    if (!id) {
+      setToast({ message: "Customer ID is required for update", type: 'fail' });
+      return;
+    }
+
+    // Transform form data to API format for update
     const dobParsed = parseDateForAPI(formData.dateOfBirth);
     
-    const apiData = {
-      first_inquiry_date: formData.orderDate,
-      first_inquiry_hour: formData.orderTime.split(':')[0] || '',
-      first_inquiry_minute: formData.orderTime.split(':')[1] || '',
-      customer_status: formData.customerStatus,
-      name: formData.fullName,
-      name_kana: formData.fullNameKatakana,
-      represents_id: formData.customerType,
-      dob_year: dobParsed.year,
-      dob_month: dobParsed.month,
-      dob_day: dobParsed.day,
-      age: formData.age,
-      gender: formData.gender,
-      phone1_type: formData.phone1Type,
-      phone1: formData.phone1,
-      phone2_type: formData.phone2Type,
-      phone2: formData.phone2,
-      phone3_type: formData.phone3Type,
-      phone3: formData.phone3,
-      email1: formData.email1,
-      email2: formData.email2,
-      primary_contact_phone: formData.primaryPhone,
-      primary_contact_email: formData.primaryEmail,
-      post_code: formData.postcode,
-      prefecture_id: formData.prefecture,
-      address1: formData.address1,
-      address2: formData.address2,
-      apartment_name: formData.building,
-      language: formData.language,
-      newsletter_emails: formData.advertisingEmail,
-      services: formData.preferredServices.reduce((acc: any, service: string, index: number) => {
-        acc[index + 1] = service;
-        return acc;
-      }, {}),
-      station_details: trainStations.filter(station => 
-        station.date || station.railwayCompany || station.trainLine || station.trainStation
-      ).map(station => ({
-        date_added: station.date,
-        company: station.railwayCompany,
-        route_name: station.trainLine,
-        nearest_station: station.trainStation,
-      })),
-      key_information: keyPossessionRecords.filter(record => 
-        record.dateReceived || record.dateReturned || record.staffName || record.status
-      ).map(record => ({
-        date_added: record.dateReceived,
-        date_returned: record.dateReturned,
-        user_id: record.staffName,
-        status: record.status,
-      })),
-      deputy_checkin: formData.proxyCheckIn,
-      deputy_remarks: formData.note1,
-      match_list_hk: formData.matchingListHK.reduce((acc: any, item: string, index: number) => {
-        acc[index + 1] = item;
-        return acc;
-      }, {}),
-      match_list_bs: formData.matchingListBS.reduce((acc: any, item: string, index: number) => {
-        acc[index + 1] = item;
-        return acc;
-      }, {}),
-      match_list_remarks: formData.note2,
-      remarks: formData.note3,
-    };
+    // Create FormData to handle file uploads properly
+    // FormData structure for file uploads:
+    // - Regular fields: key=value
+    // - Files: key_information[1][receipt][1]=File, key_information[1][receipt][2]=File, etc.
+    // - Arrays: services[1]=1, services[2]=2, etc.
+    // - Nested objects: station_details[0][date_added]=value, station_details[0][company]=value, etc.
+    const submissionData = new FormData();
+    
+    // Add basic customer data to FormData
+    submissionData.append('first_inquiry_date', formData.orderDate);
+    submissionData.append('first_inquiry_hour', formData.orderTime.split(':')[0] || '');
+    submissionData.append('first_inquiry_minute', formData.orderTime.split(':')[1] || '');
+    submissionData.append('customer_status', formData.customerStatus);
+    submissionData.append('name', formData.fullName);
+    submissionData.append('name_kana', formData.fullNameKatakana);
+    submissionData.append('represents_id', formData.customerType);
+    submissionData.append('dob_year', dobParsed.year);
+    submissionData.append('dob_month', dobParsed.month);
+    submissionData.append('dob_day', dobParsed.day);
+    submissionData.append('age', formData.age);
+    submissionData.append('gender', formData.gender);
+    submissionData.append('phone1_type', formData.phone1Type);
+    submissionData.append('phone1', formData.phone1);
+    submissionData.append('phone2_type', formData.phone2Type);
+    submissionData.append('phone2', formData.phone2);
+    submissionData.append('phone3_type', formData.phone3Type);
+    submissionData.append('phone3', formData.phone3);
+    submissionData.append('email1', formData.email1);
+    submissionData.append('email2', formData.email2);
+    submissionData.append('primary_contact_phone', formData.primaryPhone);
+    submissionData.append('primary_contact_email', formData.primaryEmail);
+    submissionData.append('post_code', formData.postcode);
+    submissionData.append('prefecture_id', formData.prefecture);
+    submissionData.append('address1', formData.address1);
+    submissionData.append('address2', formData.address2);
+    submissionData.append('apartment_name', formData.building);
+    submissionData.append('language', formData.language);
+    submissionData.append('newsletter_emails', formData.advertisingEmail);
+    
+    // Add services as indexed array
+    formData.preferredServices.forEach((service, index) => {
+      submissionData.append(`services[${service}]`, service);
+    });
+    
+    // Add train stations
+    trainStations.filter(station => 
+      station.date || station.railwayCompany || station.trainLine || station.trainStation
+    ).forEach((station, index) => {
+      if (station.id) {
+        submissionData.append(`station_details[${index}][id]`, String(station.id));
+      }
+      submissionData.append(`station_details[${index}][date_added]`, station.date);
+      submissionData.append(`station_details[${index}][company]`, station.railwayCompany);
+      submissionData.append(`station_details[${index}][route_name]`, station.trainLine);
+      submissionData.append(`station_details[${index}][nearest_station]`, station.trainStation);
+    });
+    
+    // Add key information with file uploads using the correct indexed format
+    keyPossessionRecords.filter(record => 
+      record.dateReceived || record.dateReturned || record.staffName || record.status || 
+      record.existingReceipt.length > 0 || record.newReceipt
+    ).forEach((record, recordIndex) => {
+      const keyIndex = recordIndex + 1; // Use 1-based indexing for API
+      submissionData.append(`key_information[${keyIndex}][date_added]`, record.dateReceived);
+      submissionData.append(`key_information[${keyIndex}][date_returned]`, record.dateReturned);
+      submissionData.append(`key_information[${keyIndex}][user_id]`, record.staffName);
+      submissionData.append(`key_information[${keyIndex}][status]`, record.status);
+      
+      // Add existing receipts
+      record.existingReceipt.forEach((receiptPath, receiptIndex) => {
+        submissionData.append(`key_information[${keyIndex}][existing_receipt][${receiptIndex}]`, receiptPath);
+      });
 
-    dispatch(createCustomerBasicInfo(apiData));
+      // Add new receipt file if it exists (as array format)
+      if (record.newReceipt) {
+        submissionData.append(`key_information[${keyIndex}][receipt][0]`, record.newReceipt);
+      }
+    });
+    
+    submissionData.append('deputy_checkin', formData.proxyCheckIn);
+    submissionData.append('deputy_remarks', formData.note1);
+    
+    // Add match lists as indexed arrays
+    formData.matchingListHK.forEach((item) => {
+      submissionData.append(`match_list_hk[${item}]`, item);
+    });
+    formData.matchingListBS.forEach((item) => {
+      submissionData.append(`match_list_bs[${item}]`, item);
+    });
+    
+    submissionData.append('match_list_remarks', formData.note2);
+    submissionData.append('remarks', formData.note3);
+
+    // Debug: Log FormData contents to verify file uploads are included
+    console.log('About to submit FormData with the following contents:');
+    logFormDataContents(submissionData);
+    
+    // Debug: Log key possession records state
+    console.log('Key possession records state:', keyPossessionRecords.map((record, index) => ({
+      index,
+      hasExistingFiles: record.existingReceipt.length,
+      existingFiles: record.existingReceipt,
+      hasNewFile: !!record.newReceipt,
+      newFileName: record.newReceipt?.name
+    })));
+
+    // Use Redux action to update customer with FormData
+    dispatch(updateCustomerBasicInfo({ customerId: String(id), customerData: submissionData }));
   };
 
   // Helper function to generate generic options if backend options are empty
@@ -403,6 +693,12 @@ const BasicInfo1Tab: React.FC = () => {
       label: item.label,
     })) || generateGenericOptions(6);
 
+  // Proxy Check-In options with proper values and translations
+  const proxyCheckInOptions = [
+    { value: "0", label: t("adBasicInfo1.options.proxyCheckIn.notRequired") },
+    { value: "1", label: t("adBasicInfo1.options.proxyCheckIn.required") }
+  ];
+  
   const matchingListHKOptions =
     adminDropdowns?.matching_list_hk?.map((item: any) => ({
       value: String(item.value),
@@ -415,12 +711,6 @@ const BasicInfo1Tab: React.FC = () => {
       label: item.label,
     })) || generateGenericOptions(8);
 
-  // Proxy Check-In options with proper values and translations
-  const proxyCheckInOptions = [
-    { value: "0", label: t("adBasicInfo1.options.proxyCheckIn.notRequired") },
-    { value: "1", label: t("adBasicInfo1.options.proxyCheckIn.required") }
-  ];
-  
   const statusOptions = generateGenericOptions(3);
 
   const assigneeOptions =
@@ -428,63 +718,19 @@ const BasicInfo1Tab: React.FC = () => {
       ?.filter((user: any) => user.status)
       .map((item: any) => ({ value: String(item.value), label: item.label })) || generateGenericOptions(5);
 
-  // Helper function to update train station - simplified to avoid interference with input
-  const updateTrainStation = (index: number, field: string, value: string) => {
-    const newStations = [...trainStations];
-    newStations[index] = { ...newStations[index], [field]: value };
-    setTrainStations(newStations);
-  };
-
-  // Helper function to update key record - simplified to avoid interference with input
-  const updateKeyRecord = (index: number, field: string, value: string) => {
-    const newRecords = [...keyPossessionRecords];
-    newRecords[index] = { ...newRecords[index], [field]: value };
-    setKeyPossessionRecords(newRecords);
-  };
-
-  // Use useEffect to handle dynamic row addition after state updates
-  useEffect(() => {
-    // Check if we need to add empty train station row
-    const lastTrainStation = trainStations[trainStations.length - 1];
-    const hasContentInLastRow = lastTrainStation.date || lastTrainStation.railwayCompany || 
-                               lastTrainStation.trainLine || lastTrainStation.trainStation;
-    
-    if (hasContentInLastRow && trainStations.length < 10) { // Limit to prevent infinite rows
-      setTrainStations(prev => [...prev, {
-        date: "",
-        railwayCompany: "",
-        trainLine: "",
-        trainStation: "",
-      }]);
-    }
-  }, [trainStations]);
-
-  // Use useEffect to handle dynamic key record addition after state updates
-  useEffect(() => {
-    // Check if we need to add empty key record row
-    const lastKeyRecord = keyPossessionRecords[keyPossessionRecords.length - 1];
-    const hasContentInLastRow = lastKeyRecord.dateReceived || lastKeyRecord.dateReturned || 
-                               lastKeyRecord.staffName || lastKeyRecord.status;
-    
-    if (hasContentInLastRow && keyPossessionRecords.length < 10) { // Limit to prevent infinite rows
-      setKeyPossessionRecords(prev => [...prev, {
-        dateReceived: "",
-        dateReturned: "",
-        staffName: "",
-        status: "",
-        receipt: "",
-      }]);
-    }
-  }, [keyPossessionRecords]);
-
   return (
     <ApiLoadingWrapper
-      loading={dropdownsLoading}
-      error={dropdownsError}
-      onRetry={() => dispatch(fetchAdminDropdowns())}
-      errorTitle="Error loading form options"
+      loading={dropdownsLoading || getLoading}
+      error={dropdownsError || getError}
+      onRetry={() => {
+        dispatch(fetchAdminDropdowns());
+        if (id && typeof id === 'string') {
+          dispatch(getCustomerBasicInfo(id));
+        }
+      }}
+      errorTitle="Error loading form data"
     >
-    <div className="tab-content">
+      <div className="tab-content">
         {/* Toast Notification */}
         {toast && (
           <Toast
@@ -493,17 +739,17 @@ const BasicInfo1Tab: React.FC = () => {
             onClose={() => {
               setToast(null);
               // Clear error state when toast is closed
-              if (toast.type === 'fail' && createError) {
-                dispatch(resetCreateCustomerBasicInfo());
+              if (toast.type === 'fail' && updateError) {
+                dispatch(resetUpdateCustomerBasicInfo());
               }
             }}
             duration={4000}
           />
         )}
         
-      <Form
+        <Form
         onSubmit={handleSubmit}
-        registerBtnText="REGISTER"
+        registerBtnText="UPDATE"
         setErrors={setErrors}
         errors={errors}
       >
@@ -521,6 +767,7 @@ const BasicInfo1Tab: React.FC = () => {
                     placeholder={t("admin-form.placeholders.date")}
                     value={formData.orderDate}
                     onChange={(e) => handleInputChange("orderDate", e.target.value)}
+                    disabled={true}
                   />
                 </div>
                 <div className={styles.timeField}>
@@ -529,6 +776,7 @@ const BasicInfo1Tab: React.FC = () => {
                     type="time"
                     value={formData.orderTime}
                     onChange={(e) => handleInputChange("orderTime", e.target.value)}
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -557,6 +805,7 @@ const BasicInfo1Tab: React.FC = () => {
                 placeholder={t("admin-form.placeholders.customerId")}
                 value={formData.customerId}
                 onChange={(e) => handleInputChange("customerId", e.target.value)}
+                disabled={true}
               />
             </div>
           </div>
@@ -660,8 +909,12 @@ const BasicInfo1Tab: React.FC = () => {
                       label={t("admin-form.labels.phone1")}
                       placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone1}
-                      onChange={(e) => handleInputChange("phone1", e.target.value)}
-                      validations={[{ type: "required" }, { type: "isNumber" }]}
+                      onChange={(e) => {
+                        // Only allow numbers, spaces, hyphens, and parentheses
+                        const value = e.target.value.replace(/[^0-9\s\-\(\)]/g, '');
+                        handleInputChange("phone1", value);
+                      }}
+                      validations={[{ type: "required" }]}
                       tag={[{ value: "required", label: "Required" }]}
                     />
                   </div>
@@ -692,11 +945,15 @@ const BasicInfo1Tab: React.FC = () => {
                     <InputField
                       labelClassName="-ml-4"
                       name="phone2"
+                      type="tel"
                       label={t("admin-form.labels.phone2")}
                       placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone2}
-                      onChange={(e) => handleInputChange("phone2", e.target.value)}
-                      validations={formData.phone2 ? [{ type: "isNumber" }] : []}
+                      onChange={(e) => {
+                        // Only allow numbers, spaces, hyphens, and parentheses
+                        const value = e.target.value.replace(/[^0-9\s\-\(\)]/g, '');
+                        handleInputChange("phone2", value);
+                      }}
                     />
                   </div>
                 </div>
@@ -726,11 +983,15 @@ const BasicInfo1Tab: React.FC = () => {
                     <InputField
                       labelClassName="-ml-4"
                       name="phone3"
+                      type="tel"
                       label={t("admin-form.labels.phone3")}
                       placeholder={t("admin-form.placeholders.phone")}
                       value={formData.phone3}
-                      onChange={(e) => handleInputChange("phone3", e.target.value)}
-                      validations={formData.phone3 ? [{ type: "isNumber" }] : []}
+                      onChange={(e) => {
+                        // Only allow numbers, spaces, hyphens, and parentheses
+                        const value = e.target.value.replace(/[^0-9\s\-\(\)]/g, '');
+                        handleInputChange("phone3", value);
+                      }}
                     />
                   </div>
                 </div>
@@ -806,10 +1067,15 @@ const BasicInfo1Tab: React.FC = () => {
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <InputField
                     name="postcode"
+                    type="text"
                     placeholder={t("admin-form.placeholders.postcode")}
                     value={formData.postcode}
-                    onChange={(e) => handleInputChange("postcode", e.target.value)}
-                    validations={[{ type: "required" }, { type: "isNumber" }]}
+                    onChange={(e) => {
+                      // Only allow numbers for postal code
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      handleInputChange("postcode", value);
+                    }}
+                    validations={[{ type: "required" }]}
                     tag={[{ value: "required", label: "Required" }]}
                   />
                 </div>
@@ -879,41 +1145,41 @@ const BasicInfo1Tab: React.FC = () => {
                 <div>
                   <InputDateField
                     name={`trainStation${index}Date`}
-                    placeholder={t("admin-form.placeholders.japaneseDate")}
-                    value={station.date}
-                    onChange={(e) => updateTrainStation(index, 'date', e.target.value)}
-                    validations={index === 0 ? [{ type: "required" }] : []}
-                    tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
-                  />
-                </div>
-                <div>
-                  <InputField
-                    name={`trainStation${index}Company`}
-                    placeholder={t("admin-form.placeholders.railwayCompanyJR")}
-                    value={station.railwayCompany}
-                    onChange={(e) => updateTrainStation(index, 'railwayCompany', e.target.value)}
-                    validations={index === 0 ? [{ type: "required" }] : []}
-                    tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
-                  />
-                </div>
-                <div>
-                  <InputField
-                    name={`trainStation${index}Line`}
-                    placeholder={t("admin-form.placeholders.trainLineExample")}
-                    value={station.trainLine}
-                    onChange={(e) => updateTrainStation(index, 'trainLine', e.target.value)}
-                    validations={index === 0 ? [{ type: "required" }] : []}
-                    tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
-                  />
-                </div>
-                <div>
-                  <InputField
-                    name={`trainStation${index}Station`}
-                    placeholder={t("admin-form.placeholders.trainStationExample")}
-                    value={station.trainStation}
-                    onChange={(e) => updateTrainStation(index, 'trainStation', e.target.value)}
-                    validations={index === 0 ? [{ type: "required" }] : []}
-                    tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
+                                         placeholder={t("admin-form.placeholders.japaneseDate")}
+                     value={station.date}
+                     onChange={(e) => updateTrainStation(index, "date", e.target.value)}
+                     validations={index === 0 ? [{ type: "required" }] : []}
+                     tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
+                   />
+                 </div>
+                 <div>
+                   <InputField
+                     name={`trainStation${index}Company`}
+                     placeholder={t("admin-form.placeholders.railwayCompanyJR")}
+                     value={station.railwayCompany}
+                     onChange={(e) => updateTrainStation(index, "railwayCompany", e.target.value)}
+                     validations={index === 0 ? [{ type: "required" }] : []}
+                     tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
+                   />
+                 </div>
+                 <div>
+                   <InputField
+                     name={`trainStation${index}Line`}
+                     placeholder={t("admin-form.placeholders.trainLineExample")}
+                     value={station.trainLine}
+                     onChange={(e) => updateTrainStation(index, "trainLine", e.target.value)}
+                     validations={index === 0 ? [{ type: "required" }] : []}
+                     tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
+                   />
+                 </div>
+                 <div>
+                   <InputField
+                     name={`trainStation${index}Station`}
+                     placeholder={t("admin-form.placeholders.trainStationExample")}
+                     value={station.trainStation}
+                     onChange={(e) => updateTrainStation(index, "trainStation", e.target.value)}
+                     validations={index === 0 ? [{ type: "required" }] : []}
+                     tag={index === 0 ? [{ value: "required", label: "Required" }] : []}
                   />
                 </div>
                 <div className="d-flex gap-1">
@@ -995,7 +1261,7 @@ const BasicInfo1Tab: React.FC = () => {
                     name={`keyRecord${index}DateReceived`}
                     placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={record.dateReceived}
-                    onChange={(e) => updateKeyRecord(index, 'dateReceived', e.target.value)}
+                    onChange={(e) => updateKeyRecord(index, "dateReceived", e.target.value)}
                   />
                 </div>
                 <div>
@@ -1003,7 +1269,7 @@ const BasicInfo1Tab: React.FC = () => {
                     name={`keyRecord${index}DateReturned`}
                     placeholder={t("admin-form.placeholders.japaneseDate")}
                     value={record.dateReturned}
-                    onChange={(e) => updateKeyRecord(index, 'dateReturned', e.target.value)}
+                    onChange={(e) => updateKeyRecord(index, "dateReturned", e.target.value)}
                   />
                 </div>
                 <div>
@@ -1012,7 +1278,7 @@ const BasicInfo1Tab: React.FC = () => {
                     placeholder="Staff name"
                     options={assigneeOptions}
                     value={record.staffName}
-                    onChange={(e) => updateKeyRecord(index, 'staffName', e.target.value)}
+                    onChange={(e) => updateKeyRecord(index, "staffName", e.target.value)}
                   />
                 </div>
                 <div>
@@ -1021,11 +1287,22 @@ const BasicInfo1Tab: React.FC = () => {
                     placeholder="Status"
                     options={statusOptions}
                     value={record.status}
-                    onChange={(e) => updateKeyRecord(index, 'status', e.target.value)}
+                    onChange={(e) => updateKeyRecord(index, "status", e.target.value)}
                   />
                 </div>
                 <div>
-                  <Link href="#"><FiPaperclip /></Link>
+                  <InputField
+                    name={`keyRecord${index}Receipt`}
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    existingFileName={record.existingReceipt.length > 0 ? `file${index + 1}` : undefined}
+                    onFileChange={(file) => {
+                      if (file) {
+                        updateKeyRecord(index, "newReceipt", file);
+                      }
+                    }}
+                    placeholder={record.existingReceipt.length > 0 ? "Click to replace file" : "Upload receipt"}
+                  />
                 </div>
                 <div className="d-flex gap-1">
                   <Button text={t("buttons.edit")} type="success" />
@@ -1135,7 +1412,7 @@ const BasicInfo1Tab: React.FC = () => {
           <div className="row">
             <div className="col-12 d-flex justify-content-center">
               <Button 
-                text={t("buttons.register")} 
+                text="UPDATE"
                 className={styles.registerButton}
                 htmlType="submit"
               />
@@ -1143,9 +1420,9 @@ const BasicInfo1Tab: React.FC = () => {
           </div>
         </div>
       </Form>
-    </div>
+      </div>
     </ApiLoadingWrapper>
   );
 };
 
-export default BasicInfo1Tab; 
+export default BasicInfo1TabEdit; 

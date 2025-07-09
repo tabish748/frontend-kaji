@@ -497,6 +497,12 @@
       "staffName": "STAFF NAME",
       "status": "STATUS",
       "receipt": "RECEIPT"
+    },
+    "options": {
+      "proxyCheckIn": {
+        "notRequired": "Not Required",
+        "required": "Required"
+      }
     }
   },
   "admin-form": {

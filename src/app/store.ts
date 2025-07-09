@@ -3,6 +3,9 @@ import authReducer from './features/auth/authSlice';
 import loadingReducer from './features/loading/loadingSlice';
 import customerBasicInfoReducer from './customer/getCustomerBasicInfoSlice';
 import customerDropdownsReducer from './features/dropdowns/getCustomerDropdownsSlice';
+import adminDropdownsReducer from './features/dropdowns/getAdminDropdownsSlice';
+import createCustomerBasicInfoReducer from './customer/createCustomerBasicInfoSlice';
+import updateCustomerBasicInfoReducer from './customer/updateCustomerBasicInfoSlice';
 import changePaymentMethodReducer from './customer/changePaymentMethodSlice';
 import changePlanRequestReducer from './customer/changePlanRequestSlice';
 import reactivateRequestReducer from './customer/reactivateRequestSlice';
@@ -16,6 +19,9 @@ export const store = configureStore({
     loading: loadingReducer,
     customerBasicInfo: customerBasicInfoReducer,
     customerDropdowns: customerDropdownsReducer,
+    adminDropdowns: adminDropdownsReducer,
+    createCustomerBasicInfo: createCustomerBasicInfoReducer,
+    updateCustomerBasicInfo: updateCustomerBasicInfoReducer,
     changePaymentMethod: changePaymentMethodReducer,
     changePlanRequest: changePlanRequestReducer,
     reactivateRequest: reactivateRequestReducer,

@@ -65,6 +65,7 @@ export const Form: React.FC<FormProps> = ({
   const { t } = useLanguage();
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showConfirmBox, setShowConfirmBox] = useState<boolean>(false);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState<boolean>(false);
 
   // Ref to store references to each field
   const fieldRefs = useRef<Record<string, HTMLInputElement | null>>({});
@@ -99,9 +100,9 @@ export const Form: React.FC<FormProps> = ({
     }
   };
 
-  // Auto-scroll to first error when errors are updated externally
+  // Auto-scroll to first error when errors are updated externally (only during form submission)
   useEffect(() => {
-    if (errors && Object.keys(errors).length > 0) {
+    if (shouldAutoScroll && errors && Object.keys(errors).length > 0) {
       const firstErrorField = Object.keys(errors).find(key => errors[key]);
       
       if (firstErrorField) {
@@ -157,8 +158,10 @@ export const Form: React.FC<FormProps> = ({
           }
         }, 150);
       }
+      // Reset the auto-scroll flag after handling
+      setShouldAutoScroll(false);
     }
-  }, [errors]);
+  }, [errors, shouldAutoScroll]);
 
   const validateField = (
     name: string,
@@ -322,59 +325,9 @@ export const Form: React.FC<FormProps> = ({
       setErrors(newErrors);
     }
 
-    // Auto-scroll to first invalid field
+    // Set flag to trigger auto-scroll on form submission validation failure
     if (firstInvalidField && !formValid) {
-      // Use setTimeout to ensure the errors are rendered first
-      setTimeout(() => {
-        const fieldElement = fieldRefs.current[firstInvalidField];
-        
-        if (fieldElement && typeof fieldElement.getBoundingClientRect === 'function') {
-          scrollToElement(fieldElement);
-        } else {
-          // Try to find the field by querying the DOM directly
-          const domElement = document.querySelector(
-            `[name="${firstInvalidField}"], ` +
-            `input[name="${firstInvalidField}"], ` +
-            `select[name="${firstInvalidField}"], ` +
-            `textarea[name="${firstInvalidField}"], ` +
-            `[data-name="${firstInvalidField}"]`
-          ) as HTMLElement;
-          
-          if (domElement) {
-            // Check if the field is inside a collapsed accordion
-             const accordionPanel = domElement.closest('[class*="accordionPanel"]');
-             
-             if (accordionPanel) {
-               // Check if the accordion is closed (has panelClosed class)
-               const isAccordionClosed = accordionPanel.classList.contains('panelClosed') ||
-                                        accordionPanel.className.includes('panelClosed');
-               
-               if (isAccordionClosed) {
-                 // Find the accordion item container
-                 const accordionItem = accordionPanel.closest('[class*="accordionItem"]');
-                 
-                 if (accordionItem) {
-                   // Look for the accordion trigger button
-                   const accordionTrigger = accordionItem.querySelector('[class*="accordionLabel"]') as HTMLElement;
-                   
-                   if (accordionTrigger && typeof accordionTrigger.click === 'function') {
-                     accordionTrigger.click();
-                     
-                     // Wait for accordion animation to complete before scrolling
-                     setTimeout(() => {
-                       scrollToElement(domElement);
-                     }, 400);
-                     return;
-                   }
-                 }
-               }
-             }
-            
-            // Scroll to element if not in accordion or accordion is already open
-            scrollToElement(domElement);
-          }
-        }
-      }, 100);
+      setShouldAutoScroll(true);
     }
 
     return formValid;

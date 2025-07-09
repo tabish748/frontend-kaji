@@ -13,56 +13,81 @@ const InquiryTabLayout: React.FC<InquiryTabLayoutProps> = ({ children }) => {
   const router = useRouter();
   const { t } = useLanguage();
 
-  const tabs = [
+  // Detect if we're in edit mode
+  const isEditMode = router.pathname.includes('/edit/');
+  const editId = router.query.id as string;
+
+  // Base tabs configuration
+  const baseTabsConfig = [
     {
       id: "inquiry",
       label: t("adInquiryCreate.tabs.inquiry"),
-      href: "/inquiry/create",
+      createHref: "/inquiry/create",
+      editHref: `/inquiry/edit/${editId}`,
     },
     {
       id: "basic-info-1",
       label: t("adInquiryCreate.tabs.basicInfo1"),
-      href: "/inquiry/create/basic-info-1",
+      createHref: "/inquiry/create/basic-info-1",
+      editHref: `/inquiry/edit/basic-info-1/${editId}`,
     },
     {
       id: "basic-info-2",
       label: t("adInquiryCreate.tabs.basicInfo2"),
-      href: "/inquiry/create/basic-info-2",
+      createHref: "/inquiry/create/basic-info-2",
+      editHref: `/inquiry/edit/basic-info-2/${editId}`,
     },
     {
       id: "contract",
       label: t("adInquiryCreate.tabs.contract"),
-      href: "/inquiry/create/contract",
+      createHref: "/inquiry/create/contract",
+      editHref: `/inquiry/edit/contract/${editId}`,
     },
     {
       id: "quotation",
       label: t("adInquiryCreate.tabs.quotation"),
-      href: "/inquiry/create/quotation",
+      createHref: "/inquiry/create/quotation",
+      editHref: `/inquiry/edit/quotation/${editId}`,
     },
     {
       id: "invoice",
       label: t("adInquiryCreate.tabs.invoice"),
-      href: "/inquiry/create/invoice",
+      createHref: "/inquiry/create/invoice",
+      editHref: `/inquiry/edit/invoice/${editId}`,
     },
     {
       id: "history",
       label: t("adInquiryCreate.tabs.history"),
-      href: "/inquiry/create/history",
+      createHref: "/inquiry/create/history",
+      editHref: `/inquiry/edit/history/${editId}`,
     },
   ];
 
-  const isActive = (href: string) => {
+  // Generate tabs with appropriate hrefs
+  const tabs = baseTabsConfig.map(tab => ({
+    id: tab.id,
+    label: tab.label,
+    href: isEditMode ? tab.editHref : tab.createHref,
+  }));
+
+  const isActive = (href: string, tabId: string) => {
     const currentPath = router.asPath;
     // Remove query parameters for comparison
     const pathWithoutQuery = currentPath.split('?')[0];
     
-    if (href === "/inquiry/create") {
-      return pathWithoutQuery === "/inquiry/create";
+    if (isEditMode) {
+      // For edit mode, check if current path contains the tab identifier
+      if (tabId === "inquiry" && pathWithoutQuery.includes('/edit/') && !pathWithoutQuery.includes('/basic-info-') && !pathWithoutQuery.includes('/contract') && !pathWithoutQuery.includes('/quotation') && !pathWithoutQuery.includes('/invoice') && !pathWithoutQuery.includes('/history')) {
+        return true;
+      }
+      return pathWithoutQuery.includes(`/edit/${tabId}/`) || pathWithoutQuery.includes(`/edit/${tabId}/${editId}`);
+    } else {
+      // Original create mode logic
+      if (href === "/inquiry/create") {
+        return pathWithoutQuery === "/inquiry/create";
+      }
+      return pathWithoutQuery.startsWith(href);
     }
-    
-    // For nested routes, check if the current path starts with the tab href
-    // This will make basic-info-2 active when on /inquiry/create/basic-info-2/hk etc.
-    return pathWithoutQuery.startsWith(href);
   };
 
   return (
@@ -80,7 +105,7 @@ const InquiryTabLayout: React.FC<InquiryTabLayoutProps> = ({ children }) => {
               query: router.query.lang ? { lang: router.query.lang } : {}, // Only preserve lang parameter
             }}
             className={`${styles.tabItem} ${
-              isActive(tab.href) ? styles.active : ""
+              isActive(tab.href, tab.id) ? styles.active : ""
             }`}
           >
             <span className={styles.tabLabel}>{tab.label}</span>

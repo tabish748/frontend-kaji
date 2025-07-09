@@ -600,7 +600,7 @@ export default function PlanAddRequest() {
                 ) : (
                   <>
                     <IoAdd className={aboutStyles.addPlanIcon} />
-                    New
+                    Add Plan
                   </>
                 )}
               </button>

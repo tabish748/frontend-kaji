@@ -430,6 +430,9 @@
       "otherCleaningArea": "その他",
       "otherPet": "その他",
       "layout": "間取り"
+    },
+    "errors": {
+      "submitFailed": "問合せの作成に失敗しました"
     }
   },
 
@@ -485,6 +488,12 @@
       "staffName": "スタッフ",
       "status": "ステータス",
       "receipt": "預かり証"
+    },
+    "options": {
+      "proxyCheckIn": {
+        "notRequired": "不要",
+        "required": "必要"
+      }
     }
   },
 

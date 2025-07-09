@@ -350,6 +350,114 @@ export function calculateAge(dob: any) {
   return age;
 }
 
+/**
+ * Parse date string and return formatted year, month, day components for API
+ * Supports formats: YYYY/MM/DD, YYYY-MM-DD, MM/DD/YYYY
+ * @param dateString - Date string in various formats
+ * @returns Object with year, month, day as strings with proper padding
+ */
+export function parseDateForAPI(dateString: string) {
+  if (!dateString) {
+    return { year: '', month: '', day: '' };
+  }
+
+  let year = '', month = '', day = '';
+
+  // Handle YYYY/MM/DD or YYYY-MM-DD format
+  if (dateString.includes('/') || dateString.includes('-')) {
+    const separator = dateString.includes('/') ? '/' : '-';
+    const parts = dateString.split(separator);
+    
+    if (parts.length === 3) {
+      // Check if first part is year (4 digits) or month/day (1-2 digits)
+      if (parts[0].length === 4) {
+        // YYYY/MM/DD or YYYY-MM-DD format
+        year = parts[0];
+        month = parts[1].padStart(2, '0');
+        day = parts[2].padStart(2, '0');
+      } else {
+        // MM/DD/YYYY format
+        month = parts[0].padStart(2, '0');
+        day = parts[1].padStart(2, '0');
+        year = parts[2];
+      }
+    }
+  }
+
+  return { year, month, day };
+}
+
+/**
+ * Convert API DOB format (YYYY-MM-DD) to form format (YYYY/MM/DD)
+ * @param apiDate - Date string from API in YYYY-MM-DD format
+ * @returns Formatted date string for form display
+ */
+export function formatDOBFromAPI(apiDate: string): string {
+  if (!apiDate) return "";
+  
+  try {
+    const date = new Date(apiDate);
+    if (isNaN(date.getTime())) return "";
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}/${month}/${day}`;
+  } catch (error) {
+    console.error("Error formatting DOB from API:", error);
+    return "";
+  }
+}
+
+/**
+ * Convert form DOB format (YYYY/MM/DD) to API format (YYYY-MM-DD)
+ * @param formDate - Date string from form in YYYY/MM/DD format
+ * @returns Formatted date string for API submission
+ */
+export function formatDOBForAPI(formDate: string): string {
+  if (!formDate) return "";
+  
+  try {
+    // Handle various input formats
+    const cleanDate = formDate.replace(/\//g, '-');
+    const date = new Date(cleanDate);
+    
+    if (isNaN(date.getTime())) return "";
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error("Error formatting DOB for API:", error);
+    return "";
+  }
+}
+
+/**
+ * Validate DOB format and check if it's a reasonable date
+ * @param dobString - Date string to validate
+ * @returns Boolean indicating if DOB is valid
+ */
+export function validateDOB(dobString: string): boolean {
+  if (!dobString) return false;
+  
+  try {
+    const date = new Date(dobString.replace(/\//g, '-'));
+    if (isNaN(date.getTime())) return false;
+    
+    const currentYear = new Date().getFullYear();
+    const birthYear = date.getFullYear();
+    
+    // Reasonable age range (0-150 years old)
+    return birthYear >= currentYear - 150 && birthYear <= currentYear;
+  } catch (error) {
+    return false;
+  }
+}
+
 export function formatSubmissionMonth(monthString: string) {
   if (!monthString) return "";
 
