@@ -115,7 +115,7 @@ export default function PlanAddRequest() {
           id: plan.id,
           name: `PLAN ${plans.length + 1}`,
           prevFormValues: {
-            contractType: contract.contract_type?.toString() || "general",
+            contractType: contract.contract_type?.toString() || "1",
             service: plan.service_id?.toString() || "",
             plan: plan.contract_plan_id?.toString() || "",
             timeRange: plan.time_range ? "with" : "without",
@@ -129,7 +129,7 @@ export default function PlanAddRequest() {
             endTime: plan.service_hours_end || "",
           },
           updateFormValues: {
-            contractType: contract.contract_type?.toString() || "general",
+            contractType: contract.contract_type?.toString() || "1",
             service: plan.service_id?.toString() || "",
             plan: plan.contract_plan_id?.toString() || "",
             timeRange: plan.time_range ? "with" : "without",
@@ -149,6 +149,22 @@ export default function PlanAddRequest() {
     });
     
     return plans;
+  }, [customer]);
+
+  // Get the contract type from existing plans to pre-select in new plan
+  const existingContractType = React.useMemo(() => {
+    if (customer?.customer_contracts && customer.customer_contracts.length > 0) {
+      return customer.customer_contracts[0].contract_type?.toString() || "1";
+    }
+    return "1";
+  }, [customer]);
+
+  // Get the contract ID from existing contracts
+  const existingContractId = React.useMemo(() => {
+    if (customer?.customer_contracts && customer.customer_contracts.length > 0) {
+      return customer.customer_contracts[0].id;
+    }
+    return null;
   }, [customer]);
 
   const [plans, setPlans] = useState<PlanData[]>([]);
@@ -177,17 +193,25 @@ export default function PlanAddRequest() {
   
   // State for new plan form data
   const [newPlanFormData, setNewPlanFormData] = useState<ContractFormValues>({
-    contractType: "general",
+    contractType: existingContractType,
     service: "",
     plan: "",
-    timeRange: "with",
-    timeExtension: "with",
+    timeRange: "",
+    timeExtension: "",
     contractPeriod: "",
     contractdate: "",
     weekdays: [],
     startTime: "",
     endTime: "",
   });
+
+  // Update new plan form data when existing contract type changes
+  useEffect(() => {
+    setNewPlanFormData(prev => ({
+      ...prev,
+      contractType: existingContractType
+    }));
+  }, [existingContractType]);
   
   const [newPlanErrors, setNewPlanErrors] = useState<Record<string, string | null>>({});
   
@@ -195,11 +219,11 @@ export default function PlanAddRequest() {
     id: newPlanId,
     name: newPlanName,
     prevFormValues: {
-      contractType: "general",
+      contractType: existingContractType,
       service: "",
       plan: "",
-      timeRange: "with",
-      timeExtension: "with",
+      timeRange: "",
+      timeExtension: "",
       contractPeriod: "",
       contractdate: "",
       weekdays: [],
@@ -268,6 +292,13 @@ export default function PlanAddRequest() {
   const handleContractSubmit = () => {
     if (!activeUpdatePlan || activeUpdatePlanId !== newPlanId) {
       console.error("No new plan to submit");
+      return;
+    }
+
+    if (!existingContractId) {
+      setToastMessage("No contract found. Please contact support.");
+      setToastType("fail");
+      setShowToast(true);
       return;
     }
 
@@ -342,7 +373,7 @@ export default function PlanAddRequest() {
     });
 
     const payload = {
-      customer_contract_id: 3, // As specified in your example
+      customer_contract_id: existingContractId,
       service_id: Number(formValues.service),
       contract_plan_id: Number(formValues.plan),
       time_range: formValues.timeRange === "with" ? 1 : 0,
@@ -377,14 +408,14 @@ export default function PlanAddRequest() {
         <div className={styles.label}>{t("aboutPage.contractTypeLabel")}</div>
         <RadioField
           name="contractType"
-          options={[
-            { label: t("aboutPage.general"), value: "general" },
-            { label: t("aboutPage.affiliated"), value: "affiliated" },
-          ]}
+          options={customerDropdowns?.customer_contract_types?.map(option => ({
+            label: option.label,
+            value: option.value.toString()
+          })) || []}
           selectedValue={formValues.contractType}
           onChange={isReadOnly ? () => {} : handleContractInputChange}
           className={styles.radioGroup}
-          disabled={isReadOnly}
+          disabled={true}
         />
 
         {/* Contract Plan Section */}

@@ -116,17 +116,24 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
 
   // Current editable contract values
   const [contractFormValues, setContractFormValues] = useState<ContractFormValues>({
-    contractType: "",
-      service: "",
-      plan: "",
+    contractType: prevContractValues.contractType,
+    service: "",
+    plan: "",
     timeRange: "",
     timeExtension: "",
-      contractPeriod: "",
+    contractPeriod: "",
     weekdays: [],
-      startTime: "",
-      endTime: "",
-    });
+    startTime: "",
+    endTime: "",
+  });
 
+  // Keep contractType in sync with prevContractValues when plan changes
+  useEffect(() => {
+    setContractFormValues(prev => ({
+      ...prev,
+      contractType: prevContractValues.contractType
+    }));
+  }, [prevContractValues.contractType]);
 
 
   const [formErrors, setFormErrors] = useState<Record<string, string | null>>({});
@@ -521,7 +528,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
               setFormErrors(prev => ({ ...prev, contractType: null }));
             }}
             className={styles.radioGroup}
-            disabled={changePlanState.loading}
+            disabled={true}
             validations={[{ type: "required" }]}
             errorText={formErrors["contractType"] || undefined}
           />

@@ -16,7 +16,6 @@ import { useLanguage } from "../../localization/LocalContext";
 const InquiryTab: React.FC = () => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
-    recordId: "",
     inquiryDate: "",
     inquiryTime: "",
     assignee: "",
@@ -88,31 +87,6 @@ const InquiryTab: React.FC = () => {
     },
   ]);
 
-  const [inquiryRecords, setInquiryRecords] = useState([
-    {
-      inquiryDate: "2024/01/10",
-      assignee: "田中太郎",
-      updatedBy: "佐藤花子",
-      inquiryDetails: "税務相談について詳細を確認したい",
-      response: "担当者から連絡いたします",
-      status: "対応中",
-    },
-    {
-      inquiryDate: "2024/01/20",
-      assignee: "山田次郎",
-      updatedBy: "鈴木一郎",
-      inquiryDetails: "法務相談の件でフォローアップ",
-      response: "資料を準備してお送りします",
-      status: "完了",
-    },
-  ]);
-
-  const [orderRecords, setOrderRecords] = useState([
-    { orderFormSentAt: "2024/01/15", assignee: "田中太郎", status: "送信済み" },
-    { orderFormSentAt: "2024/02/01", assignee: "佐藤花子", status: "確認中" },
-    { orderFormSentAt: "2024/02/15", assignee: "山田次郎", status: "完了" },
-  ]);
-
   const [errors, setErrors] = useState<Record<string, string | null>>({});
 
   const [dropdownOptions, setDropdownOptions] = useState<any>(null);
@@ -154,20 +128,6 @@ const InquiryTab: React.FC = () => {
     if (trainStations.length > 1) {
       const newStations = trainStations.filter((_, i) => i !== index);
       setTrainStations(newStations);
-    }
-  };
-
-  const removeInquiryRecord = (index: number) => {
-    if (inquiryRecords.length > 1) {
-      const newRecords = inquiryRecords.filter((_, i) => i !== index);
-      setInquiryRecords(newRecords);
-    }
-  };
-
-  const removeOrderRecord = (index: number) => {
-    if (orderRecords.length > 1) {
-      const newRecords = orderRecords.filter((_, i) => i !== index);
-      setOrderRecords(newRecords);
     }
   };
 
@@ -386,18 +346,7 @@ const InquiryTab: React.FC = () => {
           <h3 className="ad-heading">{t("adInquiryCreate.firstInquiryInfo")}</h3>
 
           <div className="row g-1 mb-1">
-            <div className="col-sm-12 col-lg-6 col-xl-3">
-              <InputField
-                name="recordId"
-                label={t("admin-form.labels.recordId")}
-                placeholder={t("admin-form.placeholders.recordId")}
-                value={formData.recordId}
-                onChange={(e) => handleInputChange("recordId", e.target.value)}
-                validations={[{ type: "required" }]}
-                tag={[{ value: "required", label: "Required" }]}
-              />
-            </div>
-            <div className="col-sm-12 col-lg-6 col-xl-3">
+            <div className="col-sm-12 col-lg-6 col-xl-4">
               <div className={styles.dateTimeContainer}>
                 <div className={styles.dateField}>
                   <InputDateField
@@ -425,7 +374,7 @@ const InquiryTab: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-sm-12 col-lg-6 col-xl-3">
+            <div className="col-sm-12 col-lg-6 col-xl-4">
               <CustomSelectField
                 name="assignee"
                 label={t("admin-form.labels.assignee")}
@@ -436,7 +385,7 @@ const InquiryTab: React.FC = () => {
                 tag={[{ value: "required", label: "Required" }]}
               />
             </div>
-            <div className="col-sm-12 col-lg-6 col-xl-3">
+            <div className="col-sm-12 col-lg-6 col-xl-4">
               <CustomSelectField
                 name="channel"
                 label={t("admin-form.labels.channel")}
@@ -1067,125 +1016,6 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Inquiry Records Grid */}
-          <div className="">
-            {/* Header Row */}
-            <div
-              className={`${styles.gridHeader} ${styles.inquiryRecordsGrid}`}
-            >
-              <div className="d-flex justify-content-center align-items-center">
-                {t("adInquiryCreate.gridHeaders.number")}
-              </div>
-              <div>{t("adInquiryCreate.gridHeaders.inquiryDateUpdated")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.assigneeUpdatedBy")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.inquiryDetails")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.response")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.status")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.action")}</div>
-            </div>
-
-            {/* Data Rows */}
-            {inquiryRecords.map((record, index) => (
-              <div
-                key={index}
-                className={`${styles.gridRow} ${styles.inquiryRecordsGrid} align-items-center`}
-              >
-                <div className={styles.rowNumber}>{index + 1}</div>
-                <div className="d-flex flex-column gap-1">
-                  <InputDateField
-                    name={`inquiryRecord${index}Date1`}
-                    placeholder={t("admin-form.placeholders.japaneseDate")}
-                    value={record.inquiryDate}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].inquiryDate = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                  />
-                  <InputDateField
-                    name={`inquiryRecord${index}Date2`}
-                    placeholder={t("admin-form.placeholders.japaneseDate")}
-                    value={record.inquiryDate}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].inquiryDate = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div className="d-flex flex-column gap-1">
-                  <SelectField
-                    name={`inquiryRecord${index}Assignee`}
-                    options={assigneeOptions}
-                    value={record.assignee}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].assignee = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                  />
-                  <SelectField
-                    name={`inquiryRecord${index}UpdatedBy`}
-                    options={[
-                      { value: "", label: t("admin-form.placeholders.updatedBy") },
-                      ...assigneeOptions.slice(1),
-                    ]}
-                    value={record.updatedBy}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].updatedBy = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div>
-                  <TextAreaField
-                    name={`inquiryRecord${index}Details`}
-                    placeholder={t("admin-form.placeholders.inquiryDetails")}
-                    value={record.inquiryDetails}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].inquiryDetails = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                    className={styles.fullHeightTextArea}
-                  />
-                </div>
-                <div>
-                  <TextAreaField
-                    name={`inquiryRecord${index}Response`}
-                    placeholder={t("admin-form.placeholders.response")}
-                    value={record.response}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].response = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                    className={styles.fullHeightTextArea}
-                  />
-                </div>
-                <div>
-                  <SelectField
-                    name={`inquiryRecord${index}Status`}
-                    options={statusOptions}
-                    value={record.status}
-                    onChange={(e) => {
-                      const newRecords = [...inquiryRecords];
-                      newRecords[index].status = e.target.value;
-                      setInquiryRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div>
-                  <Button
-                    text={t("buttons.delete")}
-                    type="danger"
-                    onClick={() => removeInquiryRecord(index)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* ORDER Section */}
@@ -1256,66 +1086,6 @@ const InquiryTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Order Records Grid */}
-          <div className="">
-            {/* Header Row */}
-            <div className={`${styles.gridHeader} ${styles.orderRecordsGrid}`}>
-              <div className="d-flex justify-content-center align-items-center">
-                {t("adInquiryCreate.gridHeaders.number")}
-              </div>
-              <div>{t("adInquiryCreate.gridHeaders.orderFormSentAt")}</div>
-              <div>{t("admin-form.labels.assignee")}</div>
-              <div>{t("adInquiryCreate.gridHeaders.status")}</div>
-              <div></div>
-            </div>
-
-            {/* Data Rows */}
-            {orderRecords.map((record, index) => (
-              <div
-                key={index}
-                className={`${styles.gridRow} ${styles.orderRecordsGrid}`}
-              >
-                <div className={styles.rowNumber}>{index + 1}</div>
-                <div>
-                  <InputDateField
-                    name={`orderRecord${index}Date`}
-                    placeholder={t("admin-form.placeholders.japaneseDate")}
-                    value={record.orderFormSentAt}
-                    onChange={(e) => {
-                      const newRecords = [...orderRecords];
-                      newRecords[index].orderFormSentAt = e.target.value;
-                      setOrderRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div>
-                  <SelectField
-                    name={`orderRecord${index}Assignee`}
-                    options={assigneeOptions}
-                    value={record.assignee}
-                    onChange={(e) => {
-                      const newRecords = [...orderRecords];
-                      newRecords[index].assignee = e.target.value;
-                      setOrderRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div>
-                  <SelectField
-                    name={`orderRecord${index}Status`}
-                    options={orderStatusOptions}
-                    value={record.status}
-                    onChange={(e) => {
-                      const newRecords = [...orderRecords];
-                      newRecords[index].status = e.target.value;
-                      setOrderRecords(newRecords);
-                    }}
-                  />
-                </div>
-                <div></div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Note Section */}

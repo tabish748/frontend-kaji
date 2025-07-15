@@ -30,7 +30,7 @@
       font-size: 16px;
       
       &.placeholder {
-        color: $gray-light;
+        color: $gray-500;
       }
     }
     &:hover {
@@ -88,7 +88,7 @@
 }
 
 .placeholder {
-  color: $gray-light;
+  color: $gray-500;
   font-style: italic;
 }
 

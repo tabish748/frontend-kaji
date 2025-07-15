@@ -20,6 +20,7 @@ import getHmsShowServiceReducer from './customer/getHmsShowServiceSlice';
 import saveHcServiceReducer from './customer/saveHcServiceSlice';
 import saveHmsServiceReducer from './customer/saveHmsServiceSlice';
 import saveHkServiceReducer from './customer/saveHkServiceSlice';
+import publicInquiryEditReducer from './inquiry/publicInquiryEditSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     saveHcService: saveHcServiceReducer,
     saveHmsService: saveHmsServiceReducer,
     saveHkService: saveHkServiceReducer,
+    publicInquiryEdit: publicInquiryEditReducer,
   },
 });
 
