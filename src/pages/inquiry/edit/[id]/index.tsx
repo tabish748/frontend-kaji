@@ -181,32 +181,16 @@ const InquiryTabEdit: React.FC = () => {
         firstServiceDate: inquiryData.first_service_requested_date || "",
         additionalRequests: inquiryData.other_service_requests || "",
         note: inquiryData.remarks || "",
-        responseInquiryDate: inquiryData.inquiry_date || "",
-        responseTime:
-          inquiryData.inquiry_hour && inquiryData.inquiry_minute
-            ? `${String(inquiryData.inquiry_hour).padStart(2, "0")}:${String(
-                inquiryData.inquiry_minute
-              ).padStart(2, "0")}`
-            : "",
-        responseStatus: inquiryData.inquiry_status
-          ? String(inquiryData.inquiry_status)
-          : "",
-        inquiry: inquiryData.inquiry || "",
-        response: inquiryData.answer || "",
-        orderFormSentAt: inquiryData.submission_date || "",
-        orderTime: inquiryData.submission_date
-          ? `${String(inquiryData.submission_date.split("T")[1]).padStart(
-              2,
-              "0"
-            )}:00`
-          : "",
-        orderFormSent: inquiryData.submission_date ? true : false,
-        orderOwner: inquiryData.responder_id
-          ? String(inquiryData.responder_id)
-          : "",
-        orderStatus: inquiryData.order_status
-          ? String(inquiryData.order_status)
-          : "",
+        responseInquiryDate: "",
+        responseTime: "",
+        responseStatus: "",
+        inquiry: "",
+        response: "",
+        orderFormSentAt: "",
+        orderTime: "",
+        orderFormSent: "",
+        orderOwner: "",
+        orderStatus: "",
       });
     }
   }, [inquiryData]);
