@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
 import BasicInfo2Tab from '@/components/inquiry-tabs/BasicInfo2Tab';
 import InquiryTabLayout from '@/components/inquiry-tabs/InquiryTabLayout';
 import { Form } from '@/components/form/form';
@@ -11,9 +13,24 @@ import styles from '@/styles/components/molecules/inquiry-tab.module.scss';
 import ApiHandler from '@/app/api-handler';
 import { useLanguage } from '@/localization/LocalContext';
 import { FiPlus, FiMinus } from 'react-icons/fi';
+import Toast from '@/components/toast/toast';
+import { AppDispatch, RootState } from '@/app/store';
+import { saveHmsService, resetSaveHmsService } from '@/app/customer/saveHmsServiceSlice';
+import { fetchCustomerServicesDropdowns, resetCustomerServicesDropdowns } from '@/app/features/dropdowns/getCustomerServicesDropdownsSlice';
+import ApiLoadingWrapper from '@/components/api-loading-wrapper/api-loading-wrapper';
 
 export default function BasicInfo2HMSPage() {
   const { t } = useLanguage();
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Redux state
+  const saveState = useSelector((state: RootState) => state.saveHmsService) || {};
+  const { loading: saving, error: saveError, success: saveSuccess } = saveState;
+  
+  // Dropdown state from Redux
+  const dropdownState = useSelector((state: RootState) => state.customerServicesDropdowns) || {};
+  const { customerServicesDropdowns: dropdownOptions, loading: loadingDropdowns, error: dropdownError } = dropdownState;
   
   const [formData, setFormData] = useState({
     // Basic Service Info
@@ -28,32 +45,36 @@ export default function BasicInfo2HMSPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
-  const [dropdownOptions, setDropdownOptions] = useState<any>(null);
-  const [loadingDropdowns, setLoadingDropdowns] = useState(true);
-  const [dropdownError, setDropdownError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
 
+  // Load dropdowns on component mount
   useEffect(() => {
-    const fetchDropdowns = async () => {
-      setLoadingDropdowns(true);
-      setDropdownError(null);
-      try {
-        const res = await ApiHandler.request(
-          "/api/inquiry-form-dropdowns",
-          "GET"
-        );
-        if (res.success) {
-          setDropdownOptions(res.data);
-        } else {
-          setDropdownError("Failed to load dropdowns");
-        }
-      } catch (e) {
-        setDropdownError("Failed to load dropdowns");
-      } finally {
-        setLoadingDropdowns(false);
-      }
-    };
-    fetchDropdowns();
-  }, []);
+    dispatch(fetchCustomerServicesDropdowns());
+  }, [dispatch]);
+
+  // Reset HMS service state on component mount
+  useEffect(() => {
+    dispatch(resetSaveHmsService());
+  }, [dispatch]);
+
+  // Handle save success
+  useEffect(() => {
+    if (saveSuccess) {
+      setToast({ message: 'HMS service created successfully!', type: 'success' });
+      // Redirect to the inquiry list or show success message
+      setTimeout(() => {
+        router.push('/inquiry');
+      }, 2000);
+      dispatch(resetSaveHmsService());
+    }
+  }, [saveSuccess, router, dispatch]);
+
+  // Handle save error
+  useEffect(() => {
+    if (saveError) {
+      setToast({ message: saveError, type: 'fail' });
+    }
+  }, [saveError]);
 
   const handleInputChange = (name: string, value: any) => {
     setFormData((prev) => ({
@@ -107,7 +128,16 @@ export default function BasicInfo2HMSPage() {
   };
 
   const handleSubmit = async () => {
-    console.log("HMS Form submitted:", formData);
+    const submissionData = new FormData();
+    submissionData.append('person_incharge_id', formData.owner);
+    formData.serviceDetails.filter(service => service !== "other").forEach((service, index) => {
+      submissionData.append(`service_details[${index + 1}]`, service);
+    });
+    formData.otherRequirement.filter(item => item.trim()).forEach((item, index) => {
+      submissionData.append(`more_service_details[${index + 1}]`, item);
+    });
+    submissionData.append('remarks', formData.note);
+    dispatch(saveHmsService(submissionData));
   };
 
   // Helper function to generate generic options if backend options are empty
@@ -126,17 +156,30 @@ export default function BasicInfo2HMSPage() {
 
   // Service Details Options (HMS specific)
   const serviceDetailOptions =
-    dropdownOptions?.hms_service_details?.map((item: any) => ({
+    dropdownOptions?.hk_hc_services?.map((item: any) => ({
       value: String(item.value),
       label: item.label,
     })) || [...generateGenericOptions(6), { value: "other", label: "Other" }];
 
-  if (dropdownError) return <div>{dropdownError}</div>;
-
   return (
     <InquiryTabLayout>
       <BasicInfo2Tab>
-        <div className="nested-tab-content-inner">
+        <ApiLoadingWrapper
+          loading={loadingDropdowns}
+          error={dropdownError}
+          onRetry={() => {
+            dispatch(fetchCustomerServicesDropdowns());
+          }}
+        >
+          <div className="nested-tab-content-inner">
+            {toast && (
+              <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(null)}
+                duration={4000}
+              />
+            )}
           <Form
             onSubmit={handleSubmit}
             registerBtnText="REGISTER"
@@ -244,6 +287,7 @@ export default function BasicInfo2HMSPage() {
           </div>
           </Form>
         </div>
+        </ApiLoadingWrapper>
       </BasicInfo2Tab>
     </InquiryTabLayout>
   );

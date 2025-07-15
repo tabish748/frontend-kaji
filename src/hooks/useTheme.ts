@@ -108,7 +108,7 @@ export const useTheme = () => {
     if (!isInitialized) {
       setIsInitialized(true);
     }
-  }, [router.isReady, currentPath, userRole, isAuthenticated, isInitialized]);
+  }, [router.isReady, currentPath, userRole, isAuthenticated, isInitialized, getDashboardType]);
 
   return {
     currentTheme: getDashboardType(),

@@ -124,160 +124,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     isActiveRoute("/employees") || isActiveRoute("/employees/create")
   );
 
-  useEffect(() => {
-    const route = router.pathname;
-
-    if (
-      route.startsWith("/dashboard") ||
-      route.startsWith("/legalDashboard") ||
-      route.startsWith("/insuranceDashboard")
-    ) {
-      setIsDesktopSidebarVisible(false);
-    } else {
-      setIsDesktopSidebarVisible(true);
-    }
-
-    // Reset dropdown states first
-    setActiveDropdown(null);
-    setActiveSubDropdown(null);
-
-    // Get sidebar items and check for active routes
-    const items = getSidebarItems();
-
-    items.forEach((item) => {
-      if (item.isDropdown) {
-        // Check if any sub-item in this dropdown is active
-        const hasActiveRoute = item.dropdownItems.some((dropdownItem: any) => {
-          if (dropdownItem.subItems) {
-            return dropdownItem.subItems.some(
-              (subItem: any) => router.pathname === subItem.path
-            );
-          }
-          return router.pathname === dropdownItem.path;
-        });
-
-        if (hasActiveRoute) {
-          // Open the main dropdown
-          setActiveDropdown(item.id);
-
-          // Find and open the specific sub-dropdown
-          item.dropdownItems.forEach((dropdownItem: any, index: number) => {
-            if (dropdownItem.subItems) {
-              const hasActiveSubItem = dropdownItem.subItems.some(
-                (subItem: any) => router.pathname === subItem.path
-              );
-              if (hasActiveSubItem) {
-                setActiveSubDropdown(`${item.id}-${index}`);
-              }
-            }
-          });
-        }
-      }
-    });
-  }, [router.pathname]);
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const hamburgerRef = useRef<HTMLDivElement>(null);
-
-  const toggleDropdown = (dropdownId: any) => {
-    // Don't open dropdowns when sidebar is collapsed
-    if (!isDesktopSidebarVisible) {
-      return;
-    }
-    setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
-  };
-
-  const toggleSubDropdown = (subDropdownId: any) => {
-    // Don't open sub-dropdowns when sidebar is collapsed
-    if (!isDesktopSidebarVisible) {
-      return;
-    }
-    setActiveSubDropdown(
-      activeSubDropdown === subDropdownId ? null : subDropdownId
-    );
-  };
-
-  const unifiedToggleSidebar = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    // Check if we're on mobile by checking window width
-    if (window.innerWidth <= 576) {
-      // mobile breakpoint
-      setSidebarVisible(!isSidebarVisible);
-    } else {
-      const newCollapsedState = !isDesktopSidebarVisible;
-      setIsDesktopSidebarVisible(newCollapsedState);
-      
-      // Close all dropdowns when collapsing sidebar
-      if (!newCollapsedState) {
-        setActiveDropdown(null);
-        setActiveSubDropdown(null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        isSidebarVisible &&
-        sidebarRef.current?.contains(e.target as Node) === false &&
-        hamburgerRef.current?.contains(e.target as Node) === false
-      ) {
-        setSidebarVisible(false);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside as any);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside as any);
-    };
-  }, [isSidebarVisible]);
-
-  const { currentLanguage } = useLanguage();
-  const currentDate = formatDate(new Date(), currentLanguage);
-  useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
-    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
-    
-    // Get company information
-    const companyId = loggedInUser?.company_id || null;
-    const companyDepartmentId = loggedInUser?.company_department_id || null;
-    
-    // Set company name - you might need to fetch this from an API or have it stored
-    // For now, using a fallback approach
-    const companyName = userDepartment?.company_name || `Company ${companyId}` || "Company";
-    const departmentName = userDepartment?.department_name || (companyDepartmentId ? `Department ${companyDepartmentId}` : "Department");
-    
-    setOfficeName(companyName);
-    setDepartmentId(departmentName);
-  }, []);
-
-  const currentDay = extractDay(new Date(), currentLanguage);
-
-  const handleLogout = async () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    router.push("/login");
-  };
-
-  useEffect(() => {
-    const name = currentLanguage === "jp" ? JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name_kana + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name_kana : JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name ;
-    if (name) setUserName(name);
-  }, []);
-
-  useEffect(() => {
-    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
-    const deptId = userDepartment?.id;
-    if (deptId === "1" || deptId === 1) {
-      router.push("/projectConfirmed?project_category=1&limit=50&active_tab=2");
-    } else if (deptId === "2" || deptId === 2) {
-      router.push("/projectLegal/listing/1");
-    }
-  }, []);
-
-  const getSidebarItems = () => {
+  const getSidebarItems = useCallback(() => {
     const items = [
       {
         title: t("adDashboardSidebar.dashboard"),
@@ -381,7 +228,161 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title }) => {
     ];
 
     return items;
+  }, [t]);
+
+  useEffect(() => {
+    const route = router.pathname;
+
+    if (
+      route.startsWith("/dashboard") ||
+      route.startsWith("/legalDashboard") ||
+      route.startsWith("/insuranceDashboard")
+    ) {
+      setIsDesktopSidebarVisible(false);
+    } else {
+      setIsDesktopSidebarVisible(true);
+    }
+
+    // Reset dropdown states first
+    setActiveDropdown(null);
+    setActiveSubDropdown(null);
+
+    // Get sidebar items and check for active routes
+    const items = getSidebarItems();
+
+    items.forEach((item) => {
+      if (item.isDropdown) {
+        // Check if any sub-item in this dropdown is active
+        const hasActiveRoute = item.dropdownItems.some((dropdownItem: any) => {
+          if (dropdownItem.subItems) {
+            return dropdownItem.subItems.some(
+              (subItem: any) => router.pathname === subItem.path
+            );
+          }
+          return router.pathname === dropdownItem.path;
+        });
+
+        if (hasActiveRoute) {
+          // Open the main dropdown
+          setActiveDropdown(item.id);
+
+          // Find and open the specific sub-dropdown
+          item.dropdownItems.forEach((dropdownItem: any, index: number) => {
+            if (dropdownItem.subItems) {
+              const hasActiveSubItem = dropdownItem.subItems.some(
+                (subItem: any) => router.pathname === subItem.path
+              );
+              if (hasActiveSubItem) {
+                setActiveSubDropdown(`${item.id}-${index}`);
+              }
+            }
+          });
+        }
+      }
+    });
+  }, [router.pathname, getSidebarItems]);
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLDivElement>(null);
+
+  const toggleDropdown = (dropdownId: any) => {
+    // Don't open dropdowns when sidebar is collapsed
+    if (!isDesktopSidebarVisible) {
+      return;
+    }
+    setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
+
+  const toggleSubDropdown = (subDropdownId: any) => {
+    // Don't open sub-dropdowns when sidebar is collapsed
+    if (!isDesktopSidebarVisible) {
+      return;
+    }
+    setActiveSubDropdown(
+      activeSubDropdown === subDropdownId ? null : subDropdownId
+    );
+  };
+
+  const unifiedToggleSidebar = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    // Check if we're on mobile by checking window width
+    if (window.innerWidth <= 576) {
+      // mobile breakpoint
+      setSidebarVisible(!isSidebarVisible);
+    } else {
+      const newCollapsedState = !isDesktopSidebarVisible;
+      setIsDesktopSidebarVisible(newCollapsedState);
+      
+      // Close all dropdowns when collapsing sidebar
+      if (!newCollapsedState) {
+        setActiveDropdown(null);
+        setActiveSubDropdown(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        isSidebarVisible &&
+        sidebarRef.current?.contains(e.target as Node) === false &&
+        hamburgerRef.current?.contains(e.target as Node) === false
+      ) {
+        setSidebarVisible(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside as any);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside as any);
+    };
+  }, [isSidebarVisible]);
+
+  const { currentLanguage } = useLanguage();
+  const currentDate = formatDate(new Date(), currentLanguage);
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
+    
+    // Get company information
+    const companyId = loggedInUser?.company_id || null;
+    const companyDepartmentId = loggedInUser?.company_department_id || null;
+    
+    // Set company name - you might need to fetch this from an API or have it stored
+    // For now, using a fallback approach
+    const companyName = userDepartment?.company_name || `Company ${companyId}` || "Company";
+    const departmentName = userDepartment?.department_name || (companyDepartmentId ? `Department ${companyDepartmentId}` : "Department");
+    
+    setOfficeName(companyName);
+    setDepartmentId(departmentName);
+  }, []);
+
+  const currentDay = extractDay(new Date(), currentLanguage);
+
+  const handleLogout = async () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
+  useEffect(() => {
+    const name = currentLanguage === "jp" ? JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name_kana + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name_kana : JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.first_name + " " + JSON.parse(localStorage.getItem("loggedInUser") || "{}")?.last_name ;
+    if (name) setUserName(name);
+  }, [currentLanguage]);
+
+  useEffect(() => {
+    const userDepartment = JSON.parse(localStorage.getItem("userDepartment") || "{}");
+    const deptId = userDepartment?.id;
+    if (deptId === "1" || deptId === 1) {
+      router.push("/projectConfirmed?project_category=1&limit=50&active_tab=2");
+    } else if (deptId === "2" || deptId === 2) {
+      router.push("/projectLegal/listing/1");
+    }
+  }, [router]);
+
   const sidebarItems = getSidebarItems();
 
   const isRouteActive = (

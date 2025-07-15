@@ -32,23 +32,8 @@ export const changeAddressRequest = createAsyncThunk(
   'changeAddress/changeAddressRequest',
   async (payload: ChangeAddressPayload) => {
     const endpoint = `/api/customer/change-address-request/save`;
-    
-    // Transform the payload to match the expected format
-    const formattedPayload = {
-      post_code: payload.post_code,
-      prefecture_id: payload.prefecture_id,
-      address1: payload.address1,
-      address2: payload.address2,
-      apartment_name: payload.apartment_name,
-      'stations[0][company]': payload.stations[0]?.company || '',
-      'stations[0][route_name]': payload.stations[0]?.route_name || '',
-      'stations[0][nearest_station]': payload.stations[0]?.nearest_station || '',
-      'stations[1][company]': payload.stations[1]?.company || '',
-      'stations[1][route_name]': payload.stations[1]?.route_name || '',
-      'stations[1][nearest_station]': payload.stations[1]?.nearest_station || '',
-    };
-    
-    return await ApiHandler.request(endpoint, 'POST', formattedPayload);
+    // Send the payload as JSON directly
+    return await ApiHandler.request(endpoint, 'POST', payload);
   }
 );
 

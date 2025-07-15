@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form } from "../form/form";
 import InputField from "../input-field/input-field";
@@ -13,7 +12,6 @@ import styles from "../../styles/components/molecules/inquiry-tab.module.scss";
 import { calculateAge, parseDateForAPI } from "../../libs/utils";
 import Button from "../button/button";
 import { useLanguage } from "../../localization/LocalContext";
-import { FiPaperclip } from "react-icons/fi";
 import { AppDispatch, RootState } from '../../app/store';
 import { fetchAdminDropdowns } from '../../app/features/dropdowns/getAdminDropdownsSlice';
 import { createCustomerBasicInfo, resetCreateCustomerBasicInfo } from '../../app/customer/createCustomerBasicInfoSlice';
@@ -94,7 +92,7 @@ const BasicInfo1Tab: React.FC = () => {
       dateReturned: "",
       staffName: "",
       status: "",
-      receipt: "",
+      receipt: null as File | null,
     },
   ]);
 
@@ -161,7 +159,7 @@ const BasicInfo1Tab: React.FC = () => {
       dateReturned: "",
       staffName: "",
       status: "",
-      receipt: "",
+      receipt: null,
     },
   ]);
 
@@ -279,71 +277,86 @@ const BasicInfo1Tab: React.FC = () => {
     // Transform form data to API format
     const dobParsed = parseDateForAPI(formData.dateOfBirth);
     
-    const apiData = {
-      first_inquiry_date: formData.orderDate,
-      first_inquiry_hour: formData.orderTime.split(':')[0] || '',
-      first_inquiry_minute: formData.orderTime.split(':')[1] || '',
-      customer_status: formData.customerStatus,
-      name: formData.fullName,
-      name_kana: formData.fullNameKatakana,
-      represents_id: formData.customerType,
-      dob_year: dobParsed.year,
-      dob_month: dobParsed.month,
-      dob_day: dobParsed.day,
-      age: formData.age,
-      gender: formData.gender,
-      phone1_type: formData.phone1Type,
-      phone1: formData.phone1,
-      phone2_type: formData.phone2Type,
-      phone2: formData.phone2,
-      phone3_type: formData.phone3Type,
-      phone3: formData.phone3,
-      email1: formData.email1,
-      email2: formData.email2,
-      primary_contact_phone: formData.primaryPhone,
-      primary_contact_email: formData.primaryEmail,
-      post_code: formData.postcode,
-      prefecture_id: formData.prefecture,
-      address1: formData.address1,
-      address2: formData.address2,
-      apartment_name: formData.building,
-      language: formData.language,
-      newsletter_emails: formData.advertisingEmail,
-      services: formData.preferredServices.reduce((acc: any, service: string, index: number) => {
-        acc[index + 1] = service;
-        return acc;
-      }, {}),
-      station_details: trainStations.filter(station => 
+    // Create FormData to handle file uploads properly
+    const submissionData = new FormData();
+    
+    // Add basic customer data to FormData
+    submissionData.append('first_inquiry_date', formData.orderDate);
+    submissionData.append('first_inquiry_hour', formData.orderTime.split(':')[0] || '');
+    submissionData.append('first_inquiry_minute', formData.orderTime.split(':')[1] || '');
+    submissionData.append('customer_status', formData.customerStatus);
+    submissionData.append('name', formData.fullName);
+    submissionData.append('name_kana', formData.fullNameKatakana);
+    submissionData.append('represents_id', formData.customerType);
+    submissionData.append('dob_year', dobParsed.year);
+    submissionData.append('dob_month', dobParsed.month);
+    submissionData.append('dob_day', dobParsed.day);
+    submissionData.append('age', formData.age);
+    submissionData.append('gender', formData.gender);
+    submissionData.append('phone1_type', formData.phone1Type);
+    submissionData.append('phone1', formData.phone1);
+    submissionData.append('phone2_type', formData.phone2Type);
+    submissionData.append('phone2', formData.phone2);
+    submissionData.append('phone3_type', formData.phone3Type);
+    submissionData.append('phone3', formData.phone3);
+    submissionData.append('email1', formData.email1);
+    submissionData.append('email2', formData.email2);
+    submissionData.append('primary_contact_phone', formData.primaryPhone);
+    submissionData.append('primary_contact_email', formData.primaryEmail);
+    submissionData.append('post_code', formData.postcode);
+    submissionData.append('prefecture_id', formData.prefecture);
+    submissionData.append('address1', formData.address1);
+    submissionData.append('address2', formData.address2);
+    submissionData.append('apartment_name', formData.building);
+    submissionData.append('language', formData.language);
+    submissionData.append('newsletter_emails', formData.advertisingEmail);
+    
+    // Add services as indexed array
+    formData.preferredServices.forEach((service, index) => {
+      submissionData.append(`services[${service}]`, service);
+    });
+    
+    // Add train stations
+    trainStations.filter(station => 
         station.date || station.railwayCompany || station.trainLine || station.trainStation
-      ).map(station => ({
-        date_added: station.date,
-        company: station.railwayCompany,
-        route_name: station.trainLine,
-        nearest_station: station.trainStation,
-      })),
-      key_information: keyPossessionRecords.filter(record => 
-        record.dateReceived || record.dateReturned || record.staffName || record.status
-      ).map(record => ({
-        date_added: record.dateReceived,
-        date_returned: record.dateReturned,
-        user_id: record.staffName,
-        status: record.status,
-      })),
-      deputy_checkin: formData.proxyCheckIn,
-      deputy_remarks: formData.note1,
-      match_list_hk: formData.matchingListHK.reduce((acc: any, item: string, index: number) => {
-        acc[index + 1] = item;
-        return acc;
-      }, {}),
-      match_list_bs: formData.matchingListBS.reduce((acc: any, item: string, index: number) => {
-        acc[index + 1] = item;
-        return acc;
-      }, {}),
-      match_list_remarks: formData.note2,
-      remarks: formData.note3,
-    };
+    ).forEach((station, index) => {
+      submissionData.append(`station_details[${index}][date_added]`, station.date);
+      submissionData.append(`station_details[${index}][company]`, station.railwayCompany);
+      submissionData.append(`station_details[${index}][route_name]`, station.trainLine);
+      submissionData.append(`station_details[${index}][nearest_station]`, station.trainStation);
+    });
+    
+    // Add key information with file uploads using the correct indexed format
+    keyPossessionRecords.filter(record => 
+      record.dateReceived || record.dateReturned || record.staffName || record.status || record.receipt
+    ).forEach((record, recordIndex) => {
+      const keyIndex = recordIndex + 1; // Use 1-based indexing for API
+      submissionData.append(`key_information[${keyIndex}][date_added]`, record.dateReceived);
+      submissionData.append(`key_information[${keyIndex}][date_returned]`, record.dateReturned);
+      submissionData.append(`key_information[${keyIndex}][user_id]`, record.staffName);
+      submissionData.append(`key_information[${keyIndex}][status]`, record.status);
+      
+      // Add receipt file if it exists
+      if (record.receipt) {
+        submissionData.append(`key_information[${keyIndex}][receipt][0]`, record.receipt);
+      }
+    });
+    
+    submissionData.append('deputy_checkin', formData.proxyCheckIn);
+    submissionData.append('deputy_remarks', formData.note1);
+    
+    // Add match lists as indexed arrays
+    formData.matchingListHK.forEach((item) => {
+      submissionData.append(`match_list_hk[${item}]`, item);
+    });
+    formData.matchingListBS.forEach((item) => {
+      submissionData.append(`match_list_bs[${item}]`, item);
+    });
+    
+    submissionData.append('match_list_remarks', formData.note2);
+    submissionData.append('remarks', formData.note3);
 
-    dispatch(createCustomerBasicInfo(apiData));
+    dispatch(createCustomerBasicInfo(submissionData));
   };
 
   // Helper function to generate generic options if backend options are empty
@@ -436,7 +449,7 @@ const BasicInfo1Tab: React.FC = () => {
   };
 
   // Helper function to update key record - simplified to avoid interference with input
-  const updateKeyRecord = (index: number, field: string, value: string) => {
+  const updateKeyRecord = (index: number, field: string, value: any) => {
     const newRecords = [...keyPossessionRecords];
     newRecords[index] = { ...newRecords[index], [field]: value };
     setKeyPossessionRecords(newRecords);
@@ -464,7 +477,7 @@ const BasicInfo1Tab: React.FC = () => {
     // Check if we need to add empty key record row
     const lastKeyRecord = keyPossessionRecords[keyPossessionRecords.length - 1];
     const hasContentInLastRow = lastKeyRecord.dateReceived || lastKeyRecord.dateReturned || 
-                               lastKeyRecord.staffName || lastKeyRecord.status;
+                               lastKeyRecord.staffName || lastKeyRecord.status || lastKeyRecord.receipt;
     
     if (hasContentInLastRow && keyPossessionRecords.length < 10) { // Limit to prevent infinite rows
       setKeyPossessionRecords(prev => [...prev, {
@@ -472,7 +485,7 @@ const BasicInfo1Tab: React.FC = () => {
         dateReturned: "",
         staffName: "",
         status: "",
-        receipt: "",
+        receipt: null,
       }]);
     }
   }, [keyPossessionRecords]);
@@ -1025,7 +1038,17 @@ const BasicInfo1Tab: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <Link href="#"><FiPaperclip /></Link>
+                  <InputField
+                    name={`keyRecord${index}Receipt`}
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    onFileChange={(file) => {
+                      if (file) {
+                        updateKeyRecord(index, "receipt", file);
+                      }
+                    }}
+                    placeholder="Upload receipt"
+                  />
                 </div>
                 <div className="d-flex gap-1">
                   <Button text={t("buttons.edit")} type="success" />

@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useEffect } from "react";
 import styles from "../../styles/components/atoms/input.module.scss";
 import { parseISO, isBefore, isAfter } from 'date-fns';
+import Image from "next/image";
 
 interface InputDateFieldProps {
   label?: string;
@@ -171,7 +172,7 @@ const InputDateField = forwardRef<HTMLDivElement, InputDateFieldProps>(({
       if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
         return (
           <span className={styles.iconWrapper}>
-            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+            <Image src={icon} alt="icon" width={20} height={20} />
           </span>
         );
       } else {

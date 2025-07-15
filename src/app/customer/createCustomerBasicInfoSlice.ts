@@ -77,7 +77,7 @@ const initialState: CreateCustomerBasicInfoState = {
 
 export const createCustomerBasicInfo = createAsyncThunk(
     'createCustomerBasicInfo/create',
-    async (formData: CreateCustomerBasicInfoData, { rejectWithValue }) => {
+    async (formData: CreateCustomerBasicInfoData | FormData, { rejectWithValue }) => {
         try {
             const endpoint = `/api/company/customer/create`;
             return await ApiHandler.request(endpoint, 'POST', formData);

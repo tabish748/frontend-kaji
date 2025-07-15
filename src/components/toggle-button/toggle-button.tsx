@@ -25,7 +25,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ label, options, getSelected
     if (isControlled) {
       setIsOn(value);
     }
-  }, [value]);
+  }, [value, isControlled]);
 
   const handleToggle = () => {
     if (disabled) return; // Prevent toggling if disabled

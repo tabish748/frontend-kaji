@@ -7,6 +7,7 @@ import { MdOutlineAlternateEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import styles from "@/styles/pages/cnlogin.module.scss";
 import Image from "next/image";
+import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/app/features/auth/authSlice";
 import { useRouter } from "next/router";
@@ -161,9 +162,14 @@ export default function Login() {
               isLoading={loading}
             />
             <div className={styles.forgotPassword}>
-              <a href="/cn-forgot-password">
+              <Link href="/cn-forgot-password">
                 {t("cnLoginPage.forgotPassword")}
-              </a>
+              </Link>
+            </div>
+            <div className={`${styles.forgotPassword}`}>
+              <Link href="/cn-contact-form">
+                New Request Form
+              </Link>
             </div>
           </div>
         </Form>

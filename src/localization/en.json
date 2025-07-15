@@ -119,7 +119,10 @@
       "contactdetails": "Contact details",
       "billingInfo": "BILLING INFORMATION",
       "paymentInfo": "PAYMENT INFORMATION"
-    }
+    },
+    "railwayCompany3Placeholder": "Railway Company 3",
+    "trainLine3Placeholder": "Train Line 3",
+    "trainStation3Placeholder": "Train Station 3"
   },
   "schedulePage": {
     "tabs": {
@@ -228,7 +231,8 @@
     "subHeading": "Please confirm your registered information and provide the necessary changes",
     "active": "Active",
     "suspended": "Suspended",
-    "label": "Usage Status"
+    "label": "Usage Status",
+    "addressTab": "Address {{number}}"
   },
   "contact": {
     "heading": "Contact with us",

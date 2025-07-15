@@ -58,7 +58,7 @@ const CustomDateField: React.FC<CustomDateFieldProps> = forwardRef<HTMLDivElemen
       }
       onChange({ target: { name, value: newValue } } as React.ChangeEvent<HTMLInputElement>);
     }
-  }, [localDate, localHour, localMinute, name, isUserInteracting]);
+  }, [localDate, localHour, localMinute, name, isUserInteracting, onChange]);
 
   const snapMinutesToInterval = (minutes: string) => {
     const minuteIntervals = [0, 15, 30, 45];

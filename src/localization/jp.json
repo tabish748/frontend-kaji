@@ -137,7 +137,10 @@
       "contactdetails": "ご契約内容",
       "billingInfo": "ご請求情報",
       "paymentInfo": "お支払い情報"
-    }
+    },
+    "railwayCompany3Placeholder": "鉄道会社3",
+    "trainLine3Placeholder": "路線3",
+    "trainStation3Placeholder": "駅3"
   },
 
   "schedulePage": {
@@ -241,7 +244,8 @@
 
   "updateAddressPage": {
     "heading": "住所変更申請",
-    "subHeading": "ご登録内容をご確認の上、ご変更内容をご入力ください。"
+    "subHeading": "ご登録内容をご確認の上、ご変更内容をご入力ください。",
+    "addressTab": "住所{{number}}"
   },
 
   "reactivateRequestPage": {

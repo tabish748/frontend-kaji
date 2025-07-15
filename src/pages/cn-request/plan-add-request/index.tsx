@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { RootState, AppDispatch } from "@/app/store";
 import { fetchCustomerDropdowns } from "@/app/features/dropdowns/getCustomerDropdownsSlice";
 import { addContractPlan, resetAddContractPlan } from "@/app/customer/addContractPlanSlice";
-import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSlice";
+import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSliceAbout";
 import ClientSection from "@/components/client-section/client-section";
 import styles from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import aboutStyles from "@/styles/pages/cnabout.module.scss";
@@ -52,7 +52,7 @@ export default function PlanAddRequest() {
 
   const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
   const addContractPlanState = useSelector((state: RootState) => state.addContractPlan);
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
 
   // Toast state
   const [toastMessage, setToastMessage] = useState<string>("");

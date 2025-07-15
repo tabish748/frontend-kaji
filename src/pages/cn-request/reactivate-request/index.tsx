@@ -26,7 +26,7 @@ export default function ReactivateRequest({ activeContractIdx, activePlanIdx, on
   const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
   const reactivateState = useSelector((state: RootState) => state.reactivateRequest);
 
   // Toast state

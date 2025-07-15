@@ -49,7 +49,7 @@ export default function BillingChangeRequest({ activeContractIdx, activePlanIdx,
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
   const changeBillingState = useSelector((state: RootState) => state.changeBillingInfo);
 
   // Toast state

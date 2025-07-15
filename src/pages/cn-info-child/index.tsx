@@ -193,7 +193,7 @@ export default function CnInfoChild() {
         setHasOpenedAccordions((prev) => ({ ...prev, "0-child": true }));
       }
     }
-  }, [children, isLoading]);
+  }, [children, isLoading, accordionStates]);
 
   // Handle force open accordion effect
   useEffect(() => {

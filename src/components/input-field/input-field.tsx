@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } f
 import { IoClose } from "react-icons/io5";
 import { FiPaperclip } from "react-icons/fi";
 import styles from "../../styles/components/atoms/input.module.scss";
+import Image from "next/image";
 
 interface InputFieldProps {
   label?: string;
@@ -114,7 +115,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(({
       if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
         return (
           <span className={styles.iconWrapper}>
-            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+            <Image src={icon} alt="icon" width={20} height={20} />
           </span>
         );
       } else {

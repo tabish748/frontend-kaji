@@ -26,7 +26,7 @@ export default function UpdatePaymentMethod({ activeContractIdx, activePlanIdx, 
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
   const changePayMethodState = useSelector((state: RootState) => state.changePaymentMethod);
 
   // Toast state

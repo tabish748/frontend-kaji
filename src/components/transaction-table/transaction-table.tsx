@@ -128,7 +128,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
             });
         });
         updateSelectedRows(newSelectedRows);
-    }, [transactions]); // Removed updateSelectedRows from dependencies to avoid unnecessary effect triggers if this function itself doesn't change
+    }, [transactions, updateSelectedRows]); // Added updateSelectedRows back to dependencies
     const editorContentRef = useRef<(string | null)[]>(transactions.map(() => null));
 
     return (

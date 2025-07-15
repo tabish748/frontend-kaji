@@ -171,14 +171,14 @@ const InquiryTab: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    // Helper function to split time into hours and minutes
-    const getTimeComponents = (timeStr: string | undefined) => {
-      if (!timeStr) return { hour: "", minute: "" };
-      const [hours, minutes] = timeStr.split(":");
-      return { hour: hours || "", minute: minutes || "" };
-    };
+  // Helper function to split time into hours and minutes
+  const getTimeComponents = (timeStr: string | undefined): { hour: string; minute: string } => {
+    if (!timeStr) return { hour: "", minute: "" };
+    const [hours, minutes] = timeStr.split(":");
+    return { hour: hours || "", minute: minutes || "" };
+  };
 
+  const handleSubmit = async () => {
     // Convert any 12-hour times to 24-hour format first
     const newFormData = { ...formData };
     type TimeField = "inquiryTime" | "responseTime" | "orderTime";
@@ -200,10 +200,12 @@ const InquiryTab: React.FC = () => {
     const responseTime = getTimeComponents(newFormData.responseTime);
     const orderTime = getTimeComponents(newFormData.orderTime);
 
-    // Format services array
-    const servicesArray: Record<string, number | null> = {};
-    (newFormData.preferredServices || []).forEach((service: number) => {
-      servicesArray[`services[${service}]`] = service;
+    // Build services object: {1: 1, 2: 2, 3: 3, 4: "", ...}
+    const allServiceIds = (dropdownOptions?.services || []).map((item: any) => String(item.value));
+    const selectedServiceIds = (newFormData.preferredServices || []).map((s: any) => String(s));
+    const services: Record<string, number | ""> = {};
+    allServiceIds.forEach((id: string) => {
+      services[id] = selectedServiceIds.includes(id) ? Number(id) : "";
     });
 
     // Format date of birth components
@@ -228,11 +230,11 @@ const InquiryTab: React.FC = () => {
       dob_day: dob?.getDate() || "",
       age: Number(newFormData.age),
       gender: Number(newFormData.gender),
-      phone_type1: newFormData.phone1Type,
+      phone1_type: newFormData.phone1Type,
       phone1: newFormData.phone1,
-      phone_type2: newFormData.phone2Type || "",
+      phone2_type: newFormData.phone2Type || "",
       phone2: newFormData.phone2 || "",
-      phone_type3: newFormData.phone3Type || "",
+      phone3_type: newFormData.phone3Type || "",
       phone3: newFormData.phone3 || "",
       email1: newFormData.email1,
       email2: newFormData.email2 || "",
@@ -247,7 +249,7 @@ const InquiryTab: React.FC = () => {
       newsletter_emails: Number(
         newFormData.advertisingEmail === "subscribe" ? 1 : 0
       ),
-      ...servicesArray,
+      services,
       first_service_requested_date: newFormData.firstServiceDate,
       other_service_requests: newFormData.additionalRequests || "",
       remarks: newFormData.note || "",

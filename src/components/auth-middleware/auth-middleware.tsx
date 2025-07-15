@@ -130,7 +130,7 @@ const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
           loggedInUser?.profile_completion_steps || {};
 
         // Prevent access to child info page if customer info is not completed
-        if (!customer_info && currentPath === "/cn-info-child") {
+        if ( currentPath === "/cn-info-child" && !customer_order_form) {
           router.push(
             `/cn-info/?section=customer${
               router.query.lang ? `&lang=${router.query.lang}` : ""

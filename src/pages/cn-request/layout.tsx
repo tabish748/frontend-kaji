@@ -1,12 +1,12 @@
 import ClientSection from "@/components/client-section/client-section";
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, useMemo } from "react";
 import styles from "@/styles/pages/cnChangePaymentMethod.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Request_layout, USER_TYPE } from "@/libs/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCustomerDropdowns } from "@/app/features/dropdowns/getCustomerDropdownsSlice";
-import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSlice";
+import { fetchCustomerBasicInfo } from "@/app/customer/getCustomerBasicInfoSliceAbout";
 import { RootState, AppDispatch } from "@/app/store";
 
 interface PaymentFormValues {
@@ -27,7 +27,7 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { customerDropdowns } = useSelector((state: RootState) => state.customerDropdowns);
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
 
   // Check if current path indicates client user using Request_layout array
   const isClient = pathname ? Request_layout.includes(pathname) : false;
@@ -39,7 +39,7 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
     if (!customer) dispatch(fetchCustomerBasicInfo());
   }, [dispatch, customerDropdowns, customer]);
 
-  const contracts = customer?.customer_contracts || [];
+  const contracts = useMemo(() => customer?.customer_contracts || [], [customer?.customer_contracts]);
 
   // Use array indices for contract and plan selection
   const contractIdxFromUrl = searchParams?.get("contractIdx");
@@ -48,7 +48,7 @@ export default function SubRouteLayout({ children }: { children: ReactNode }) {
   const [activeContractIdx, setActiveContractIdx] = useState<number>(initialActiveContractIdx);
 
   const activeContract = contracts[activeContractIdx];
-  const plans = activeContract?.customer_contract_plans || [];
+  const plans = useMemo(() => activeContract?.customer_contract_plans || [], [activeContract?.customer_contract_plans]);
   const initialActivePlanIdx = planIdxFromUrl ? parseInt(planIdxFromUrl) : 0;
   const [activePlanIdx, setActivePlanIdx] = useState<number>(initialActivePlanIdx);
 

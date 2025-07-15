@@ -1,8 +1,8 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Style from '../../styles/components/atoms/date-picker.module.scss';
-import ja from "date-fns/locale/ja";
+import { ja } from "date-fns/locale/ja";
 import InputField from '../input-field/input-field';
 
 // Register the Japanese locale
@@ -44,7 +44,7 @@ const JapaneseDatePicker: React.FC<JapaneseDatePickerProps> = ({ initialDate, on
             {
             onDateChange('')
             }
-    },[inputValue])
+    },[inputValue, onDateChange])
 
     useEffect(() => {
         updateInputAndText(date);

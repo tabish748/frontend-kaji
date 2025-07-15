@@ -98,6 +98,7 @@ const RequestForm: React.FC<Props> = ({
     workCategory,
     questionaire,
     selectedValues,
+    onDataChange,
   ]);
 
   const handleToggleStateChange = (isOn: boolean) => {

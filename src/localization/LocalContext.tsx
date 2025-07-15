@@ -97,7 +97,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     // Set the language state
     setLanguageState(selectedLang);
     localStorage.setItem("preferredLanguage", selectedLang);
-  }, [router.isReady]);
+  }, [router.isReady, router]);
 
   useEffect(() => {
     if (!language) return; // Guard clause to prevent importing when language is null

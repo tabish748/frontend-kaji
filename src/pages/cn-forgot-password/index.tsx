@@ -6,6 +6,7 @@ import { useLanguage } from "@/localization/LocalContext";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import styles from "@/styles/pages/cnforgotpassword.module.scss";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import ApiHandler from "@/app/api-handler";
 import { useDispatch } from "react-redux";
@@ -135,7 +136,7 @@ export default function ForgotPassword() {
             
             <div className={styles.backToLogin}>
               <span>{t("cnForgotPasswordPage.forgetIt")} </span>
-              <a href="/cn-login">{t("cnForgotPasswordPage.sendMeBack")}</a>
+              <Link href="/cn-login">{t("cnForgotPasswordPage.sendMeBack")}</Link>
               <span> {t("cnForgotPasswordPage.toTheSignInScreen")}</span>
             </div>
           </div>

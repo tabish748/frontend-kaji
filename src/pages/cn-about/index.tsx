@@ -10,7 +10,7 @@ import SelectField from "@/components/select-field/select-field";
 import { useLanguage } from "@/localization/LocalContext";
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomerBasicInfo } from '@/app/customer/getCustomerBasicInfoSlice';
+import { fetchCustomerBasicInfo } from '@/app/customer/getCustomerBasicInfoSliceAbout';
 import { fetchCustomerDropdowns } from '@/app/features/dropdowns/getCustomerDropdownsSlice';
 import { RootState, AppDispatch } from '@/app/store';
 import ApiLoadingWrapper from "@/components/api-loading-wrapper/api-loading-wrapper";
@@ -38,12 +38,26 @@ interface Plan {
   id: number;
   name: string;
   content: string;
+  planData?: any; // Store the actual plan data from API
 }
 
 interface Contract {
   id: number;
   name: string;
   plans: Plan[];
+}
+
+// Define contract form values interface
+interface ContractFormValues {
+  contractType: string;
+  service: string | undefined;
+  plan: string | undefined;
+  timeRange: string;
+  timeExtension: string;
+  contractPeriod: string;
+  startTime: string;
+  endTime: string;
+  weekdays: string[];
 }
 
 // Add interface for key information
@@ -69,7 +83,7 @@ interface PossessionItem {
 export default function CnAbout() {
   const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
-  const { customer, loading, error } = useSelector((state: RootState) => state.customerBasicInfo);
+  const { customer, loading, error } = useSelector((state: RootState) => state.customerBasicInfoAbout);
   const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
 
   const [errors, setErrors] = React.useState<Record<string, string | null>>({});
@@ -98,13 +112,16 @@ export default function CnAbout() {
     railwayCompany2: "",
     trainLine2: "",
     trainStation2: "",
-    gender: "1",
+    railwayCompany3: "",
+    trainLine3: "",
+    trainStation3: "",
+    gender: "",
     birthYear: "",
     birthMonth: "",
     birthDay: "",
     age: "",
-    language: "1",
-    advertising: "0",
+    language: "",
+    advertising: "",
   });
 
   // Fetch customer data and dropdowns on component mount
@@ -125,63 +142,137 @@ export default function CnAbout() {
         email1: customer.email1 || "",
         email2: customer.email2 || "",
         postalCode: customer.post_code || "",
-        prefecture: customer.prefecture_id.toString() || "",
+        prefecture: customer.prefecture_id?.toString() || "",
         address1: customer.address1 || "",
         address2: customer.address2 || "",
         building: customer.apartment_name || "",
-        railwayCompany1: customer.customer_routes[0]?.company || "",
-        trainLine1: customer.customer_routes[0]?.route_name || "",
-        trainStation1: customer.customer_routes[0]?.nearest_station || "",
-        railwayCompany2: customer.customer_routes[1]?.company || "",
-        trainLine2: customer.customer_routes[1]?.route_name || "",
-        trainStation2: customer.customer_routes[1]?.nearest_station || "",
-        gender: customer.gender.toString() || "1",
+        railwayCompany1: customer?.customer_locations?.[0]?.customer_location_routes?.[0]?.company || "",
+        trainLine1: customer?.customer_locations?.[0]?.customer_location_routes?.[0]?.route_name || "",
+        trainStation1: customer?.customer_locations?.[0]?.customer_location_routes?.[0]?.nearest_station || "",
+        railwayCompany2: customer?.customer_locations?.[0]?.customer_location_routes?.[1]?.company || "",
+        trainLine2: customer?.customer_locations?.[0]?.customer_location_routes?.[1]?.route_name || "",
+        trainStation2: customer?.customer_locations?.[0]?.customer_location_routes?.[1]?.nearest_station || "",
+        railwayCompany3: customer?.customer_locations?.[0]?.customer_location_routes?.[2]?.company || "",
+        trainLine3: customer?.customer_locations?.[0]?.customer_location_routes?.[2]?.route_name || "",
+        trainStation3: customer?.customer_locations?.[0]?.customer_location_routes?.[2]?.nearest_station || "",
+        gender: customer.gender.toString() || "",
         birthYear: customer.dob_year || "",
         birthMonth: customer.dob_month || "",
         birthDay: customer.dob_day || "",
         age: customer.age.toString() || "",
-        language: customer.language.toString() || "1",
-        advertising: customer.newsletter_emails.toString() || "0",
+        language: customer.language.toString() || "",
+        advertising: customer.newsletter_emails.toString() || "",
       });
     }
   }, [customer]);
 
-  const [contractFormValues, setContractFormValues] = useState({
-    contractType: "general",
-    service: "",
-    plan: "",
-    timeRange: "with",
-    timeExtension: "with",
-    contractPeriod: "2025-04-14 to 2025-04-19",
+  const [contractFormValues, setContractFormValues] = useState<ContractFormValues>({
+    contractType: "",
+    service: undefined,
+    plan: undefined,
+    timeRange: "",
+    timeExtension: "",
+    contractPeriod: "",
     startTime: "",
     endTime: "",
-    weekdays: ["monday"] as string[],
+    weekdays: [],
   });
 
   // Update contract form values when customer data is loaded
   useEffect(() => {
     if (customer && customer.customer_contracts.length > 0) {
       const contract = customer.customer_contracts[0];
-      const contractPlan = contract.customer_contract_plans[0];
+      const contractPlan = contract.customer_contract_plans?.[0];
       
       if (contract && contractPlan) {
-        setContractFormValues(prev => ({
-          ...prev,
-          contractType: contract.contract_type || "general",
-          service: contractPlan.service_id.toString() || "",
-          plan: contractPlan.contract_plan_id?.toString() || "",
-          timeRange: contractPlan.time_range ? "with" : "without",
-          timeExtension: contractPlan.extended_time ? "with" : "without",
-          contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
-            ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
-            : "2025-04-14 to 2025-04-19",
-          startTime: contractPlan.service_hours_start || "",
-          endTime: contractPlan.service_hours_end || "",
-          weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : ["monday"],
-        }));
+        const serviceValue = contractPlan.service_id?.toString() || "";
+        let planValue = contractPlan.contract_plan_id?.toString() || "";
+        // Only use plan value if contract_plan_id is not null
+        if (!contractPlan.contract_plan_id) {
+          planValue = "";
+        }
+        
+        // Check if the values exist in the dropdown options
+        const serviceExists = customerDropdowns?.services?.some((option: any) => {
+          return option.value == serviceValue;
+        });
+        const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
+        const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == contract.contract_type?.toString());
+        
+        // Only set values if they exist in the dropdown options, otherwise leave empty
+        // For service, if service_id is null, pass undefined instead of empty string
+        const finalServiceValue = contractPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
+        // For plan, if contract_plan_id is null, pass undefined instead of empty string
+        const finalPlanValue = contractPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
+        const finalContractTypeValue = contractTypeExists ? contract.contract_type?.toString() || "1" : "1";
+        
+        // Only update if the current values are empty (first load) or if we have valid data
+        setContractFormValues(prev => {
+          const shouldUpdate = prev.service === undefined || prev.plan === undefined || prev.contractType === "general";
+          if (shouldUpdate) {
+            return {
+              ...prev,
+              contractType: finalContractTypeValue,
+              service: finalServiceValue, // For service, this will be undefined if service_id is null
+              plan: finalPlanValue, // For plan, this will be undefined if contract_plan_id is null
+              timeRange: contractPlan.time_range == null ? "" : (contractPlan.time_range ? "with" : "without"),
+              timeExtension: contractPlan.extended_time == null ? "" : (contractPlan.extended_time ? "with" : "without"),
+              contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
+                ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
+                : "2025-04-14 to 2025-04-19",
+              startTime: contractPlan.service_hours_start || "",
+              endTime: contractPlan.service_hours_end || "",
+              weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : [],
+            };
+          }
+          return prev;
+        });
       }
     }
-  }, [customer]);
+  }, [customer, customerDropdowns]);
+
+  // Additional effect to update contract form values when dropdowns are loaded
+  useEffect(() => {
+    if (customer && customerDropdowns && customer.customer_contracts.length > 0) {
+      const contract = customer.customer_contracts[0];
+      const contractPlan = contract.customer_contract_plans?.[0];
+      
+      if (contract && contractPlan) {
+        const serviceValue = contractPlan.service_id?.toString() || "";
+        let planValue = contractPlan.contract_plan_id?.toString() || "";
+        // Only use plan value if contract_plan_id is not null
+        if (!contractPlan.contract_plan_id) {
+          planValue = "";
+        }
+        
+        // Check if the values exist in the dropdown options
+        const serviceExists = customerDropdowns?.services?.some((option: any) => option.value == serviceValue);
+        const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
+        const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == contract.contract_type?.toString());
+        
+        // Only set values if they exist in the dropdown options, otherwise leave empty
+        // For service, if service_id is null, pass undefined instead of empty string
+        const finalServiceValue = contractPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
+        // For plan, if contract_plan_id is null, pass undefined instead of empty string
+        const finalPlanValue = contractPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
+        const finalContractTypeValue = contractTypeExists ? contract.contract_type?.toString() || "1" : "1";
+        
+        // Only update if the current values are empty (first load)
+        setContractFormValues(prev => {
+          const shouldUpdate = prev.service === undefined || prev.plan === undefined || prev.contractType === "general";
+          if (shouldUpdate) {
+            return {
+              ...prev,
+              contractType: finalContractTypeValue,
+              service: finalServiceValue,
+              plan: finalPlanValue,
+            };
+          }
+          return prev;
+        });
+      }
+    }
+  }, [customerDropdowns]);
 
   const [billingFormValues, setBillingFormValues] = useState({
     firstName: "",
@@ -201,25 +292,44 @@ export default function CnAbout() {
   // Update billing form values when customer data is loaded
   useEffect(() => {
     if (customer && customer.customer_contracts.length > 0) {
-      const billingInfo = customer.customer_contracts[0]?.customer_contract_plans[0]?.contract_plan_billing_info;
-      if (billingInfo) {
-        setBillingFormValues({
-          firstName: billingInfo.name || "",
-          fullNameKatakana: billingInfo.name_kana || "",
-          phone1: billingInfo.phone1 || "",
-          phone2: billingInfo.phone2 || "",
-          phone3: billingInfo.phone3 || "",
-          email1: billingInfo.email1 || "",
-          email2: billingInfo.email2 || "",
-          postalCode: billingInfo.post_code || "",
-          prefecture: billingInfo.prefecture_id || "",
-          address1: billingInfo.address1 || "",
-          address2: billingInfo.address2 || "",
-          building: billingInfo.apartment_name || "",
-        });
-      }
+      const contract = customer.customer_contracts[0];
+      const contractPlan = contract.customer_contract_plans?.[0];
+      
+      // Use plan-specific billing info if available, otherwise fall back to main customer data
+      const billingInfo = contractPlan?.contract_plan_billing_info;
+      
+      setBillingFormValues({
+        firstName: billingInfo?.name || `${customer.first_name} ${customer.last_name}` || "",
+        fullNameKatakana: billingInfo?.name_kana || `${customer.first_name_kana} ${customer.last_name_kana}` || "",
+        phone1: billingInfo?.phone1 || customer.phone1 || "",
+        phone2: billingInfo?.phone2 || customer.phone2 || "",
+        phone3: billingInfo?.phone3 || customer.phone3 || "",
+        email1: billingInfo?.email1 || customer.email1 || "",
+        email2: billingInfo?.email2 || customer.email2 || "",
+        postalCode: billingInfo?.post_code || customer.post_code || "",
+        prefecture: billingInfo?.prefecture_id?.toString() || customer.prefecture_id?.toString() || "",
+        address1: billingInfo?.address1 || customer.address1 || "",
+        address2: billingInfo?.address2 || customer.address2 || "",
+        building: billingInfo?.apartment_name || customer.apartment_name || "",
+      });
+    } else if (customer) {
+      // Fallback to main customer data if no contracts/plans available
+      setBillingFormValues({
+        firstName: `${customer.first_name} ${customer.last_name}` || "",
+        fullNameKatakana: `${customer.first_name_kana} ${customer.last_name_kana}` || "",
+        phone1: customer.phone1 || "",
+        phone2: customer.phone2 || "",
+        phone3: customer.phone3 || "",
+        email1: customer.email1 || "",
+        email2: customer.email2 || "",
+        postalCode: customer.post_code || "",
+        prefecture: customer.prefecture_id?.toString() || "",
+        address1: customer.address1 || "",
+        address2: customer.address2 || "",
+        building: customer.apartment_name || "",
+      });
     }
-  }, [customer]);
+  }, [customer, setBillingFormValues]);
 
   const [paymentFormValues, setPaymentFormValues] = useState({
     paymentMethod: "2",
@@ -228,10 +338,15 @@ export default function CnAbout() {
   // Update payment form values when customer data is loaded
   useEffect(() => {
     if (customer && customer.customer_contracts.length > 0) {
-      const contractPlan = customer.customer_contracts[0]?.customer_contract_plans[0];
-      if (contractPlan) {
+      const contractPlan = customer.customer_contracts[0]?.customer_contract_plans?.[0];
+      if (contractPlan && contractPlan.payment_method) {
         setPaymentFormValues({
           paymentMethod: contractPlan.payment_method.toString() || "1",
+        });
+      } else {
+        // Default to a standard payment method if not available
+        setPaymentFormValues({
+          paymentMethod: "1",
         });
       }
     }
@@ -318,15 +433,28 @@ export default function CnAbout() {
 
   // Contract and plan data - now using customer data or fallback to default
   const contracts: Contract[] = customer && customer.customer_contracts && customer.customer_contracts.length > 0 
-    ? customer.customer_contracts.map((contract, contractIndex) => ({
-        id: contract.id,
-        name: `Contract ${contractIndex + 1}`,
-        plans: contract.customer_contract_plans ? contract.customer_contract_plans.map((plan, planIndex) => ({
-          id: plan.id,
-          name: `Plan ${planIndex + 1}`,
-          content: `Service ID: ${plan.service_id}, Payment Method: ${plan.payment_method}`,
-        })) : []
-      }))
+    ? customer.customer_contracts.map((contract: any, contractIndex: number) => {
+        return {
+          id: contract.id,
+          name: `Contract ${contractIndex + 1}`,
+          plans: contract.customer_contract_plans && contract.customer_contract_plans.length > 0 
+            ? contract.customer_contract_plans.map((plan: any, planIndex: number) => {
+                return {
+                  id: plan.id || planIndex + 1,
+                  name: `Plan ${planIndex + 1}`,
+                  content: `Service ID: ${plan.service_id || 'N/A'}, Payment Method: ${plan.payment_method || 'N/A'}, Billing: ${plan.contract_plan_billing_info ? `Payer ID: ${plan.contract_plan_billing_info.payer_id}` : 'Customer default'}`,
+                  // Store the actual plan data for easy access
+                  planData: plan,
+                };
+              }) 
+            : [{
+                id: 1,
+                name: "Plan 1",
+                content: "No plan details available",
+                planData: null,
+              }]
+        };
+      })
     : [
         {
           id: 1,
@@ -336,6 +464,7 @@ export default function CnAbout() {
               id: 1,
               name: "Plan 1",
               content: "This is the content for Contract 1, Plan 1",
+              planData: null,
             },
           ],
         },
@@ -351,7 +480,9 @@ export default function CnAbout() {
       const firstContract = customer.customer_contracts[0];
       setActiveContractId(firstContract.id);
       if (firstContract.customer_contract_plans && firstContract.customer_contract_plans.length > 0) {
-        setActivePlanId(firstContract.customer_contract_plans[0].id);
+        setActivePlanId(firstContract.customer_contract_plans[0].id || 1);
+      } else {
+        setActivePlanId(1);
       }
     }
   }, [customer]);
@@ -411,6 +542,83 @@ export default function CnAbout() {
   // Handle contract tab change
   const handleContractChange = (contractId: number) => {
     setActiveContractId(contractId);
+    
+    // Guard clause for null customer
+    if (!customer) return;
+    
+    // Find the selected contract
+    const selectedContract = customer.customer_contracts?.find(c => c.id === contractId);
+    if (selectedContract) {
+      const contractPlan = selectedContract.customer_contract_plans?.[0];
+      
+      if (contractPlan) {
+        const serviceValue = contractPlan.service_id?.toString() || "";
+        let planValue = contractPlan.contract_plan_id?.toString() || "";
+        // Only use plan value if contract_plan_id is not null
+        if (!contractPlan.contract_plan_id) {
+          planValue = "";
+        }
+        
+        // Check if the values exist in the dropdown options
+        const serviceExists = customerDropdowns?.services?.some((option: any) => option.value == serviceValue);
+        const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
+        const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == selectedContract.contract_type?.toString());
+        
+        // Only set values if they exist in the dropdown options, otherwise leave empty
+        // For service, if service_id is null, pass undefined instead of empty string
+        const finalServiceValue = contractPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
+        // For plan, if contract_plan_id is null, pass undefined instead of empty string
+        const finalPlanValue = contractPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
+        const finalContractTypeValue = contractTypeExists ? selectedContract.contract_type?.toString() || "1" : "1";
+        
+        // Update contract form values for the selected contract
+        setContractFormValues(prev => ({
+          ...prev,
+          contractType: finalContractTypeValue,
+          service: finalServiceValue,
+          plan: finalPlanValue,
+          timeRange: contractPlan.time_range == null ? "" : (contractPlan.time_range ? "with" : "without"),
+          timeExtension: contractPlan.extended_time == null ? "" : (contractPlan.extended_time ? "with" : "without"),
+          contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
+            ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
+            : "2025-04-14 to 2025-04-19",
+          startTime: contractPlan.service_hours_start || "",
+          endTime: contractPlan.service_hours_end || "",
+          weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : [],
+        }));
+        
+        // Update billing form values for the selected contract
+        // Use plan-specific billing info if available, otherwise fall back to main customer data
+        const billingInfo = contractPlan.contract_plan_billing_info;
+        
+        setBillingFormValues({
+          firstName: billingInfo?.name || `${customer.first_name} ${customer.last_name}` || "",
+          fullNameKatakana: billingInfo?.name_kana || `${customer.first_name_kana} ${customer.last_name_kana}` || "",
+          phone1: billingInfo?.phone1 || customer.phone1 || "",
+          phone2: billingInfo?.phone2 || customer.phone2 || "",
+          phone3: billingInfo?.phone3 || customer.phone3 || "",
+          email1: billingInfo?.email1 || customer.email1 || "",
+          email2: billingInfo?.email2 || customer.email2 || "",
+          postalCode: billingInfo?.post_code || customer.post_code || "",
+          prefecture: billingInfo?.prefecture_id?.toString() || customer.prefecture_id?.toString() || "",
+          address1: billingInfo?.address1 || customer.address1 || "",
+          address2: billingInfo?.address2 || customer.address2 || "",
+          building: billingInfo?.apartment_name || customer.apartment_name || "",
+        });
+        
+        // Update payment form values for the selected contract
+        if (contractPlan.payment_method) {
+          setPaymentFormValues({
+            paymentMethod: contractPlan.payment_method.toString() || "1",
+          });
+        } else {
+          setPaymentFormValues({
+            paymentMethod: "1",
+          });
+        }
+      }
+    }
+    
     // Reset to the first plan of the selected contract
     const contract = contracts.find((c) => c.id === contractId);
     if (contract && contract.plans.length > 0) {
@@ -421,20 +629,93 @@ export default function CnAbout() {
   // Handle plan tab change
   const handlePlanChange = (planId: number) => {
     setActivePlanId(planId);
+    
+    // Guard clause for null customer
+    if (!customer) return;
+    
+    // Find the selected plan from the contracts array
+    const selectedPlan = activeContract.plans.find(p => p.id === planId)?.planData;
+    
+    if (selectedPlan) {
+      const serviceValue = selectedPlan.service_id?.toString() || "";
+      let planValue = selectedPlan.contract_plan_id?.toString() || "";
+      // Only use plan value if contract_plan_id is not null
+      if (!selectedPlan.contract_plan_id) {
+        planValue = "";
+      }
+      
+      // Check if the values exist in the dropdown options
+      const serviceExists = customerDropdowns?.services?.some((option: any) => option.value == serviceValue);
+      const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
+      const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == activeContract.id?.toString());
+      
+      // Only set values if they exist in the dropdown options, otherwise leave empty
+      // For service, if service_id is null, pass undefined instead of empty string
+      const finalServiceValue = selectedPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
+      // For plan, if contract_plan_id is null, pass undefined instead of empty string
+      const finalPlanValue = selectedPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
+      const finalContractTypeValue = contractTypeExists ? activeContract.id?.toString() || "1" : "1";
+      
+      // Update contract form values for the selected plan
+      setContractFormValues(prev => ({
+        ...prev,
+        contractType: finalContractTypeValue,
+        service: finalServiceValue,
+        plan: finalPlanValue,
+        timeRange: selectedPlan.time_range ? "with" : "without",
+        timeExtension: selectedPlan.extended_time ? "with" : "without",
+        contractPeriod: selectedPlan.contract_period_start && selectedPlan.contract_period_end 
+          ? `${selectedPlan.contract_period_start} to ${selectedPlan.contract_period_end}`
+          : "2025-04-14 to 2025-04-19",
+        startTime: selectedPlan.service_hours_start || "",
+        endTime: selectedPlan.service_hours_end || "",
+        weekdays: selectedPlan.days_of_week ? selectedPlan.days_of_week.split(',') : ["monday"],
+      }));
+      
+      // Update billing form values for the selected plan
+      // Use plan-specific billing info if available, otherwise fall back to main customer data
+      const billingInfo = selectedPlan.contract_plan_billing_info;
+      
+      setBillingFormValues({
+        firstName: billingInfo?.name || `${customer.first_name} ${customer.last_name}` || "",
+        fullNameKatakana: billingInfo?.name_kana || `${customer.first_name_kana} ${customer.last_name_kana}` || "",
+        phone1: billingInfo?.phone1 || customer.phone1 || "",
+        phone2: billingInfo?.phone2 || customer.phone2 || "",
+        phone3: billingInfo?.phone3 || customer.phone3 || "",
+        email1: billingInfo?.email1 || customer.email1 || "",
+        email2: billingInfo?.email2 || customer.email2 || "",
+        postalCode: billingInfo?.post_code || customer.post_code || "",
+        prefecture: billingInfo?.prefecture_id?.toString() || customer.prefecture_id?.toString() || "",
+        address1: billingInfo?.address1 || customer.address1 || "",
+        address2: billingInfo?.address2 || customer.address2 || "",
+        building: billingInfo?.apartment_name || customer.apartment_name || "",
+      });
+      
+      // Update payment form values for the selected plan
+      if (selectedPlan.payment_method) {
+        setPaymentFormValues({
+          paymentMethod: selectedPlan.payment_method.toString() || "1",
+        });
+      } else {
+        setPaymentFormValues({
+          paymentMethod: "1",
+        });
+      }
+    }
   };
 
   const handleSubmit = () => {
-    console.log("submit", formValues);
+    // console.log("submit", formValues);
   };
 
   const handleContractSubmit = () => {
-    console.log("Contract form submitted with values:", contractFormValues);
+    // console.log("Contract form submitted with values:", contractFormValues);
   };
 
   const handleBillingSubmit = () => {
     // Form validation is handled by the Form component through the errors/setErrors props
     // Just handle the actual submission here
-    console.log("Billing form submitted with values:", billingFormValues);
+    // console.log("Billing form submitted with values:", billingFormValues);
     // TODO: Add your API call or data processing here
 
     // Reset any billing form errors
@@ -442,7 +723,7 @@ export default function CnAbout() {
   };
 
   const handlePaymentSubmit = () => {
-    console.log("Billing form submitted with values:", paymentFormValues);
+    // console.log("Billing form submitted with values:", paymentFormValues);
   };
 
   return (
@@ -660,6 +941,32 @@ export default function CnAbout() {
                   disabled
                 />
               </div>
+              <div className={styles.stationGroup}>
+                <InputField
+                  name="railwayCompany3"
+                  placeholder={t("aboutPage.railwayCompany3Placeholder")}
+                  value={formValues.railwayCompany3}
+                  onChange={handleInputChange}
+                  icon={<MdOutlineTrain size={12} />}
+                  disabled
+                />
+                <InputField
+                  name="trainLine3"
+                  placeholder={t("aboutPage.trainLine3Placeholder")}
+                  value={formValues.trainLine3}
+                  onChange={handleInputChange}
+                  icon={<MdOutlineTrain size={12} />}
+                  disabled
+                />
+                <InputField
+                  name="trainStation3"
+                  placeholder={t("aboutPage.trainStation3Placeholder")}
+                  value={formValues.trainStation3}
+                  onChange={handleInputChange}
+                  icon={<MdOutlineTrain size={12} />}
+                  disabled
+                />
+              </div>
             </div>
 
             {/* Gender Section */}
@@ -846,7 +1153,7 @@ export default function CnAbout() {
                             placeholder={t("aboutPage.servicePlaceholder")}
                             options={customerDropdowns?.services || []}
                             icon={<BsFileEarmarkText size={12} />}
-                            value={contractFormValues.service}
+                            value={contractFormValues.service || undefined}
                             onChange={handleContractInputChange}
                             disabled
                           />
@@ -855,7 +1162,7 @@ export default function CnAbout() {
                             placeholder={t("aboutPage.planPlaceholder")}
                             options={customerDropdowns?.contract_plans || []}
                             icon={<BsFileEarmarkText size={12} />}
-                            value={contractFormValues.plan}
+                            value={contractFormValues.plan || undefined}
                             onChange={handleContractInputChange}
                             disabled
                           />
@@ -977,6 +1284,19 @@ export default function CnAbout() {
                   </Form>
                   <h1 className={styles.contractHeading}>
                     {t("aboutPage.plan.billingInfo")}
+                    {(() => {
+                      const currentPlan = activeContract.plans.find(p => p.id === activePlanId);
+                      const billingInfo = currentPlan?.planData?.contract_plan_billing_info;
+                      return billingInfo ? (
+                        <span style={{ fontSize: '0.8em', color: '#666', marginLeft: '10px' }}>
+                          (Plan-specific billing)
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '0.8em', color: '#666', marginLeft: '10px' }}>
+                          (Customer default billing)
+                        </span>
+                      );
+                    })()}
                   </h1>
                   <Form
                     className={styles.customerForm}

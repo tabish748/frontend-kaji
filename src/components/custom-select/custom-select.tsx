@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } f
 import styles from "../../styles/components/molecules/custom-select.module.scss";
 import inputStyles from "../../styles/components/atoms/input.module.scss";
 import { useLanguage } from "@/localization/LocalContext";
+import Image from "next/image";
 
 interface SelectFieldProps {
   label?: string;
@@ -68,7 +69,7 @@ const CustomSelectField = forwardRef<HTMLLabelElement, SelectFieldProps>(({
       if (icon.match(/\.(jpeg|jpg|gif|png|svg)$/) || icon.startsWith('http') || icon.startsWith('/')) {
         return (
           <span className={styles.iconWrapper}>
-            <img src={icon} alt="icon" style={{ width: 20, height: 20 }} />
+            <Image src={icon} alt="icon" width={20} height={20} />
           </span>
         );
       } else {

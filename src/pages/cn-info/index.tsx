@@ -85,11 +85,17 @@ export default function CnInfo() {
     address2: "",
     building: "",
     railwayCompany1: "",
+    railwayCompany1Id: null,
     trainLine1: "",
     trainStation1: "",
     railwayCompany2: "",
+    railwayCompany2Id: null,
     trainLine2: "",
     trainStation2: "",
+    railwayCompany3: "",
+    railwayCompany3Id: null,
+    trainLine3: "",
+    trainStation3: "",
     gender: "", // No default - only set if returned from API
     language: "", // No default - only set if returned from API
     birthYear: "",
@@ -123,7 +129,8 @@ export default function CnInfo() {
     address1: "",
     address2: "",
     building: "",
-    billingType: "2", // Default to "different_from_customer"
+    billingType: "", // Default to "different_from_customer"
+    payer_id: "",
   });
 
   // Track billing info ID for update/create logic
@@ -145,6 +152,7 @@ export default function CnInfo() {
     address1: "",
     address2: "",
     building: "",
+    payer_id: "",
   });
 
   // Store different_from_customer data separately
@@ -163,6 +171,7 @@ export default function CnInfo() {
     address1: "",
     address2: "",
     building: "",
+    payer_id: "",
   });
 
   // Track which billing fields were pre-filled from API
@@ -319,7 +328,7 @@ export default function CnInfo() {
     if (router.isReady) {
       loadInitialData();
     }
-  }, [router.isReady, router.query.section]); // Only depend on section, not entire query
+  }, [router.isReady, router.query.section, accordionState, isInitialLoad, loadedSections, router]); // Include all dependencies
 
   // Update URL and handle data loading
   const handleAccordionToggle = async (index: number) => {
@@ -584,18 +593,25 @@ export default function CnInfo() {
             ? customerData.dob_day.toString().padStart(2, "0")
             : "",
           age: customerData.age ? customerData.age.toString() : "",
-          advertising: customerData.newsletter_emails
+          advertising: customerData.newsletter_emails != null
             ? customerData.newsletter_emails.toString()
             : "",
           // Handle railway/train station data from customer_routes
-          railwayCompany1: customerData.customer_routes?.[0]?.company || "",
-          trainLine1: customerData.customer_routes?.[0]?.route_name || "",
+          railwayCompany1: customerData.customer_locations[0]?.customer_location_routes[0]?.company || "",
+          railwayCompany1Id: customerData.customer_locations[0]?.customer_location_routes[0]?.id || null,
+          trainLine1: customerData.customer_locations[0]?.customer_location_routes[0]?.route_name || "",
           trainStation1:
-            customerData.customer_routes?.[0]?.nearest_station || "",
-          railwayCompany2: customerData.customer_routes?.[1]?.company || "",
-          trainLine2: customerData.customer_routes?.[1]?.route_name || "",
+            customerData.customer_locations[0]?.customer_location_routes[0]?.nearest_station || "",
+          railwayCompany2: customerData.customer_locations[0]?.customer_location_routes[1]?.company || "",
+          railwayCompany2Id: customerData.customer_locations[0]?.customer_location_routes[1]?.id || null,
+          trainLine2: customerData.customer_locations[0]?.customer_location_routes[1]?.route_name || "",
           trainStation2:
-            customerData.customer_routes?.[1]?.nearest_station || "",
+            customerData.customer_locations[0]?.customer_location_routes[1]?.nearest_station || "",
+          railwayCompany3: customerData.customer_locations[0]?.customer_location_routes[2]?.company || "",
+          railwayCompany3Id: customerData.customer_locations[0]?.customer_location_routes[2]?.id || null,
+          trainLine3: customerData.customer_locations[0]?.customer_location_routes[2]?.route_name || "",
+          trainStation3:
+            customerData.customer_locations[0]?.customer_location_routes[2]?.nearest_station || "",
         };
 
         setCustomerFormValues({
@@ -673,6 +689,7 @@ export default function CnInfo() {
             address2: relevantData.address2 || "",
             building: relevantData.apartment_name || "",
             billingType: billingType,
+            payer_id: relevantData.id ? relevantData.id.toString() : "",
         };
 
         setBillingFormValues({
@@ -697,6 +714,9 @@ export default function CnInfo() {
               address1: billingData.same_as_customer.address1 || "",
               address2: billingData.same_as_customer.address2 || "",
               building: billingData.same_as_customer.apartment_name || "",
+              payer_id: billingData.same_as_customer?.payer_id != null
+                ? billingData.same_as_customer.payer_id.toString()
+                : "",
             };
             setOriginalBillingData(sameAsCustomerData);
           }
@@ -718,9 +738,20 @@ export default function CnInfo() {
               address1: billingData.different_from_customer.address1 || "",
               address2: billingData.different_from_customer.address2 || "",
               building: billingData.different_from_customer.apartment_name || "",
+              payer_id: billingData.different_from_customer?.payer_id != null
+                ? billingData.different_from_customer.payer_id.toString()
+                : "",
             };
             // Store in a separate state for different_from_customer data
             setDifferentFromCustomerData(differentFromCustomerData);
+            // If billingType is '2', initialize billingFormValues as well
+            if (billingType === "2") {
+              setBillingFormValues({
+                ...differentFromCustomerData,
+                billingType: "2",
+                payer_id: differentFromCustomerData.payer_id || "",
+              });
+            }
           }
 
           // Store billing info ID for update logic
@@ -886,34 +917,20 @@ export default function CnInfo() {
         formData.append("newsletter_emails", customerFormValues.advertising);
 
         // Add station details
-        if (customerFormValues.railwayCompany1) {
-          formData.append(
-            "station_details[0][company]",
-            customerFormValues.railwayCompany1
-          );
-          formData.append(
-            "station_details[0][route_name]",
-            customerFormValues.trainLine1
-          );
-          formData.append(
-            "station_details[0][nearest_station]",
-            customerFormValues.trainStation1
-          );
-        }
-        if (customerFormValues.railwayCompany2) {
-          formData.append(
-            "station_details[1][company]",
-            customerFormValues.railwayCompany2
-          );
-          formData.append(
-            "station_details[1][route_name]",
-            customerFormValues.trainLine2
-          );
-          formData.append(
-            "station_details[1][nearest_station]",
-            customerFormValues.trainStation2
-          );
-        }
+        // Always send id for each station if present, even if other fields are empty
+        [0, 1, 2].forEach((idx) => {
+          const idKey = [`railwayCompany${idx+1}Id`];
+          const companyKey = [`railwayCompany${idx+1}`];
+          const lineKey = [`trainLine${idx+1}`];
+          const stationKey = [`trainStation${idx+1}`];
+          const id = customerFormValues[idKey];
+          if (id !== undefined && id !== null && id !== "") {
+            formData.append(`station_details[${idx}][id]`, id);
+            formData.append(`station_details[${idx}][company]`, customerFormValues[companyKey] || "");
+            formData.append(`station_details[${idx}][route_name]`, customerFormValues[lineKey] || "");
+            formData.append(`station_details[${idx}][nearest_station]`, customerFormValues[stationKey] || "");
+          }
+        });
 
         const response = await ApiHandler.request(
           "/api/customer/first-time-info/save",
@@ -992,6 +1009,7 @@ export default function CnInfo() {
           formData.append("address1", billingFormValues.address1);
           formData.append("address2", billingFormValues.address2);
           formData.append("apartment_name", billingFormValues.building);
+          formData.append("payer_id", billingFormValues.payer_id);
         }
 
         const response = await ApiHandler.request(
@@ -1168,12 +1186,14 @@ export default function CnInfo() {
         setBillingFormValues({
           ...originalBillingData,
           billingType: "1",
+          payer_id: billingFormValues.payer_id || "",
         });
       } else {
         // 2 = different_from_customer - use different_from_customer data from API
         setBillingFormValues({
           ...differentFromCustomerData,
           billingType: "2",
+          payer_id: differentFromCustomerData.payer_id || "",
         });
       }
     } else {
@@ -1467,6 +1487,29 @@ export default function CnInfo() {
                         name="trainStation2"
                         placeholder={t("aboutPage.trainStation2Placeholder")}
                         value={customerFormValues.trainStation2}
+                        onChange={(e) => handleInputChange("customer", e)}
+                        icon={<MdOutlineTrain size={12} />}
+                      />
+                    </div>
+                    <div className={styles.stationGroup}>
+                      <InputField
+                        name="railwayCompany3"
+                        placeholder={t("aboutPage.railwayCompany3Placeholder")}
+                        value={customerFormValues.railwayCompany3}
+                        onChange={(e) => handleInputChange("customer", e)}
+                        icon={<MdOutlineTrain size={12} />}
+                      />
+                      <InputField
+                        name="trainLine3"
+                        placeholder={t("aboutPage.trainLine3Placeholder")}
+                        value={customerFormValues.trainLine3}
+                        onChange={(e) => handleInputChange("customer", e)}
+                        icon={<MdOutlineTrain size={12} />}
+                      />
+                      <InputField
+                        name="trainStation3"
+                        placeholder={t("aboutPage.trainStation3Placeholder")}
+                        value={customerFormValues.trainStation3}
                         onChange={(e) => handleInputChange("customer", e)}
                         icon={<MdOutlineTrain size={12} />}
                       />

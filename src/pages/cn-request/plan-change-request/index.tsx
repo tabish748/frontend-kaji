@@ -45,7 +45,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { customerDropdowns, loading: dropdownsLoading, error: dropdownsError } = useSelector((state: RootState) => state.customerDropdowns);
-  const customer = useSelector((state: RootState) => state.customerBasicInfo.customer);
+  const customer = useSelector((state: RootState) => state.customerBasicInfoAbout.customer);
   const changePlanState = useSelector((state: RootState) => state.changePlanRequest);
 
   // Toast state
@@ -78,7 +78,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
       // Auto-redirect after 2 seconds
       setTimeout(() => {
         const langParam = router.query.lang ? `?lang=${router.query.lang}` : '';
-        router.replace(`/cn-request${langParam}`);
+        router.push(`/cn-request${langParam}`);
       }, 2000);
     } else if (changePlanState.success === false && changePlanState.error) {
       setToastMessage(changePlanState.error);

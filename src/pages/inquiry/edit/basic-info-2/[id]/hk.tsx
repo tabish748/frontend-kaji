@@ -15,22 +15,23 @@ import { useLanguage } from '@/localization/LocalContext';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import Toast from '@/components/toast/toast';
 import { AppDispatch, RootState } from '@/app/store';
-import { saveHkService, resetSaveHkService } from '@/app/customer/saveHkServiceSlice';
+import { getHkService, resetGetHkService } from '@/app/customer/getHkServiceSlice';
 import { fetchCustomerServicesDropdowns, resetCustomerServicesDropdowns } from '@/app/features/dropdowns/getCustomerServicesDropdownsSlice';
 import ApiLoadingWrapper from '@/components/api-loading-wrapper/api-loading-wrapper';
 
-export default function BasicInfo2HKPage() {
+export default function BasicInfo2HKEditPage() {
   const { t } = useLanguage();
   const router = useRouter();
+  const { id } = router.query;
   const dispatch = useDispatch<AppDispatch>();
-
-  // Redux state
-  const saveState = useSelector((state: RootState) => state.saveHkService) || {};
-  const { loading: saving, error: saveError, success: saveSuccess } = saveState;
   
-  // Dropdown state from Redux
+  // Redux state
+  const hkServiceState = useSelector((state: RootState) => state.getHkService) || {};
+  const { data: hkServiceData, loading: hkServiceLoading = false, error: hkServiceError = null } = hkServiceState;
+  
+  // Dropdown state
   const dropdownState = useSelector((state: RootState) => state.customerServicesDropdowns) || {};
-  const { customerServicesDropdowns: dropdownOptions, loading: loadingDropdowns, error: dropdownError } = dropdownState;
+  const { customerServicesDropdowns: dropdownOptions, loading: loadingDropdowns = false, error: dropdownError = null } = dropdownState;
   
   const [formData, setFormData] = useState({
     // Basic Service Info
@@ -52,6 +53,7 @@ export default function BasicInfo2HKPage() {
     // Other
     layout: "",
     layoutMap: null as File | null,
+    existingLayoutMap: [] as string[],
     atHomeStatus: "",
     pets: [] as string[],
     otherPet: "", // Changed from array to single string
@@ -62,45 +64,188 @@ export default function BasicInfo2HKPage() {
 
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Load dropdowns on component mount
+  // Load dropdown options using Redux
   useEffect(() => {
     dispatch(fetchCustomerServicesDropdowns());
   }, [dispatch]);
 
-  // Reset HK service state on component mount
+  // Reset dropdown state on component mount
   useEffect(() => {
-    dispatch(resetSaveHkService());
+    dispatch(resetCustomerServicesDropdowns());
   }, [dispatch]);
 
-  // Handle save success
+  // Load existing data using Redux
   useEffect(() => {
-    if (saveSuccess) {
-      setToast({ message: 'HK service created successfully!', type: 'success' });
-      // Redirect to the inquiry list or show success message
-      setTimeout(() => {
-        router.push('/inquiry');
-      }, 2000);
-      dispatch(resetSaveHkService());
+    if (id && typeof id === 'string') {
+      dispatch(getHkService(id));
     }
-  }, [saveSuccess, router, dispatch]);
+  }, [id, dispatch]);
 
-  // Handle save error
+  // Reset HK service state on component mount
   useEffect(() => {
-    if (saveError) {
-      setToast({ message: saveError, type: 'fail' });
+    dispatch(resetGetHkService());
+  }, [dispatch]);
+
+  // Handle HK service data when loaded
+  useEffect(() => {
+    if (hkServiceData) {
+      const data = hkServiceData;
+      
+      // Convert service details from indexed object to array
+      const serviceDetailsArray: string[] = [];
+      if (data.service_details) {
+        Object.values(data.service_details).forEach((value: any) => {
+          if (value) serviceDetailsArray.push(String(value));
+        });
+      }
+      
+      // Convert cleaning locations from indexed object to array
+      const cleaningAreaArray: string[] = [];
+      if (data.cleaning_locations) {
+        Object.values(data.cleaning_locations).forEach((value: any) => {
+          if (value) cleaningAreaArray.push(String(value));
+        });
+      }
+      
+      // Convert inspection locations from indexed object to array
+      const inspectionAreaArray: string[] = [];
+      if (data.inspection_locations) {
+        Object.values(data.inspection_locations).forEach((value: any) => {
+          if (value) inspectionAreaArray.push(String(value));
+        });
+      }
+      
+      // Convert pets from indexed object to array
+      const petsArray: string[] = [];
+      if (data.pets) {
+        Object.values(data.pets).forEach((value: any) => {
+          if (value) petsArray.push(String(value));
+        });
+      }
+      
+      // Convert more service details from indexed object to array
+      const otherRequirementArray = [];
+      if (data.more_service_details) {
+        Object.values(data.more_service_details).forEach((value: any) => {
+          if (value) otherRequirementArray.push(String(value));
+        });
+      }
+      if (otherRequirementArray.length === 0) otherRequirementArray.push("");
+      
+      // Convert more cleaning locations from indexed object to array
+      const otherCleaningAreaArray = [];
+      if (data.more_cleaning_locations) {
+        Object.values(data.more_cleaning_locations).forEach((value: any) => {
+          if (value) otherCleaningAreaArray.push(String(value));
+        });
+      }
+      if (otherCleaningAreaArray.length === 0) otherCleaningAreaArray.push("");
+      
+      // Use pet_others as a string directly
+      const otherPetValue: string = typeof data.pet_others === "string" ? data.pet_others : "";
+      
+      // Check if there are any "other" values and add "other" to the main arrays
+      const hasOtherServiceDetails = otherRequirementArray.some(item => item && item.trim() !== "");
+      const hasOtherCleaningAreas = otherCleaningAreaArray.some(item => item && item.trim() !== "");
+      const hasOtherPets = typeof otherPetValue === 'string' && otherPetValue.trim() !== "";
+      
+      // Add "other" to service details if there are other service details
+      if (hasOtherServiceDetails && !serviceDetailsArray.includes("other")) {
+        serviceDetailsArray.push("other");
+      }
+      
+      // Add "other" to cleaning areas if there are other cleaning areas
+      if (hasOtherCleaningAreas && !cleaningAreaArray.includes("other")) {
+        cleaningAreaArray.push("other");
+      }
+      
+      // Add "other" to pets if there are other pets
+      if (hasOtherPets && !petsArray.includes("other")) {
+        petsArray.push("other");
+      }
+
+      setFormData({
+        owner: data.person_incharge_id ? String(data.person_incharge_id) : "",
+        serviceDetails: serviceDetailsArray,
+        otherRequirement: otherRequirementArray,
+        otherRequirementText: data.other_service_details || "",
+        cleaningArea: cleaningAreaArray,
+        otherCleaningArea: otherCleaningAreaArray,
+        otherCleaningAreaText: data.other_cleaning_locations || "",
+        inspectionArea: inspectionAreaArray,
+        layout: data.floor_plan || "",
+        layoutMap: null,
+        existingLayoutMap: data.existing_floor_plan_attachment || [],
+        atHomeStatus: data.home_status ? String(data.home_status) : "",
+        pets: petsArray,
+        otherPet: otherPetValue, // Single string value
+        note: data.remarks || ""
+      });
     }
-  }, [saveError]);
+  }, [hkServiceData]);
+
+  // Handle HK service error
+  useEffect(() => {
+    if (hkServiceError) {
+      setToast({ message: 'Failed to load HK service data. Please try again.', type: 'fail' });
+    }
+  }, [hkServiceError]);
+
+  // Synchronize 'other' checked state after both dropdownOptions and formData are loaded
+  useEffect(() => {
+    if (!dropdownOptions) return;
+    setFormData(prev => {
+      let updated = { ...prev };
+      // Service Details
+      const hasOtherService = prev.otherRequirement.some(item => item && item.trim() !== "");
+      if (hasOtherService && !prev.serviceDetails.includes("other")) {
+        updated.serviceDetails = [...prev.serviceDetails, "other"];
+      } else if (!hasOtherService && prev.serviceDetails.includes("other")) {
+        updated.serviceDetails = prev.serviceDetails.filter(v => v !== "other");
+      }
+      // Cleaning Area
+      const hasOtherCleaning = prev.otherCleaningArea.some(item => item && item.trim() !== "");
+      if (hasOtherCleaning && !prev.cleaningArea.includes("other")) {
+        updated.cleaningArea = [...prev.cleaningArea, "other"];
+      } else if (!hasOtherCleaning && prev.cleaningArea.includes("other")) {
+        updated.cleaningArea = prev.cleaningArea.filter(item => item !== "other");
+      }
+      // Pets
+      const hasOtherPet = prev.otherPet && prev.otherPet.trim() !== "";
+      if (hasOtherPet && !prev.pets.includes("other")) {
+        updated.pets = [...prev.pets, "other"];
+      } else if (!hasOtherPet && prev.pets.includes("other")) {
+        updated.pets = prev.pets.filter(v => v !== "other");
+      }
+      return updated;
+    });
+  }, [dropdownOptions, hkServiceData]);
 
   const handleInputChange = (name: string, value: any) => {
     if (name.toLowerCase().includes('file') || name.toLowerCase().includes('upload') || name.toLowerCase().includes('attachment')) {
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      let updatedFormData = {
+        ...prev,
+        [name]: value,
+      };
+      
+      // Auto-check "other" for pets when otherPet field changes
+      if (name === "otherPet") {
+        const hasOtherValue = value && value.trim() !== "";
+        if (hasOtherValue && !prev.pets.includes("other")) {
+          updatedFormData.pets = [...prev.pets, "other"];
+        } else if (!hasOtherValue && prev.pets.includes("other")) {
+          updatedFormData.pets = prev.pets.filter(item => item !== "other");
+        }
+      }
+      
+      return updatedFormData;
+    });
   };
 
   // Handle dynamic other input changes
@@ -108,12 +253,37 @@ export default function BasicInfo2HKPage() {
     setFormData((prev) => {
       const currentValue = prev[field as keyof typeof prev];
       if (Array.isArray(currentValue)) {
-        return {
+        const newArray = currentValue.map((item: string, i: number) => 
+          i === index ? value : item
+        );
+        
+        // Check if any "other" values exist and automatically check "other" option
+        let updatedFormData = {
           ...prev,
-          [field]: currentValue.map((item: string, i: number) => 
-            i === index ? value : item
-          )
+          [field]: newArray
         };
+        
+        // Auto-check "other" for service details
+        if (field === "otherRequirement") {
+          const hasOtherValues = newArray.some(item => item && item.trim() !== "");
+          if (hasOtherValues && !prev.serviceDetails.includes("other")) {
+            updatedFormData.serviceDetails = [...prev.serviceDetails, "other"];
+          } else if (!hasOtherValues && prev.serviceDetails.includes("other")) {
+            updatedFormData.serviceDetails = prev.serviceDetails.filter(item => item !== "other");
+          }
+        }
+        
+        // Auto-check "other" for cleaning areas
+        if (field === "otherCleaningArea") {
+          const hasOtherValues = newArray.some(item => item && item.trim() !== "");
+          if (hasOtherValues && !prev.cleaningArea.includes("other")) {
+            updatedFormData.cleaningArea = [...prev.cleaningArea, "other"];
+          } else if (!hasOtherValues && prev.cleaningArea.includes("other")) {
+            updatedFormData.cleaningArea = prev.cleaningArea.filter(item => item !== "other");
+          }
+        }
+        
+        return updatedFormData;
       }
       return prev;
     });
@@ -155,38 +325,106 @@ export default function BasicInfo2HKPage() {
   };
 
   const handleSubmit = async () => {
-    const submissionData = new FormData();
-    submissionData.append('person_incharge_id', formData.owner);
-    formData.serviceDetails.filter(service => service !== "other").forEach((service, index) => {
-      submissionData.append(`service_details[${index + 1}]`, service);
-    });
-    formData.otherRequirement.filter(item => item.trim()).forEach((item, index) => {
-      submissionData.append(`more_service_details[${index + 1}]`, item);
-    });
-    formData.cleaningArea.filter(area => area !== "other").forEach((area, index) => {
-      submissionData.append(`cleaning_locations[${index + 1}]`, area);
-    });
-    formData.otherCleaningArea.filter(item => item.trim()).forEach((item, index) => {
-      submissionData.append(`more_cleaning_locations[${index + 1}]`, item);
-    });
-    formData.inspectionArea.forEach((area, index) => {
-      submissionData.append(`inspection_locations[${index + 1}]`, area);
-    });
-    submissionData.append('floor_plan', formData.layout);
-    if (formData.layoutMap) {
-      submissionData.append('floor_plan_attachment[0]', formData.layoutMap);
+    if (!id || typeof id !== 'string') {
+      setToast({ message: "Invalid ID", type: "fail" });
+      return;
     }
-    formData.pets.filter(pet => pet !== "other").forEach((pet, index) => {
-      submissionData.append(`pets[${index + 1}]`, pet);
-    });
-    if (formData.pets.includes("other") && formData.otherPet && formData.otherPet.trim()) {
-      submissionData.append('pet_others', formData.otherPet);
-    } else {
-      submissionData.append('pet_others', '');
+
+    setSubmitting(true);
+    try {
+      // Create FormData for file upload
+      const submissionData = new FormData();
+      
+      // Add basic data
+      submissionData.append('id', String(hkServiceData?.id || id));
+      submissionData.append('customer_id', String(id));
+      submissionData.append('person_incharge_id', formData.owner);
+      
+      // Add service details as indexed array (filter out "other")
+      formData.serviceDetails.filter(service => service !== "other").forEach((service, index) => {
+        submissionData.append(`service_details[${index + 1}]`, service);
+      });
+      
+      // Add more service details as indexed array (only if "other" is checked)
+      if (formData.serviceDetails.includes("other")) {
+        formData.otherRequirement.filter(item => item.trim()).forEach((item, index) => {
+          submissionData.append(`more_service_details[${index + 1}]`, item);
+        });
+      } else {
+        // Send empty array when "other" is unchecked
+        submissionData.append('more_service_details[0]', '');
+      }
+      
+      submissionData.append('other_service_details', formData.otherRequirementText);
+      
+      // Add cleaning locations as indexed array (filter out "other")
+      formData.cleaningArea.filter(area => area !== "other").forEach((area, index) => {
+        submissionData.append(`cleaning_locations[${index + 1}]`, area);
+      });
+      
+      // Add more cleaning locations as indexed array (only if "other" is checked)
+      if (formData.cleaningArea.includes("other")) {
+        formData.otherCleaningArea.filter(item => item.trim()).forEach((item, index) => {
+          submissionData.append(`more_cleaning_locations[${index + 1}]`, item);
+        });
+      } else {
+        // Send empty array when "other" is unchecked
+        submissionData.append('more_cleaning_locations[0]', '');
+      }
+      
+      submissionData.append('other_cleaning_locations', formData.otherCleaningAreaText);
+      
+      // Add inspection locations as indexed array
+      formData.inspectionArea.forEach((area, index) => {
+        submissionData.append(`inspection_locations[${index + 1}]`, area);
+      });
+      
+      submissionData.append('floor_plan', formData.layout);
+      
+      // Add existing floor plan attachments
+      formData.existingLayoutMap.forEach((attachment, index) => {
+        submissionData.append(`existing_floor_plan_attachment[${index}]`, attachment);
+      });
+      
+      // Add new floor plan file if uploaded
+      if (formData.layoutMap) {
+        submissionData.append('floor_plan_attachment[0]', formData.layoutMap);
+      }
+      
+      // Add pets as indexed array (filter out "other")
+      formData.pets.filter(pet => pet !== "other").forEach((pet, index) => {
+        submissionData.append(`pets[${index + 1}]`, pet);
+      });
+      
+      // Add pet others as simple string (only if "other" is checked)
+      if (formData.pets.includes("other") && formData.otherPet && formData.otherPet.trim()) {
+        submissionData.append('pet_others', formData.otherPet);
+      } else {
+        // Send empty string when "other" is unchecked
+        submissionData.append('pet_others', '');
+      }
+      
+      submissionData.append('home_status', formData.atHomeStatus);
+      submissionData.append('remarks', formData.note);
+
+      const res = await ApiHandler.request(
+        "/api/company/customer/hk-service/save",
+        "POST",
+        submissionData
+      );
+      
+      if (res.success) {
+        setToast({ message: "HK service updated successfully!", type: "success" });
+        // Refetch the data after successful update
+        dispatch(getHkService(id));
+      } else {
+        setToast({ message: res.message || "Failed to update HK service", type: "fail" });
+      }
+    } catch (error: any) {
+      setToast({ message: error.message || "Failed to update HK service", type: "fail" });
+    } finally {
+      setSubmitting(false);
     }
-    submissionData.append('home_status', formData.atHomeStatus);
-    submissionData.append('remarks', formData.note);
-    dispatch(saveHkService(submissionData));
   };
 
   // Helper function to generate generic options if backend options are empty
@@ -209,25 +447,30 @@ export default function BasicInfo2HKPage() {
       label: item.label,
     })) || generateGenericOptions(3);
 
-  const petOptions =
-    dropdownOptions?.hk_hc_pets?.map((item: any) => ({
-      value: String(item.value),
-      label: item.label,
-    })) || [...generateGenericOptions(4), { value: "other", label: "Other" }];
-
   // Service Details Options
-  const serviceDetailOptions =
-    dropdownOptions?.hk_hc_services?.map((item: any) => ({
+  const serviceDetailOptions = React.useMemo(() => {
+    let opts = dropdownOptions?.hk_hc_services?.map((item: any) => ({
       value: String(item.value),
       label: item.label,
-    })) || [...generateGenericOptions(18), { value: "other", label: "Other" }];
+    })) || generateGenericOptions(18);
+    // Ensure 'other' is present if needed
+    if (!opts.some((o: any) => o.value === 'other')) {
+      opts = [...opts, { value: 'other', label: 'Other' }];
+    }
+    return opts;
+  }, [dropdownOptions]);
 
   // Cleaning Area Options
-  const cleaningAreaOptions =
-    dropdownOptions?.hk_hc_cleaning_areas?.map((item: any) => ({
+  const cleaningAreaOptions = React.useMemo(() => {
+    let opts = dropdownOptions?.hk_hc_cleaning_areas?.map((item: any) => ({
       value: String(item.value),
       label: item.label,
-    })) || [...generateGenericOptions(13), { value: "other", label: "Other" }];
+    })) || generateGenericOptions(13);
+    if (!opts.some((o: any) => o.value === 'other')) {
+      opts = [...opts, { value: 'other', label: 'Other' }];
+    }
+    return opts;
+  }, [dropdownOptions]);
 
   // Inspection Area Options
   const inspectionAreaOptions =
@@ -236,17 +479,33 @@ export default function BasicInfo2HKPage() {
       label: item.label,
     })) || generateGenericOptions(4);
 
+  // Pet Options
+  const petOptions = React.useMemo(() => {
+    let opts = dropdownOptions?.hk_hc_pets?.map((item: any) => ({
+      value: String(item.value),
+      label: item.label,
+    })) || generateGenericOptions(4);
+    if (!opts.some((o: any) => o.value === 'other')) {
+      opts = [...opts, { value: 'other', label: 'Other' }];
+    }
+    return opts;
+  }, [dropdownOptions]);
+
   return (
     <InquiryTabLayout>
       <BasicInfo2Tab>
         <ApiLoadingWrapper
-          loading={loadingDropdowns}
-          error={dropdownError}
+          loading={loadingDropdowns || hkServiceLoading}
+          error={dropdownError || hkServiceError}
           onRetry={() => {
+            // Retry both dropdowns and service data
             dispatch(fetchCustomerServicesDropdowns());
+            dispatch(resetCustomerServicesDropdowns());
+            if (id && typeof id === 'string') dispatch(getHkService(id));
           }}
         >
           <div className="nested-tab-content-inner">
+            {/* Toast Notification */}
             {toast && (
               <Toast
                 message={toast.message}
@@ -255,9 +514,10 @@ export default function BasicInfo2HKPage() {
                 duration={4000}
               />
             )}
+
             <Form
               onSubmit={handleSubmit}
-              registerBtnText="REGISTER"
+              registerBtnText="UPDATE"
               setErrors={setErrors}
               errors={errors}
             >
@@ -267,10 +527,11 @@ export default function BasicInfo2HKPage() {
 
                 <div className="row g-1">
                   <div className="col-sm-12 col-lg-6 col-xl-4">
-                    <InputField
+                    <CustomSelectField
                       name="owner"
                       label={t("admin-form.labels.owner")}
                       placeholder={t("admin-form.placeholders.owner")}
+                      options={assigneeOptions}
                       value={formData.owner}
                       onChange={(e) => handleInputChange("owner", e.target.value)}
                     />
@@ -297,7 +558,7 @@ export default function BasicInfo2HKPage() {
                 {formData.serviceDetails.includes("other") && (
                   <div className="row g-1 mb-3">
                     <div className="col-md-12">
-                        
+                      
                       <div className="d-flex flex-wrap align-items-center gap-2">
                         {formData.otherRequirement.map((item, index) => (
                           <div key={index} className="d-flex align-items-center gap-1">
@@ -312,7 +573,7 @@ export default function BasicInfo2HKPage() {
                                 type="danger"
                                 className={`${styles.addButton} ${styles.danger}`}
                                 size="small"
-                                icon={<FiMinus    />}
+                                icon={<FiMinus />}
                                 onClick={() => removeOtherInput("otherRequirement", index)}
                               />
                             )}
@@ -321,7 +582,7 @@ export default function BasicInfo2HKPage() {
                         <Button
                           className={styles.addButton}
                           size="small"
-                          icon={<FiPlus    />}
+                          icon={<FiPlus />}
                           onClick={() => addOtherInput("otherRequirement")}
                         />
                       </div>
@@ -362,7 +623,7 @@ export default function BasicInfo2HKPage() {
                 {formData.cleaningArea.includes("other") && (
                   <div className="row g-1 mb-3">
                     <div className="col-md-12">
-                        
+                      
                       <div className="d-flex flex-wrap align-items-center gap-2">
                         {formData.otherCleaningArea.map((item, index) => (
                           <div key={index} className="d-flex align-items-center gap-1">
@@ -377,7 +638,7 @@ export default function BasicInfo2HKPage() {
                                 type="danger"
                                 className={`${styles.addButton} ${styles.danger}`}
                                 size="small"
-                                icon={<FiMinus    />}
+                                icon={<FiMinus />}
                                 onClick={() => removeOtherInput("otherCleaningArea", index)}
                               />
                             )}
@@ -386,7 +647,7 @@ export default function BasicInfo2HKPage() {
                         <Button
                           className={styles.addButton}
                           size="small"
-                          icon={<FiPlus    />}
+                          icon={<FiPlus />}
                           onClick={() => addOtherInput("otherCleaningArea")}
                         />
                       </div>
@@ -448,6 +709,7 @@ export default function BasicInfo2HKPage() {
                       value={formData.layoutMap?.name || ""}
                       fileValue={formData.layoutMap}
                       onFileChange={handleFileChange}
+                      existingFileName={formData.existingLayoutMap.length > 0 ? "Existing file" : undefined}
                       icon="📎"
                     />
                   </div>
@@ -477,7 +739,6 @@ export default function BasicInfo2HKPage() {
                 {formData.pets.includes("other") && (
                   <div className="row g-1 mb-3">
                     <div className="col-md-12">
-                      
                       <div className="d-flex flex-wrap align-items-center gap-2">
                         <InputField
                           name="otherPet"
@@ -509,18 +770,19 @@ export default function BasicInfo2HKPage() {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit & Delete Buttons */}
               <div className="form-section mb-4">
                 <div className="row">
-                  <div className="col-12 d-flex justify-content-center">
+                  <div className="col-12 d-flex justify-content-center gap-2">
                     <Button 
-                      text={t("buttons.register")} 
+                      text="UPDATE"
                       className={styles.registerButton}
                       htmlType="submit"
+                      disabled={submitting}
                     />
+                  </div>
                 </div>
               </div>
-            </div>
             </Form>
           </div>
         </ApiLoadingWrapper>

@@ -10,5 +10,5 @@ export const useUpdateEffect = (effect: () => void, dependencies: DependencyList
       // Only call the effect on updates, not on initial mount
       effect();
     }
-  }, dependencies); // Ensure dependencies are passed correctly
+  }, dependencies || []); // Ensure dependencies are passed correctly
 }
