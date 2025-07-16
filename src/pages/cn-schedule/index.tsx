@@ -18,7 +18,7 @@ import CustomSelectField from "@/components/custom-select/custom-select";
 import InputField from "@/components/input-field/input-field";
 import { BsPaperclip } from "react-icons/bs";
 
-export default function CnSchedule() {
+export default function CnSchedule() { 
   const { t } = useLanguage();
   const [page, setPage] = React.useState<number>(1);
   const [plans, setPlans] = React.useState<PlansPage>(
