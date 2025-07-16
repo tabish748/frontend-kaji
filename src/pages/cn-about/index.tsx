@@ -32,6 +32,7 @@ import { BiCalendar, BiHomeAlt2 } from "react-icons/bi";
 import { BsFileEarmarkText, BsPaperclip } from "react-icons/bs";
 import { GiAlarmClock } from "react-icons/gi";
 import { IoPricetagsOutline } from "react-icons/io5";
+import { parseDaysOfWeek } from '@/libs/utils';
 
 // Define contract and plan structure
 interface Plan {
@@ -187,42 +188,33 @@ export default function CnAbout() {
       if (contract && contractPlan) {
         const serviceValue = contractPlan.service_id?.toString() || "";
         let planValue = contractPlan.contract_plan_id?.toString() || "";
-        // Only use plan value if contract_plan_id is not null
         if (!contractPlan.contract_plan_id) {
           planValue = "";
         }
-        
-        // Check if the values exist in the dropdown options
         const serviceExists = customerDropdowns?.services?.some((option: any) => {
           return option.value == serviceValue;
         });
         const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
         const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == contract.contract_type?.toString());
-        
-        // Only set values if they exist in the dropdown options, otherwise leave empty
-        // For service, if service_id is null, pass undefined instead of empty string
         const finalServiceValue = contractPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
-        // For plan, if contract_plan_id is null, pass undefined instead of empty string
         const finalPlanValue = contractPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
         const finalContractTypeValue = contractTypeExists ? contract.contract_type?.toString() || "1" : "1";
-        
-        // Only update if the current values are empty (first load) or if we have valid data
         setContractFormValues(prev => {
           const shouldUpdate = prev.service === undefined || prev.plan === undefined || prev.contractType === "general";
           if (shouldUpdate) {
             return {
               ...prev,
               contractType: finalContractTypeValue,
-              service: finalServiceValue, // For service, this will be undefined if service_id is null
-              plan: finalPlanValue, // For plan, this will be undefined if contract_plan_id is null
+              service: finalServiceValue,
+              plan: finalPlanValue,
               timeRange: contractPlan.time_range == null ? "" : (contractPlan.time_range ? "with" : "without"),
               timeExtension: contractPlan.extended_time == null ? "" : (contractPlan.extended_time ? "with" : "without"),
               contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
                 ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
-                : "2025-04-14 to 2025-04-19",
+                : "",
               startTime: contractPlan.service_hours_start || "",
               endTime: contractPlan.service_hours_end || "",
-              weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : [],
+              weekdays: parseDaysOfWeek(contractPlan.days_of_week),
             };
           }
           return prev;
@@ -240,24 +232,15 @@ export default function CnAbout() {
       if (contract && contractPlan) {
         const serviceValue = contractPlan.service_id?.toString() || "";
         let planValue = contractPlan.contract_plan_id?.toString() || "";
-        // Only use plan value if contract_plan_id is not null
         if (!contractPlan.contract_plan_id) {
           planValue = "";
         }
-        
-        // Check if the values exist in the dropdown options
         const serviceExists = customerDropdowns?.services?.some((option: any) => option.value == serviceValue);
         const planExists = customerDropdowns?.contract_plans?.some((option: any) => option.value == planValue);
         const contractTypeExists = customerDropdowns?.customer_contract_types?.some((option: any) => option.value == contract.contract_type?.toString());
-        
-        // Only set values if they exist in the dropdown options, otherwise leave empty
-        // For service, if service_id is null, pass undefined instead of empty string
         const finalServiceValue = contractPlan.service_id === null ? undefined : (serviceExists ? serviceValue : "");
-        // For plan, if contract_plan_id is null, pass undefined instead of empty string
         const finalPlanValue = contractPlan.contract_plan_id === null ? undefined : (planExists ? planValue : "");
         const finalContractTypeValue = contractTypeExists ? contract.contract_type?.toString() || "1" : "1";
-        
-        // Only update if the current values are empty (first load)
         setContractFormValues(prev => {
           const shouldUpdate = prev.service === undefined || prev.plan === undefined || prev.contractType === "general";
           if (shouldUpdate) {
@@ -266,6 +249,7 @@ export default function CnAbout() {
               contractType: finalContractTypeValue,
               service: finalServiceValue,
               plan: finalPlanValue,
+              // Do not update timeRange, timeExtension, contractPeriod, weekdays here
             };
           }
           return prev;
@@ -355,10 +339,15 @@ export default function CnAbout() {
   // Handle receipt download
   const handleReceiptDownload = (receipt: string[]) => {
     if (receipt && receipt.length > 0) {
-      // Download the first receipt file
+      let fileUrl = receipt[0];
+      // Prepend NEXT_PUBLIC_BASE_URL if not absolute
+      if (fileUrl && !/^https?:\/\//i.test(fileUrl)) {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+        fileUrl = baseUrl.replace(/\/$/, '') + '/' + fileUrl.replace(/^\//, '');
+      }
       const link = document.createElement('a');
-      link.href = receipt[0]; // Use first receipt file
-      link.download = receipt[0].split('/').pop() || 'receipt.txt';
+      link.href = fileUrl;
+      link.download = fileUrl.split('/').pop() || 'receipt.txt';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -395,9 +384,12 @@ export default function CnAbout() {
     let keyInfoArray: KeyInformation[] = [];
     try {
       if (typeof customer.key_information === 'string') {
-        keyInfoArray = JSON.parse(customer.key_information);
-      } else {
+        const parsed = JSON.parse(customer.key_information);
+        keyInfoArray = Array.isArray(parsed) ? parsed : [];
+      } else if (Array.isArray(customer.key_information)) {
         keyInfoArray = customer.key_information as KeyInformation[];
+      } else {
+        keyInfoArray = [];
       }
     } catch (error) {
       console.error('Error parsing key_information:', error);
@@ -412,8 +404,10 @@ export default function CnAbout() {
       ];
     }
 
+    if (!Array.isArray(keyInfoArray)) return [];
+
     return keyInfoArray.map((keyInfo: KeyInformation, index: number) => ({
-      head: `key ${index}`, // Use 0-based indexing
+      head: `key ${index + 1}`,
       dateOfRecieved: keyInfo.date_added,
       dateOfReturn: keyInfo.date_returned,
       nameStaff: keyInfo.user_id,
@@ -581,10 +575,10 @@ export default function CnAbout() {
           timeExtension: contractPlan.extended_time == null ? "" : (contractPlan.extended_time ? "with" : "without"),
           contractPeriod: contractPlan.contract_period_start && contractPlan.contract_period_end 
             ? `${contractPlan.contract_period_start} to ${contractPlan.contract_period_end}`
-            : "2025-04-14 to 2025-04-19",
+            : "",
           startTime: contractPlan.service_hours_start || "",
           endTime: contractPlan.service_hours_end || "",
-          weekdays: contractPlan.days_of_week ? contractPlan.days_of_week.split(',') : [],
+          weekdays: parseDaysOfWeek(contractPlan.days_of_week),
         }));
         
         // Update billing form values for the selected contract
@@ -666,10 +660,10 @@ export default function CnAbout() {
         timeExtension: selectedPlan.extended_time ? "with" : "without",
         contractPeriod: selectedPlan.contract_period_start && selectedPlan.contract_period_end 
           ? `${selectedPlan.contract_period_start} to ${selectedPlan.contract_period_end}`
-          : "2025-04-14 to 2025-04-19",
+          : "",
         startTime: selectedPlan.service_hours_start || "",
         endTime: selectedPlan.service_hours_end || "",
-        weekdays: selectedPlan.days_of_week ? selectedPlan.days_of_week.split(',') : ["monday"],
+        weekdays: parseDaysOfWeek(selectedPlan.days_of_week),
       }));
       
       // Update billing form values for the selected plan
@@ -1208,7 +1202,7 @@ export default function CnAbout() {
                       <div className={styles.fieldGroup}>
                         <InputDateField
                           name="contractPeriod"
-                          value="2025-04-14 to 2025-04-19"
+                          value={contractFormValues.contractPeriod}
                           isRange={true}
                           startPlaceholder={t("aboutPage.startDatePlaceholder")}
                           endPlaceholder={t("aboutPage.endDatePlaceholder")}

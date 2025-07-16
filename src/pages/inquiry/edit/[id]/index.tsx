@@ -341,7 +341,7 @@ const InquiryTabEdit: React.FC = () => {
       address2: formData.address2,
       apartment_name: formData.building,
       language: formData.language,
-      newsletter_emails: formData.advertisingEmail,
+      newsletter_emails: parseInt(formData.advertisingEmail),
       services,
       first_service_requested_date: formData.firstServiceDate,
       other_service_requests: formData.additionalRequests,

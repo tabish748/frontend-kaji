@@ -23,6 +23,7 @@ import { BsFileEarmarkText } from "react-icons/bs";
 import { BiCalendar } from "react-icons/bi";
 import { GiAlarmClock } from "react-icons/gi";
 import { IoAdd } from "react-icons/io5";
+import { parseDaysOfWeek } from '@/libs/utils';
 
 interface ContractFormValues {
   contractType: string;
@@ -124,7 +125,7 @@ export default function PlanAddRequest() {
               ? `${plan.contract_period_start} to ${plan.contract_period_end}`
               : "",
             contractdate: plan.contract_period_start || "",
-            weekdays: plan.days_of_week ? plan.days_of_week.split(',') : [],
+            weekdays: parseDaysOfWeek(plan.days_of_week),
             startTime: plan.service_hours_start || "",
             endTime: plan.service_hours_end || "",
           },
@@ -138,7 +139,7 @@ export default function PlanAddRequest() {
               ? `${plan.contract_period_start} to ${plan.contract_period_end}`
               : "",
             contractdate: plan.contract_period_start || "",
-            weekdays: plan.days_of_week ? plan.days_of_week.split(',') : [],
+            weekdays: parseDaysOfWeek(plan.days_of_week),
             startTime: plan.service_hours_start || "",
             endTime: plan.service_hours_end || "",
           },
@@ -343,33 +344,11 @@ export default function PlanAddRequest() {
       ? formValues.contractPeriod.split(' to ')
       : [formValues.contractPeriod, formValues.contractPeriod];
 
-    // Map weekdays to the required format
-    const daysOfWeekMap: { [key: string]: string } = {
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-    };
-
-    // Map weekdays to numbers and day names
-    const weekdayMapping: { [key: string]: { number: string, name: string } } = {
-      "monday": { number: "1", name: "Monday" },
-      "tuesday": { number: "2", name: "Tuesday" }, 
-      "wednesday": { number: "3", name: "Wednesday" },
-      "thursday": { number: "4", name: "Thursday" },
-      "friday": { number: "5", name: "Friday" },
-      "saturday": { number: "6", name: "Saturday" },
-      "sunday": { number: "7", name: "Sunday" },
-    };
-
-    formValues.weekdays.forEach(day => {
-      const dayInfo = weekdayMapping[day.toLowerCase()];
-      if (dayInfo) {
-        daysOfWeekMap[dayInfo.number] = dayInfo.name;
-      }
+    // Map weekdays to the required format for API (e.g., {monday: 1, tuesday: 0, ...})
+    const allDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const daysOfWeekMap: { [key: string]: number } = {};
+    allDays.forEach(day => {
+      daysOfWeekMap[day] = formValues.weekdays.includes(day) ? 1 : 0;
     });
 
     const payload = {
@@ -384,7 +363,7 @@ export default function PlanAddRequest() {
       service_hours_end: formValues.endTime,
       recurrence_type: "",
       interval: "",
-      days_of_week: daysOfWeekMap,
+      days_of_week: Object.fromEntries(Object.entries(daysOfWeekMap).map(([k, v]) => [k, v.toString()])),
     };
 
     console.log("Submitting payload:", payload);

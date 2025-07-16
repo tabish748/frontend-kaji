@@ -618,3 +618,29 @@ export function convertTo24Hour(time12h: string): string {
 
   return `${hours.toString().padStart(2, "0")}:${minutes}`;
 }
+
+// Helper to parse days_of_week (for contract plan weekdays)
+export function parseDaysOfWeek(days_of_week: any): string[] {
+  if (!days_of_week) return [];
+  if (typeof days_of_week === 'string') {
+    // Try to parse as JSON first
+    try {
+      const obj = JSON.parse(days_of_week);
+      if (typeof obj === 'object' && obj !== null) {
+        return Object.entries(obj)
+          .filter(([_, v]) => v === 1)
+          .map(([k]) => k);
+      }
+    } catch {
+      // Not JSON, treat as comma-separated string
+      return days_of_week.split(',');
+    }
+    return days_of_week.split(',');
+  }
+  if (typeof days_of_week === 'object' && days_of_week !== null) {
+    return Object.entries(days_of_week)
+      .filter(([_, v]) => v === 1)
+      .map(([k]) => k);
+  }
+  return [];
+}

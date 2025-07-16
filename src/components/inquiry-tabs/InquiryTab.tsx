@@ -47,7 +47,7 @@ const InquiryTab: React.FC = () => {
     address2: "",
     building: "",
     language: "",
-    advertisingEmail: "subscribe",
+    advertisingEmail: "",
     preferredServices: [],
     firstServiceDate: "",
     additionalRequests: "",
@@ -132,7 +132,9 @@ const InquiryTab: React.FC = () => {
   };
 
   // Helper function to split time into hours and minutes
-  const getTimeComponents = (timeStr: string | undefined): { hour: string; minute: string } => {
+  const getTimeComponents = (
+    timeStr: string | undefined
+  ): { hour: string; minute: string } => {
     if (!timeStr) return { hour: "", minute: "" };
     const [hours, minutes] = timeStr.split(":");
     return { hour: hours || "", minute: minutes || "" };
@@ -161,8 +163,12 @@ const InquiryTab: React.FC = () => {
     const orderTime = getTimeComponents(newFormData.orderTime);
 
     // Build services object: {1: 1, 2: 2, 3: 3, 4: "", ...}
-    const allServiceIds = (dropdownOptions?.services || []).map((item: any) => String(item.value));
-    const selectedServiceIds = (newFormData.preferredServices || []).map((s: any) => String(s));
+    const allServiceIds = (dropdownOptions?.services || []).map((item: any) =>
+      String(item.value)
+    );
+    const selectedServiceIds = (newFormData.preferredServices || []).map(
+      (s: any) => String(s)
+    );
     const services: Record<string, number | ""> = {};
     allServiceIds.forEach((id: string) => {
       services[id] = selectedServiceIds.includes(id) ? Number(id) : "";
@@ -206,9 +212,7 @@ const InquiryTab: React.FC = () => {
       address2: newFormData.address2 || "",
       apartment_name: newFormData.building || "",
       language: Number(newFormData.language),
-      newsletter_emails: Number(
-        newFormData.advertisingEmail === "subscribe" ? 1 : 0
-      ),
+      newsletter_emails: Number(newFormData.advertisingEmail),
       services,
       first_service_requested_date: newFormData.firstServiceDate,
       other_service_requests: newFormData.additionalRequests || "",
@@ -253,10 +257,16 @@ const InquiryTab: React.FC = () => {
         console.log("Inquiry created successfully");
       } else {
         // Handle error
-        setErrors((prev) => ({ ...prev, submit: t("admin-form.errors.submitFailed") }));
+        setErrors((prev) => ({
+          ...prev,
+          submit: t("admin-form.errors.submitFailed"),
+        }));
       }
     } catch (error) {
-      setErrors((prev) => ({ ...prev, submit: t("admin-form.errors.submitFailed") }));
+      setErrors((prev) => ({
+        ...prev,
+        submit: t("admin-form.errors.submitFailed"),
+      }));
     }
   };
 
@@ -313,37 +323,41 @@ const InquiryTab: React.FC = () => {
   const assigneeOptions =
     dropdownOptions?.users
       ?.filter((user: any) => user.status)
-      .map((item: any) => ({ value: String(item.value), label: item.label })) || [];
+      .map((item: any) => ({ value: String(item.value), label: item.label })) ||
+    [];
   const genderOptions =
     dropdownOptions?.gender?.map((item: any) => ({
       value: String(item.value),
       label: item.label,
     })) || [];
-  const contacterTypeOptions =
-    dropdownOptions?.represents?.map((item: any) => ({
+  const contacterTypeOptions = dropdownOptions?.represents?.map(
+    (item: any) => ({
       value: String(item.value),
       label: item.label,
-    })) || [
-      { value: "1", label: "Option 1" },
-      { value: "2", label: "Option 2" },
-      { value: "3", label: "Option 3" },
-    ];
+    })
+  ) || [
+    { value: "1", label: "Option 1" },
+    { value: "2", label: "Option 2" },
+    { value: "3", label: "Option 3" },
+  ];
 
   if (loadingDropdowns) return <div>{t("admin-form.loading.options")}</div>;
   if (dropdownError) return <div>{dropdownError}</div>;
 
   return (
     <div className="tab-content">
-              <Form
-          onSubmit={handleSubmit}
-          // showBottomSubmitBtn={true}
-          registerBtnText="REGISTER"
-          setErrors={setErrors}
+      <Form
+        onSubmit={handleSubmit}
+        // showBottomSubmitBtn={true}
+        registerBtnText="REGISTER"
+        setErrors={setErrors}
         errors={errors}
       >
         {/* FIRST INQUIRY INFO Section */}
         <div className="form-section mb-4">
-          <h3 className="ad-heading">{t("adInquiryCreate.firstInquiryInfo")}</h3>
+          <h3 className="ad-heading">
+            {t("adInquiryCreate.firstInquiryInfo")}
+          </h3>
 
           <div className="row g-1 mb-1">
             <div className="col-sm-12 col-lg-6 col-xl-4">
@@ -483,7 +497,7 @@ const InquiryTab: React.FC = () => {
           <div className="row g-1 mb-1">
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
               <div className="d-flex gap-2 align-items-end">
-                <div style={{ flex: '1' }}>
+                <div style={{ flex: "1" }}>
                   <InputDateField
                     name="dateOfBirth"
                     label={t("admin-form.labels.dateOfBirth")}
@@ -500,7 +514,7 @@ const InquiryTab: React.FC = () => {
                     }}
                   />
                 </div>
-                <div style={{ width: '80px' }}>
+                <div style={{ width: "80px" }}>
                   <InputField
                     name="age"
                     label={t("admin-form.labels.age")}
@@ -662,20 +676,20 @@ const InquiryTab: React.FC = () => {
                   checked={formData.primaryEmail === "email1"}
                   onChange={() => handleInputChange("primaryEmail", "email1")}
                 />
-                                  <div className={styles.flexOne}>
-                    <InputField
-                      labelClassName="-ml-4"
-                      name="email1"
-                      label={t("admin-form.labels.email1")}
-                      placeholder={t("admin-form.placeholders.email1")}
-                      value={formData.email1}
-                      onChange={(e) =>
-                        handleInputChange("email1", e.target.value)
-                      }
-                      validations={[{ type: "required" }, { type: "email" }]}
-                      tag={[{ value: "required", label: "Required" }]}
-                    />
-                  </div>
+                <div className={styles.flexOne}>
+                  <InputField
+                    labelClassName="-ml-4"
+                    name="email1"
+                    label={t("admin-form.labels.email1")}
+                    placeholder={t("admin-form.placeholders.email1")}
+                    value={formData.email1}
+                    onChange={(e) =>
+                      handleInputChange("email1", e.target.value)
+                    }
+                    validations={[{ type: "required" }, { type: "email" }]}
+                    tag={[{ value: "required", label: "Required" }]}
+                  />
+                </div>
               </div>
             </div>
             <div className="col-12 col-sm-12 col-md-6 col-lg-6">
@@ -690,19 +704,19 @@ const InquiryTab: React.FC = () => {
                   checked={formData.primaryEmail === "email2"}
                   onChange={() => handleInputChange("primaryEmail", "email2")}
                 />
-                                  <div className={styles.flexOne}>
-                    <InputField
-                      labelClassName="-ml-4"
-                      name="email2"
-                      label={t("admin-form.labels.email2")}
-                      placeholder={t("admin-form.placeholders.email2")}
-                      value={formData.email2}
-                      onChange={(e) =>
-                        handleInputChange("email2", e.target.value)
-                      }
-                      validations={[{ type: "email" }]}
-                    />
-                  </div>
+                <div className={styles.flexOne}>
+                  <InputField
+                    labelClassName="-ml-4"
+                    name="email2"
+                    label={t("admin-form.labels.email2")}
+                    placeholder={t("admin-form.placeholders.email2")}
+                    value={formData.email2}
+                    onChange={(e) =>
+                      handleInputChange("email2", e.target.value)
+                    }
+                    validations={[{ type: "email" }]}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -710,7 +724,9 @@ const InquiryTab: React.FC = () => {
           {/* Address Row */}
           <div className="row g-1 mb-1">
             <div className="col-md-12">
-              <label className={styles.formLabel}>{t("admin-form.labels.address")} </label>
+              <label className={styles.formLabel}>
+                {t("admin-form.labels.address")}{" "}
+              </label>
               <div className="row g-2">
                 <div className="col-12 col-sm-6 col-md-3 col-lg-2">
                   <InputField
@@ -782,7 +798,9 @@ const InquiryTab: React.FC = () => {
 
           {/* Train Station Grid */}
           <div className="">
-            <label className={styles.formLabel}>{t("admin-form.labels.trainStation")} </label>
+            <label className={styles.formLabel}>
+              {t("admin-form.labels.trainStation")}{" "}
+            </label>
 
             {/* Header Row */}
             <div className={`${styles.gridHeader} ${styles.trainStationGrid}`}>
@@ -842,7 +860,9 @@ const InquiryTab: React.FC = () => {
                 <div>
                   <InputField
                     name={`trainStation${index}Station`}
-                    placeholder={t("admin-form.placeholders.trainStationExample")}
+                    placeholder={t(
+                      "admin-form.placeholders.trainStationExample"
+                    )}
                     value={station.trainStation}
                     onChange={(e) => {
                       const newStations = [...trainStations];
@@ -1015,7 +1035,6 @@ const InquiryTab: React.FC = () => {
               />
             </div>
           </div>
-
         </div>
 
         {/* ORDER Section */}
@@ -1052,7 +1071,12 @@ const InquiryTab: React.FC = () => {
               <CheckboxField
                 name="orderFormSent"
                 label=""
-                options={[{ value: "orderFormSent", label: t("admin-form.labels.orderFormSent") }]}
+                options={[
+                  {
+                    value: "orderFormSent",
+                    label: t("admin-form.labels.orderFormSent"),
+                  },
+                ]}
                 selectedValues={formData.orderFormSent ? ["orderFormSent"] : []}
                 onChange={(values) =>
                   handleInputChange(
@@ -1073,7 +1097,9 @@ const InquiryTab: React.FC = () => {
                 }
               />
             </div>
-            <div className={`${styles.orderStatusContainer} col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3`}>
+            <div
+              className={`${styles.orderStatusContainer} col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3`}
+            >
               <CustomSelectField
                 name="orderStatus"
                 label={t("admin-form.labels.status")}
@@ -1085,7 +1111,6 @@ const InquiryTab: React.FC = () => {
               />
             </div>
           </div>
-
         </div>
 
         {/* Note Section */}
@@ -1108,8 +1133,8 @@ const InquiryTab: React.FC = () => {
         <div className="form-section mb-4">
           <div className="row">
             <div className="col-12 d-flex justify-content-center">
-              <Button 
-                text={t("buttons.register")} 
+              <Button
+                text={t("buttons.register")}
                 className={styles.registerButton}
                 htmlType="submit"
               />

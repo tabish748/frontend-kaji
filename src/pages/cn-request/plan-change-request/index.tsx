@@ -21,6 +21,7 @@ import SubRouteLayout from "../layout";
 import { BsFileEarmarkText } from "react-icons/bs";
 import { BiCalendar } from "react-icons/bi";
 import { GiAlarmClock } from "react-icons/gi";
+import { parseDaysOfWeek } from '@/libs/utils';
 
 interface ContractFormValues {
   contractType: string;
@@ -109,7 +110,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
     contractPeriod: activePlan?.contract_period_start && activePlan?.contract_period_end 
       ? `${activePlan.contract_period_start} to ${activePlan.contract_period_end}`
       : "",
-    weekdays: activePlan?.days_of_week ? activePlan.days_of_week.split(',') : [],
+    weekdays: parseDaysOfWeek(activePlan?.days_of_week),
     startTime: activePlan?.service_hours_start || "",
     endTime: activePlan?.service_hours_end || "",
   };
@@ -243,33 +244,11 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
       ? contractFormValues.contractPeriod.split(' to ')
       : [contractFormValues.contractPeriod, contractFormValues.contractPeriod];
 
-    // Map weekdays to the required format
-    const daysOfWeekMap: { [key: string]: string } = {
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-    };
-
-    // Map weekdays to numbers (Monday=1, Tuesday=2, etc.)
-    const weekdayMapping: { [key: string]: string } = {
-      "monday": "1",
-      "tuesday": "2", 
-      "wednesday": "3",
-      "thursday": "4",
-      "friday": "5",
-      "saturday": "6",
-      "sunday": "7",
-    };
-
-    contractFormValues.weekdays.forEach(day => {
-      const dayNumber = weekdayMapping[day.toLowerCase()];
-      if (dayNumber) {
-        daysOfWeekMap[dayNumber] = day.charAt(0).toUpperCase() + day.slice(1);
-      }
+    // Map weekdays to the required format for API (e.g., {monday: 1, tuesday: 0, ...})
+    const allDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const daysOfWeekMap: { [key: string]: number } = {};
+    allDays.forEach(day => {
+      daysOfWeekMap[day] = contractFormValues.weekdays.includes(day) ? 1 : 0;
     });
 
     const payload = {
@@ -285,7 +264,7 @@ export default function PlanChangeRequest({ activeContractIdx, activePlanIdx, on
       service_hours_end: contractFormValues.endTime,
       recurrence_type: "",
       interval: "",
-      days_of_week: daysOfWeekMap,
+      days_of_week: Object.fromEntries(Object.entries(daysOfWeekMap).map(([k, v]) => [k, v.toString()])),
     };
 
     dispatch(changePlanRequest(payload));

@@ -69,7 +69,42 @@ export default function CnInfo() {
   >({});
 
   // Form 1 - Customer Information
-  const [customerFormValues, setCustomerFormValues] = useState({
+  const [customerFormValues, setCustomerFormValues] = useState<{
+    [key: string]: string | number | null;
+    firstName: string;
+    lastName: string;
+    firstNameKana: string;
+    lastNameKana: string;
+    phone1: string;
+    phone2: string;
+    phone3: string;
+    email1: string;
+    email2: string;
+    postalCode: string;
+    prefecture: string;
+    address1: string;
+    address2: string;
+    building: string;
+    railwayCompany1: string;
+    railwayCompany1Id: string | number | null;
+    trainLine1: string;
+    trainStation1: string;
+    railwayCompany2: string;
+    railwayCompany2Id: string | number | null;
+    trainLine2: string;
+    trainStation2: string;
+    railwayCompany3: string;
+    railwayCompany3Id: string | number | null;
+    trainLine3: string;
+    trainStation3: string;
+    gender: string;
+    language: string;
+    birthYear: string;
+    birthMonth: string;
+    birthDay: string;
+    age: string;
+    advertising: string;
+  }>({
     firstName: "",
     lastName: "",
     firstNameKana: "",
@@ -96,13 +131,13 @@ export default function CnInfo() {
     railwayCompany3Id: null,
     trainLine3: "",
     trainStation3: "",
-    gender: "", // No default - only set if returned from API
-    language: "", // No default - only set if returned from API
+    gender: "",
+    language: "",
     birthYear: "",
     birthMonth: "",
     birthDay: "",
     age: "",
-    advertising: "", // No default - only set if returned from API
+    advertising: "",
   });
 
   // Form 3 - Payment Information
@@ -918,19 +953,25 @@ export default function CnInfo() {
 
         // Add station details
         // Always send id for each station if present, even if other fields are empty
-        [0, 1, 2].forEach((idx) => {
-          const idKey = [`railwayCompany${idx+1}Id`];
-          const companyKey = [`railwayCompany${idx+1}`];
-          const lineKey = [`trainLine${idx+1}`];
-          const stationKey = [`trainStation${idx+1}`];
+        for (let idx = 0; idx < 3; idx++) {
+          const idKey = `railwayCompany${idx+1}Id`;
+          const companyKey = `railwayCompany${idx+1}`;
+          const lineKey = `trainLine${idx+1}`;
+          const stationKey = `trainStation${idx+1}`;
+
           const id = customerFormValues[idKey];
+          const company = customerFormValues[companyKey] || "";
+          const routeName = customerFormValues[lineKey] || "";
+          const nearestStation = customerFormValues[stationKey] || "";
+
+          // Only add id if it exists and is not empty
           if (id !== undefined && id !== null && id !== "") {
-            formData.append(`station_details[${idx}][id]`, id);
-            formData.append(`station_details[${idx}][company]`, customerFormValues[companyKey] || "");
-            formData.append(`station_details[${idx}][route_name]`, customerFormValues[lineKey] || "");
-            formData.append(`station_details[${idx}][nearest_station]`, customerFormValues[stationKey] || "");
+            formData.append(`station_details[${idx}][id]`, String(id));
           }
-        });
+          formData.append(`station_details[${idx}][company]`, String(company));
+          formData.append(`station_details[${idx}][route_name]`, String(routeName));
+          formData.append(`station_details[${idx}][nearest_station]`, String(nearestStation));
+        }
 
         const response = await ApiHandler.request(
           "/api/customer/first-time-info/save",
